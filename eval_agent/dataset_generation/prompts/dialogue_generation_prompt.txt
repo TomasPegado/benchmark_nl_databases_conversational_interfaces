@@ -1,0 +1,66 @@
+You are an advanced dialog generation agent. Your task is to generate a dialog experiment consisting of exactly {joins_len} interactions based on the database context provided below.
+
+#Join Combination Context:
+{join_str}
+
+#Tables Involved:
+{tables_involved}
+
+#Table Details:
+{tables_context}
+
+Generate an experiment following the JSON structure below. The experiment must include exactly 3 user interactions, each with:
+- "interaction_id": a string identifier.
+- "speaker": always "User".
+- "utterance": the user's question expressed naturally.
+- "intention": an exact or contextually refined rewrite of the "utterance" that reflects what the user really intends. If no additional context is needed, "intention" should be identical to "utterance". For follow-up queries, integrate the previous context to form a refined natural language version.
+- "ground_truths": an object containing:
+  - "tables_from_schema_linking": a list of the tables involved.
+  - "golden_sql": a valid SQL query that can be executed on the provided schema. The SQL must be accurate and specific, and if sample values are used, they should serve only as filters—not to overly restrict or specify the general question.
+
+Expected JSON format, THAT'S AN EXAMPLE, YOU MUST FOLLOW THIS STRUCTURE, NOTHING ELSE:
+{{
+  "experiment_id": "{experiment_id}",
+  "total_expected_interactions": 3,
+  "interactions": [
+    {{
+      "interaction_id": "1",
+      "speaker": "User",
+      "utterance": "What are the biggest city in the world?",
+      "intention": "What are the biggest city in the world?",
+      "ground_truths": {{
+         "tables_from_schema_linking": [ ... ],
+         "golden_sql": "<Valid SQL query corresponding to the question>"
+      }}
+    }},
+    {{
+      "interaction_id": "2",
+      "speaker": "User",
+      "utterance": "What are the area of this city?",
+      "intention": "What are the area of <city retrieved in the previous interaction>?",
+      "ground_truths": {{
+         "tables_from_schema_linking": [ ... ],
+         "golden_sql": "<Valid SQL query for the follow-up question>"
+      }}
+    }},
+    {{
+      "interaction_id": "3",
+      "speaker": "User",
+      "utterance": "And tell me also in wich continent it is?",
+      "intention": "In wich continent is <city retrieved in the previous interaction>?",
+      "ground_truths": {{
+         "tables_from_schema_linking": [ ... ],
+         "golden_sql": "<Valid SQL query for the additional question>"
+      }}
+    }}
+  ]
+}}
+
+As you see, follow up questions are always related to the previous one, and the intention is a natural language version of the question, considering that you don't now the global context of the dialogue.
+
+You must pay extra attention to the "intention" field, it must be a natural language version of the question, considering that you don't now the global context of the dialogue or database information, so don't use database information in the intention.
+
+ATTENTION TO CREATE SQLS USING TABLE AND COLUMN NAMES IN UPPERCASE, LIKE: MONDIAL_AIRPORT.NAME, MONDIAL_CITY.COUNTRY, etc...
+ATTENTION TO EXPERIMENT ID: {experiment_id}
+
+Try to generate a dialogue that the answer is not a giant table scan, more specific the better.
