@@ -1,0 +1,1103 @@
+{
+  "dataset": [
+    {
+      "experiment_id": "1",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the total federal revenue for school districts in Alabama?",
+          "intention": "What is the total federal revenue for school districts in Alabama?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_17",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT SUM(T_FED_REV) FROM STUDENTMATHSCORE_FINREV_FED_17 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_FINREV_FED_17.STATE_CODE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE_CODE WHERE STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE = 'Alabama'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many school districts are there in Alabama?",
+          "intention": "How many school districts are there in Alabama?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT RECORDS_CNT FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 WHERE STATE = 'Alabama'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the average math score of 8th-grade students in Alabama in 2017?",
+          "intention": "What is the average math score of 8th-grade students in Alabama in 2017?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8"
+            ],
+            "golden_sql": "SELECT AVERAGE_SCALE_SCORE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE STATE = 'Alabama' AND YEAR_ = 2017"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "2",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which pesticides were detected in Maryland?",
+          "intention": "Which pesticides were detected in Maryland?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "PESTICIDE_RESULTSDATA15",
+              "PESTICIDE_SAMPLEDATA15"
+            ],
+            "golden_sql": "SELECT DISTINCT PESTCODE FROM PESTICIDE_RESULTSDATA15 INNER JOIN PESTICIDE_SAMPLEDATA15 ON PESTICIDE_RESULTSDATA15.SAMPLE_PK = PESTICIDE_SAMPLEDATA15.SAMPLE_PK WHERE PESTICIDE_SAMPLEDATA15.STATE = 'MD';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What were the commodities associated with these pesticides?",
+          "intention": "What were the commodities associated with the pesticides detected in Maryland?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "PESTICIDE_RESULTSDATA15",
+              "PESTICIDE_SAMPLEDATA15"
+            ],
+            "golden_sql": "SELECT DISTINCT PESTICIDE_RESULTSDATA15.COMMOD FROM PESTICIDE_RESULTSDATA15 INNER JOIN PESTICIDE_SAMPLEDATA15 ON PESTICIDE_RESULTSDATA15.SAMPLE_PK = PESTICIDE_SAMPLEDATA15.SAMPLE_PK WHERE PESTICIDE_SAMPLEDATA15.STATE = 'MD';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Were there any wildfires in those areas?",
+          "intention": "Were there any wildfires in Maryland where the pesticides were detected?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "PESTICIDE_SAMPLEDATA15",
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT COUNT(*) FROM USWILDFIRES_FIRES WHERE STATE = 'MD';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "3",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which states receive the highest federal revenue for education?",
+          "intention": "Which states receive the highest federal revenue for education?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_17",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT S.STATE FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 S INNER JOIN STUDENTMATHSCORE_FINREV_FED_17 R ON S.STATE_CODE = R.STATE_CODE ORDER BY R.T_FED_REV DESC FETCH FIRST 5 ROWS ONLY"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the total number of school districts in these states?",
+          "intention": "What is the total number of school districts in the states with the highest federal revenue for education?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_17",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT SUM(S.RECORDS_CNT) FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 S INNER JOIN STUDENTMATHSCORE_FINREV_FED_17 R ON S.STATE_CODE = R.STATE_CODE WHERE R.T_FED_REV IN (SELECT T_FED_REV FROM (SELECT T_FED_REV FROM STUDENTMATHSCORE_FINREV_FED_17 ORDER BY T_FED_REV DESC FETCH FIRST 5 ROWS ONLY))"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "How many wildfires occurred in these states?",
+          "intention": "How many wildfires occurred in the states with the highest federal revenue for education?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "USWILDFIRES_FIRES",
+              "STUDENTMATHSCORE_FINREV_FED_17",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT COUNT(*) FROM USWILDFIRES_FIRES W INNER JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 S ON W.STATE = S.STATE INNER JOIN STUDENTMATHSCORE_FINREV_FED_17 R ON S.STATE_CODE = R.STATE_CODE WHERE R.T_FED_REV IN (SELECT T_FED_REV FROM (SELECT T_FED_REV FROM STUDENTMATHSCORE_FINREV_FED_17 ORDER BY T_FED_REV DESC FETCH FIRST 5 ROWS ONLY))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "4",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What awards have these players won?",
+          "intention": "What awards have the players inducted into the Hall of Fame in 1936 won?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT DISTINCT AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "How many first place votes did the players get for these awards?",
+          "intention": "How many first place votes did the players inducted into the Hall of Fame in 1936 get for these awards?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+            ],
+            "golden_sql": "SELECT PLAYER_ID, SUM(VOTES_FIRST) AS TOTAL_FIRST_PLACE_VOTES FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y') GROUP BY PLAYER_ID"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "5",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What awards did these players win?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT P.PLAYER_ID, A.AWARD_ID, A.YEAR_, A.LEAGUE_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.YEARID = 1936 AND P.INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What were their salaries in 1985?",
+          "intention": "What were the salaries of the players inducted into the Hall of Fame in 1936 during 1985?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT P.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME P JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID WHERE P.YEARID = 1936 AND P.INDUCTED = 'Y' AND S.YEAR_ = 1985"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "6",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many votes did each of these players receive?",
+          "intention": "How many votes did the players inducted into the Hall of Fame in 1936 receive?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID, VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the salary of these players in 1985?",
+          "intention": "What is the salary of the players inducted into the Hall of Fame in 1936 during the year 1985?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_SALARY S ON H.PLAYER_ID = S.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR_ = 1985;"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "7",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What were the states with an average math score below 270 in 8th grade?",
+          "intention": "Find the states where the average math score in 8th grade was below 270.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8"
+            ],
+            "golden_sql": "SELECT DISTINCT STATE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE AVERAGE_SCALE_SCORE < 270"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many records are there for these states in the student finance table?",
+          "intention": "Find the number of records for these states in the student finance table.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17",
+              "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8"
+            ],
+            "golden_sql": "SELECT F.STATE, F.RECORDS_CNT FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 F JOIN STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 S ON S.STATE = F.STATE WHERE S.AVERAGE_SCALE_SCORE < 270"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the causes of wildfires in these states?",
+          "intention": "Find the causes of wildfires in the states where the average math score in 8th grade was below 270.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17",
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT DISTINCT W.STAT_CAUSE_DESCR FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 S JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 F ON S.STATE = F.STATE JOIN USWILDFIRES_FIRES W ON F.STATE = W.STATE WHERE S.AVERAGE_SCALE_SCORE < 270"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "8",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players have won the 'Triple Crown' award?",
+          "intention": "Which players have won the 'Triple Crown' award?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT PLAYER_ID, YEAR_, LEAGUE_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What were the salaries of these players in the year they won?",
+          "intention": "What were the salaries of the players who won the 'Triple Crown' award in the year they won it?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT S.PLAYER_ID, S.SALARY, S.YEAR_, S.LEAGUE_ID FROM THEHISTORYOFBASEBALL_SALARY S INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON S.PLAYER_ID = A.PLAYER_ID AND S.YEAR_ = A.YEAR_ WHERE A.AWARD_ID = 'Triple Crown'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "And which leagues did they belong to?",
+          "intention": "Which leagues did the players who won the 'Triple Crown' award belong to in the year they won?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT DISTINCT S.PLAYER_ID, S.LEAGUE_ID FROM THEHISTORYOFBASEBALL_SALARY S INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON S.PLAYER_ID = A.PLAYER_ID AND S.YEAR_ = A.YEAR_ WHERE A.AWARD_ID = 'Triple Crown'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "9",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What awards did they win and in which years?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win and in which years?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+            ],
+            "golden_sql": "SELECT DISTINCT AWARD_ID, YEAR_ FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "How many first place votes did they receive for those awards?",
+          "intention": "How many first place votes did the players inducted into the Hall of Fame in 1936 receive for those awards?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+            ],
+            "golden_sql": "SELECT PLAYER_ID, SUM(VOTES_FIRST) AS TOTAL_FIRST_PLACE_VOTES FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y') GROUP BY PLAYER_ID"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "10",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which states have records of wildfires caused by arson?",
+          "intention": "Which states have records of wildfires caused by arson?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT DISTINCT STATE FROM USWILDFIRES_FIRES WHERE STAT_CAUSE_DESCR = 'Arson';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many student math scores are recorded for those states?",
+          "intention": "How many student math scores are recorded for the states with records of wildfires caused by arson?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17",
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT SUM(RECORDS_CNT) FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 WHERE STATE IN (SELECT DISTINCT STATE FROM USWILDFIRES_FIRES WHERE STAT_CAUSE_DESCR = 'Arson');"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the total quantity of pesticides sampled in those states?",
+          "intention": "What is the total quantity of pesticides sampled in the states with records of wildfires caused by arson?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "PESTICIDE_SAMPLEDATA15",
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT SUM(QUANTITY) FROM PESTICIDE_SAMPLEDATA15 WHERE STATE IN (SELECT DISTINCT STATE FROM USWILDFIRES_FIRES WHERE STAT_CAUSE_DESCR = 'Arson');"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "11",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players won the Triple Crown award?",
+          "intention": "Which players won the Triple Crown award?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT PLAYER_ID, YEAR_, LEAGUE_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the notes associated with these players?",
+          "intention": "What are the notes associated with the players who won the Triple Crown award?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT PLAYER_ID, NOTES FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Can you also tell me their salaries for the years they won?",
+          "intention": "What are the salaries of the players who won the Triple Crown award for the years they won?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT PA.PLAYER_ID, PA.YEAR_, S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_SALARY S ON PA.PLAYER_ID = S.PLAYER_ID AND PA.YEAR_ = S.YEAR_ AND PA.LEAGUE_ID = S.LEAGUE_ID WHERE PA.AWARD_ID = 'Triple Crown';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "12",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Who were the players inducted into the Hall of Fame in 1936?",
+          "intention": "Who were the players inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What awards did they receive?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 receive?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT DISTINCT A.AWARD_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON H.PLAYER_ID = A.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "In which leagues did they win those awards?",
+          "intention": "In which leagues did the players inducted into the Hall of Fame in 1936 win those awards?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT DISTINCT A.LEAGUE_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON H.PLAYER_ID = A.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "13",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What was the salary of these players?",
+          "intention": "What was the salary of the players inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT S.YEAR_, S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Tell me the team they played for in the same year.",
+          "intention": "Which teams did the players inducted into the Hall of Fame in 1936 play for in the same year?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT S.YEAR_, S.PLAYER_ID, S.TEAM_ID FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "14",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Who were the players inducted into the Hall of Fame in 1936?",
+          "intention": "Retrieve the players who were inducted into the Hall of Fame in 1936.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What awards did these players win?",
+          "intention": "Find the awards won by the players who were inducted into the Hall of Fame in 1936.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT DISTINCT P.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Can you also tell me the points they won for these awards?",
+          "intention": "Retrieve the points won by the players inducted into the Hall of Fame in 1936 for the awards they won.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+            ],
+            "golden_sql": "SELECT V.PLAYER_ID, V.AWARD_ID, V.POINTS_WON FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD P ON V.AWARD_ID = P.AWARD_ID JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "15",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which states have records of wildfires?",
+          "intention": "Which states have records of wildfires?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT DISTINCT STATE FROM USWILDFIRES_FIRES"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many wildfires were recorded in Arizona?",
+          "intention": "How many wildfires were recorded in Arizona?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT COUNT(*) FROM USWILDFIRES_FIRES WHERE STATE = 'AZ'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What was the cause of these wildfires?",
+          "intention": "What was the cause of the wildfires recorded in Arizona?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT DISTINCT STAT_CAUSE_DESCR FROM USWILDFIRES_FIRES WHERE STATE = 'AZ'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "16",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the average federal revenue for schools in California?",
+          "intention": "What is the average federal revenue for schools in California?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_17",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT AVG(T_FED_REV) FROM STUDENTMATHSCORE_FINREV_FED_17 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_FINREV_FED_17.STATE_CODE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE_CODE WHERE STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE = 'California'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How does this compare to the national average?",
+          "intention": "How does the average federal revenue for schools in California compare to the national average?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_17"
+            ],
+            "golden_sql": "SELECT AVG(T_FED_REV) FROM STUDENTMATHSCORE_FINREV_FED_17"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What about the average math scores for 8th graders in California for the same year?",
+          "intention": "What are the average math scores for 8th graders in California for the same year?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT AVERAGE_SCALE_SCORE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8.STATE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE WHERE STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE = 'California' AND STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8.YEAR_ = 2017"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "17",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which states have more than 200 math score records?",
+          "intention": "Which states have more than 200 math score records?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT STATE FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 WHERE RECORDS_CNT > 200"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the average fire size in those states?",
+          "intention": "What is the average fire size in the states with more than 200 math score records?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17",
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT UF.STATE, AVG(UF.FIRE_SIZE) AS AVERAGE_FIRE_SIZE FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 SNG JOIN USWILDFIRES_FIRES UF ON SNG.STATE = UF.STATE WHERE SNG.RECORDS_CNT > 200 GROUP BY UF.STATE"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which causes are most responsible for the fires in those states?",
+          "intention": "Which causes are most responsible for the fires in the states with more than 200 math score records?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17",
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT UF.STATE, UF.STAT_CAUSE_DESCR, COUNT(UF.STAT_CAUSE_DESCR) AS CAUSE_COUNT FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 SNG JOIN USWILDFIRES_FIRES UF ON SNG.STATE = UF.STATE WHERE SNG.RECORDS_CNT > 200 GROUP BY UF.STATE, UF.STAT_CAUSE_DESCR ORDER BY CAUSE_COUNT DESC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "18",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which states have a federal revenue greater than 26000 in 2017?",
+          "intention": "Find the states where the federal revenue was greater than 26000 in 2017.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_17",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE FROM STUDENTMATHSCORE_FINREV_FED_17 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_FINREV_FED_17.STATE_CODE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE_CODE WHERE STUDENTMATHSCORE_FINREV_FED_17.T_FED_REV > 26000 AND STUDENTMATHSCORE_FINREV_FED_17.YR_DATA = 17"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many wildfires occurred in those states?",
+          "intention": "Count the number of wildfires that occurred in the states retrieved in the previous interaction.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "USWILDFIRES_FIRES",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT COUNT(*) FROM USWILDFIRES_FIRES WHERE USWILDFIRES_FIRES.STATE IN (SELECT STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE FROM STUDENTMATHSCORE_FINREV_FED_17 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_FINREV_FED_17.STATE_CODE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE_CODE WHERE STUDENTMATHSCORE_FINREV_FED_17.T_FED_REV > 26000 AND STUDENTMATHSCORE_FINREV_FED_17.YR_DATA = 17)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Can you tell me the average fire size in those states?",
+          "intention": "Find the average fire size in the states retrieved in the first interaction.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "USWILDFIRES_FIRES",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT AVG(USWILDFIRES_FIRES.FIRE_SIZE) FROM USWILDFIRES_FIRES WHERE USWILDFIRES_FIRES.STATE IN (SELECT STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE FROM STUDENTMATHSCORE_FINREV_FED_17 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_FINREV_FED_17.STATE_CODE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE_CODE WHERE STUDENTMATHSCORE_FINREV_FED_17.T_FED_REV > 26000 AND STUDENTMATHSCORE_FINREV_FED_17.YR_DATA = 17)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "19",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which states have data about pesticide samples?",
+          "intention": "Which states have data about pesticide samples?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "PESTICIDE_SAMPLEDATA15"
+            ],
+            "golden_sql": "SELECT DISTINCT STATE FROM PESTICIDE_SAMPLEDATA15;"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For Maryland, what is the total quantity of pesticide samples?",
+          "intention": "What is the total quantity of pesticide samples in Maryland?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "PESTICIDE_SAMPLEDATA15"
+            ],
+            "golden_sql": "SELECT SUM(QUANTITY) AS TOTAL_QUANTITY FROM PESTICIDE_SAMPLEDATA15 WHERE STATE = 'MD';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the commodities tested in Maryland?",
+          "intention": "What are the commodities tested in Maryland?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "PESTICIDE_SAMPLEDATA15"
+            ],
+            "golden_sql": "SELECT DISTINCT COMMOD FROM PESTICIDE_SAMPLEDATA15 WHERE STATE = 'MD';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "20",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players won an award in 1956?",
+          "intention": "Which players won an award in 1956?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT PLAYER_ID, AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE YEAR_ = 1956"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What was the maximum number of points won by these players in 1956?",
+          "intention": "What was the maximum number of points won by the players who won an award in 1956?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT MAX(POINTS_WON) FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE YEAR_ = 1956"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What was the salary of these players in 1956?",
+          "intention": "What was the salary of the players who won an award in 1956?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_SALARY",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT PLAYER_ID, SALARY FROM THEHISTORYOFBASEBALL_SALARY WHERE YEAR_ = 1956 AND PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE YEAR_ = 1956)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "21",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What awards did they win?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT DISTINCT AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Who got the most points for these awards?",
+          "intention": "Who got the most points for the awards won by the players inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE",
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID, AWARD_ID, MAX(POINTS_WON) FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE AWARD_ID IN (SELECT DISTINCT AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y')) GROUP BY PLAYER_ID, AWARD_ID"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "22",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What awards did these players win in 1936?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+            ],
+            "golden_sql": "SELECT DISTINCT P.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE P INNER JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND P.YEAR_ = 1936;"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Can you also tell me their salaries for 1936?",
+          "intention": "What were the salaries of the players inducted into the Hall of Fame in 1936 during that year?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S INNER JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR_ = 1936;"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "23",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What were the average math scores for students in Alabama in 2017?",
+          "intention": "What were the average math scores for students in Alabama in 2017?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8"
+            ],
+            "golden_sql": "SELECT AVERAGE_SCALE_SCORE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE STATE = 'Alabama' AND YEAR_ = 2017"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many records are there for Alabama in the student math score database?",
+          "intention": "How many records are there for Alabama in the student math score database?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+            ],
+            "golden_sql": "SELECT RECORDS_CNT FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 WHERE STATE = 'Alabama'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Are there any wildfires recorded in the same state?",
+          "intention": "Are there any wildfires recorded in Alabama?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "USWILDFIRES_FIRES"
+            ],
+            "golden_sql": "SELECT COUNT(*) FROM USWILDFIRES_FIRES WHERE STATE = 'AL'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "24",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Who were the players inducted into the Hall of Fame in 1936?",
+          "intention": "Who were the players inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What awards did those players win?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT P.AWARD_ID, P.PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What were their salaries in 1936?",
+          "intention": "What were the salaries of the players inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT S.SALARY, S.PLAYER_ID FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR_ = 1936"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "25",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which states had the highest average math scores for 8th grade students in 2017?",
+          "intention": "Which states had the highest average math scores for 8th grade students in 2017?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8"
+            ],
+            "golden_sql": "SELECT STATE, AVERAGE_SCALE_SCORE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE YEAR_ = 2017 ORDER BY AVERAGE_SCALE_SCORE DESC FETCH FIRST 5 ROWS ONLY"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the total federal revenue for these states?",
+          "intention": "What is the total federal revenue for the states with the highest average math scores for 8th grade students in 2017?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "STUDENTMATHSCORE_FINREV_FED_17",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17",
+              "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8"
+            ],
+            "golden_sql": "SELECT S2.STATE, SUM(S1.T_FED_REV) AS TOTAL_FEDERAL_REVENUE FROM STUDENTMATHSCORE_FINREV_FED_17 S1 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 S2 ON S1.STATE_CODE = S2.STATE_CODE WHERE S2.STATE IN (SELECT STATE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE YEAR_ = 2017 ORDER BY AVERAGE_SCALE_SCORE DESC FETCH FIRST 5 ROWS ONLY) GROUP BY S2.STATE"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which of these states experienced wildfires?",
+          "intention": "Which of the states with the highest average math scores for 8th grade students in 2017 experienced wildfires?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "USWILDFIRES_FIRES",
+              "STUDENTMATHSCORE_FINREV_FED_17",
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17",
+              "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8"
+            ],
+            "golden_sql": "SELECT DISTINCT U.STATE FROM USWILDFIRES_FIRES U WHERE U.STATE IN (SELECT S2.STATE FROM STUDENTMATHSCORE_FINREV_FED_17 S1 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 S2 ON S1.STATE_CODE = S2.STATE_CODE WHERE S2.STATE IN (SELECT STATE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE YEAR_ = 2017 ORDER BY AVERAGE_SCALE_SCORE DESC FETCH FIRST 5 ROWS ONLY))"
+          }
+        }
+      ]
+    }
+  ]
+}
