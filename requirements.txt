@@ -14,4 +14,4 @@ unidecode==1.4.0
 pydantic==2.11.4
 oracledb==3.3.0
 langgraph==0.6.7
-networkx==3.5
+networkx==3.4.2

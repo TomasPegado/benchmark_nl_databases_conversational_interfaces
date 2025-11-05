@@ -1,10 +1,11 @@
 {
-    "DB_HOST": "",
-    "DB_PORT": "1521",
-    "DB_USER_NAME": "",
-    "DB_PASS": "",
-    "SQL_DRIVER": "oracle+oracledb",
-    "SERVICE_NAME": "orcl...",
-    "SCHEMA": "",
-    "KEYWORD_SEARCH_API_URL": "<Not required>"
+  "DB_HOST": "",
+  "DB_PORT": "1521",
+  "DB_USER_NAME": "",
+  "DB_PASS": "",
+  "DB_NAME": "",
+  "SQL_DRIVER": "oracle+oracledb",
+  "SERVICE_NAME": "orcl...",
+  "SCHEMA": "",
+  "KEYWORD_SEARCH_API_URL": "<Not required>"
 }
