@@ -26,12 +26,12 @@ class TextToSQLResult(BaseModel):
 
 class TextToSQLExtendedSchema:
     def __init__(self,
-                 llm, decomposer_module, retriever, prompt_path, debug=False
+                 llm, decomposer_module, prompt_path, debug=False
         ) -> None:
         
         self.llm = llm
         self.decomposer_module = decomposer_module
-        self.retriever = retriever
+        # self.retriever = retriever
         self.debug = debug
         
         try:
@@ -42,11 +42,11 @@ class TextToSQLExtendedSchema:
             raise FileNotFoundError(f"O arquivo {prompt_path} não foi encontrado.")
             
     def translate_text_to_sql(self, question):
-        context = self.__build_context(question)
+        # context = self.__build_context(question)
 
         llm_with_structured_output = self.llm.with_structured_output(TextToSQLResult)
 
-        prompt = self.text_to_sql_prompt.format(input=question, samples=context)
+        prompt = self.text_to_sql_prompt.format(input=question, samples = "")
         result = llm_with_structured_output.invoke([HumanMessage(content=prompt)])
 
         return result
