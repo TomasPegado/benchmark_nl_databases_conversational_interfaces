@@ -2,7 +2,7 @@ from langgraph.prebuilt import tools_condition, ToolNode
 from langgraph.graph import START, StateGraph, MessagesState
 from typing import Literal
 from langchain_core.messages import HumanMessage
-from eval_agent.text2sql_agent.nodes import TextToSQLAgentNodes
+from eval_agent.text2sql_agent.kaggle_nodes import TextToSQLAgentNodes
 from langgraph.checkpoint.memory import MemorySaver
 
 from eval_agent.text2sql_agent.tool_kaggle import TOOLS as TOOLS_KAGGLE

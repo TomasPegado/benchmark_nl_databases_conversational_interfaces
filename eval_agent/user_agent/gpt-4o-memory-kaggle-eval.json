@@ -1,0 +1,1267 @@
+[
+    {
+        "experiment_id": "1",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:06:28.689992",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Which states have the highest total federal revenue in 2017?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which states have the highest total federal revenue in 2017?",
+                        "agent_reply": "No data is available for states with the highest total federal revenue in 2017.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which states have the highest total federal revenue in 2017?",
+                            "user_intention": "Which states have the highest total federal revenue in 2017?",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE, MAX(STUDENTMATHSCORE_FINREV_FED_17.T_FED_REV) AS TOTAL_FEDERAL_REVENUE FROM STUDENTMATHSCORE_FINREV_FED_17 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_FINREV_FED_17.STATE_CODE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE_CODE WHERE STUDENTMATHSCORE_FINREV_FED_17.YR_DATA = 17 GROUP BY STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE",
+                            "generated_sql": "SELECT k.state, SUM(f.t_fed_rev) AS total_fed_rev FROM KAGGLE.STUDENTMATHSCORE_FINREV_FED_17 f JOIN KAGGLE.STUDENTMATHSCORE_FINREV_FED_KEY_17 k ON f.state_code = k.state_code WHERE f.yr_data = 2017 GROUP BY k.state ORDER BY total_fed_rev DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 10.32109546661377,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "What is the average scale score of students in those states for grade 8 math in 2017?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the average scale score of students in those states for grade 8 math in the same year?",
+                        "agent_reply": "No data is available for the average scale score of students in the states with the highest total federal revenue in 2017 for grade 8 math.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the average scale score of students in the states with the highest total federal revenue in 2017 for grade 8 math?",
+                            "user_intention": "What is the average scale score of students in those states for grade 8 math in 2017?",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT S2.STATE, AVG(S1.AVERAGE_SCALE_SCORE) AS AVERAGE_SCALE_SCORE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 S1 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 S2 ON S1.STATE = S2.STATE WHERE S1.YEAR_ = 2017 AND S2.STATE IN (SELECT STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE FROM STUDENTMATHSCORE_FINREV_FED_17 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_FINREV_FED_17.STATE_CODE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE_CODE WHERE STUDENTMATHSCORE_FINREV_FED_17.YR_DATA = 17 GROUP BY STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE) GROUP BY S2.STATE",
+                            "generated_sql": "SELECT m.AVERAGE_SCALE_SCORE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 m JOIN STUDENTMATHSCORE_FINREV_FED_17 f   ON m.STATE = f.SCHOOL_DISTRICT WHERE m.YEAR_ = 2017   AND f.YR_DATA = 17   AND f.T_FED_REV = (SELECT MAX(T_FED_REV)                       FROM STUDENTMATHSCORE_FINREV_FED_17                       WHERE YR_DATA = 17)",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.615557193756104,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "How many records are there for these states in the database?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many records are there for these states in the database?",
+                        "agent_reply": "For the state with the highest total federal revenue in 2017, New York has 682 records in the database.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many records are there for the states with the highest total federal revenue in 2017 in the database?",
+                            "user_intention": "How many records are there for these states in the database?",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT STATE, RECORDS_CNT FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 WHERE STATE IN (SELECT STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE FROM STUDENTMATHSCORE_FINREV_FED_17 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_FINREV_FED_17.STATE_CODE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE_CODE WHERE STUDENTMATHSCORE_FINREV_FED_17.YR_DATA = 17 GROUP BY STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE)",
+                            "generated_sql": "SELECT sk.state, sk.records_cnt FROM kaggle.studentmathscore_finrev_fed_key_17 sk WHERE sk.state_code = (SELECT sf.state_code FROM kaggle.studentmathscore_finrev_fed_17 sf WHERE sf.yr_data = 17 ORDER BY sf.t_fed_rev DESC FETCH FIRST 1 ROWS ONLY)",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.92068362236023,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "2",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:06:57.720656",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "What are the details of pesticide samples collected in Maryland in September 2015?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the details of pesticide samples collected in Maryland in September 2015?",
+                        "agent_reply": "The database contains detailed records of 56 pesticide samples collected in Maryland in September 2015. These records include various attributes such as sample ID, state, year, month, day, site, commodity type, variety, origin, country, and quantity. If you need specific details or a summary, feel free to ask!",
+                        "evaluation": {
+                            "text_to_sql_input": "Get the details of pesticide samples collected in Maryland in September 2015",
+                            "user_intention": "What are the details of pesticide samples collected in Maryland in September 2015?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT * FROM PESTICIDE_SAMPLEDATA15 WHERE STATE = 'MD' AND YEAR = '15' AND MONTH = '09'",
+                            "generated_sql": "SELECT ps.sample_pk, ps.state, ps.year, ps.month, ps.day, ps.site, ps.commod, ps.variety, ps.origin, ps.country, ps.quantity FROM KAGGLE.PESTICIDE_SAMPLEDATA15 ps WHERE LOWER(ps.state) = LOWER('MD') AND ps.year = '15' AND ps.month = '09'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.3810555934906,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "What is the commodity type of the pesticide samples collected in Maryland in September 2015?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the commodity type of these samples?",
+                        "agent_reply": "The pesticide samples collected in Maryland in September 2015 include the following commodity types: 'FR' (Fresh) and 'FZ' (Frozen).",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the commodity type of pesticide samples collected in Maryland in September 2015?",
+                            "user_intention": "What is the commodity type of the pesticide samples collected in Maryland in September 2015?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT COMMTYPE FROM PESTICIDE_SAMPLEDATA15 WHERE STATE = 'MD' AND YEAR = '15' AND MONTH = '09'",
+                            "generated_sql": "SELECT  ps.COMMTYPE FROM KAGGLE.PESTICIDE_SAMPLEDATA15 ps WHERE ps.STATE = 'MD'   AND ps.YEAR = '15'   AND ps.MONTH = '09'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.204310178756714,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "What are the pesticide codes associated with the pesticide samples collected in Maryland in September 2015?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the pesticide codes associated with these samples?",
+                        "agent_reply": "There are 12,832 unique pesticide codes associated with the samples collected in Maryland in September 2015. If you need a specific list of these codes or further details, please let me know!",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the pesticide codes associated with pesticide samples collected in Maryland in September 2015?",
+                            "user_intention": "What are the pesticide codes associated with the pesticide samples collected in Maryland in September 2015?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT R.PESTCODE FROM PESTICIDE_RESULTSDATA15 R JOIN PESTICIDE_SAMPLEDATA15 S ON R.SAMPLE_PK = S.SAMPLE_PK WHERE S.STATE = 'MD' AND S.YEAR = '15' AND S.MONTH = '09'",
+                            "generated_sql": "SELECT  r.pestcode  FROM KAGGLE.PESTICIDE_RESULTSDATA15 r JOIN KAGGLE.PESTICIDE_SAMPLEDATA15 s ON r.sample_pk = s.sample_pk WHERE s.state = 'MD' AND s.year = '15' AND s.month = '09'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 14.805590629577637,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "3",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:07:31.178621",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the players who were inducted into the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": [
+                            "cobbty01",
+                            "ruthba01",
+                            "wagneho01",
+                            "mathech01",
+                            "johnswa01"
+                        ],
+                        "evaluation": {
+                            "text_to_sql_input": "Which players were inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Find the players who were inducted into the Hall of Fame in 1936.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';",
+                            "generated_sql": "SELECT player_id FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE yearid = 1936 AND inducted = 'Y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.549206733703613,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the awards received by the players inducted into the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What awards were received by these players?",
+                        "agent_reply": "The players cobbty01, ruthba01, wagneho01, mathech01, and johnswa01 received a variety of awards, including 'Pitching Triple Crown', 'Baseball Magazine All-Star', 'TSN All-Star', and others, between the years 1905 and 1932. There is a detailed list of 124 awards related to these players. Let me know if you want to see specific awards or a summary.",
+                        "evaluation": {
+                            "text_to_sql_input": "What awards were received by players cobbty01, ruthba01, wagneho01, mathech01, and johnswa01?",
+                            "user_intention": "Find the awards received by the players inducted into the Hall of Fame in 1936.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT PA.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME HF ON PA.PLAYER_ID = HF.PLAYER_ID WHERE HF.YEARID = 1936 AND HF.INDUCTED = 'Y';",
+                            "generated_sql": "SELECT player_id, award_id, year_, league_id, tie, notes  FROM kaggle.thehistoryofbaseball_player_award WHERE LOWER(player_id) IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.881238460540771,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Provide the voting details for the awards received by the players inducted into the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you also tell me the voting details for these awards?",
+                        "agent_reply": "The voting details for the awards received by players cobbty01, ruthba01, wagneho01, mathech01, and johnswa01 include the following highlights: \n- In 1911, cobbty01 received the MVP award with a perfect score of 64 points and 8 first-place votes.\n- Other players such as johnswa01, mathech01, and wagneho01 also received MVP votes in the years 1911 to 1924, with varying points and first-place votes.\n- In 1923, ruthba01 achieved a perfect score of 64 points with 8 first-place votes for the MVP award.\n- ruthba01 also received MVP votes in 1931 and 1932.\n\nSpecific details are available for 20 records. Let me know if you\u2019d like to see more detailed voting results or any specific year/player\u2019s voting details.",
+                        "evaluation": {
+                            "text_to_sql_input": "Get the voting details for the awards received by players cobbty01, ruthba01, wagneho01, mathech01, and johnswa01.",
+                            "user_intention": "Provide the voting details for the awards received by the players inducted into the Hall of Fame in 1936.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT V.AWARD_ID, V.PLAYER_ID, V.POINTS_WON, V.POINTS_MAX, V.VOTES_FIRST FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD PA ON V.AWARD_ID = PA.AWARD_ID JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME HF ON PA.PLAYER_ID = HF.PLAYER_ID WHERE HF.YEARID = 1936 AND HF.INDUCTED = 'Y';",
+                            "generated_sql": "SELECT player_id, award_id, year_, league_id, points_won, points_max, votes_first  FROM kaggle.thehistoryofbaseball_player_award_vote  WHERE LOWER(player_id) IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 10.649951219558716,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "4",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:07:59.325291",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Who were inducted into the Hall of Fame in 1936?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": "The players inducted into the Hall of Fame in 1936 were Ty Cobb (cobbty01), Babe Ruth (ruthba01), Honus Wagner (wagneho01), Christy Mathewson (mathech01), and Walter Johnson (johnswa01).",
+                        "evaluation": {
+                            "text_to_sql_input": "Who were inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Who were inducted into the Hall of Fame in 1936?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT player_id FROM kaggle.thehistoryofbaseball_hall_of_fame WHERE yearid = 1936 AND LOWER(inducted) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.01120662689209,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What awards did they win?",
+                        "agent_reply": "The players (Ty Cobb, Babe Ruth, Honus Wagner, Christy Mathewson, and Walter Johnson) won a variety of awards, including 'Pitching Triple Crown', 'Baseball Magazine All-Star', 'TSN All-Star', and others spanning multiple years. The full list includes 124 awards won by these players. Let me know if you want details about specific awards or years.",
+                        "evaluation": {
+                            "text_to_sql_input": "What awards did the players with PLAYER_ID cobbty01, ruthba01, wagneho01, mathech01, and johnswa01 win?",
+                            "user_intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT P.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT pa.player_id, pa.award_id, pa.year_, pa.league_id, pa.tie, pa.notes  FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD pa WHERE pa.player_id IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.213184118270874,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "In which years did the players inducted into the Hall of Fame in 1936 win those awards?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "And in which years did they win those awards?",
+                        "agent_reply": "The players won their awards in various years, including but not limited to 1905, 1908, 1910, 1921, 1927, and 1932. A total of 124 awards were won by these players in different years. Let me know if you need the years for a specific player or a full list.",
+                        "evaluation": {
+                            "text_to_sql_input": "In which years did the players with PLAYER_ID cobbty01, ruthba01, wagneho01, mathech01, and johnswa01 win their awards?",
+                            "user_intention": "In which years did the players inducted into the Hall of Fame in 1936 win those awards?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT P.AWARD_ID, P.YEAR_ FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  pa.player_id, pa.year_ FROM kaggle.thehistoryofbaseball_player_award pa WHERE LOWER(pa.player_id) IN (LOWER('cobbty01'), LOWER('ruthba01'), LOWER('wagneho01'), LOWER('mathech01'), LOWER('johnswa01'))",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.592933177947998,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "5",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:08:26.207345",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Who were inducted into the Hall of Fame in 1936?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": [
+                            "cobbty01",
+                            "ruthba01",
+                            "wagneho01",
+                            "mathech01",
+                            "johnswa01"
+                        ],
+                        "evaluation": {
+                            "text_to_sql_input": "Who were inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Who were inducted into the Hall of Fame in 1936?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT player_id FROM kaggle.thehistoryofbaseball_hall_of_fame WHERE yearid = 1936 AND LOWER(inducted) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 7.752267599105835,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "How many votes did the players inducted into the Hall of Fame in 1936 receive?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many votes did these players receive?",
+                        "agent_reply": [
+                            {
+                                "player_id": "cobbty01",
+                                "votes": 222.0
+                            },
+                            {
+                                "player_id": "ruthba01",
+                                "votes": 215.0
+                            },
+                            {
+                                "player_id": "wagneho01",
+                                "votes": 215.0
+                            },
+                            {
+                                "player_id": "mathech01",
+                                "votes": 205.0
+                            },
+                            {
+                                "player_id": "johnswa01",
+                                "votes": 189.0
+                            },
+                            {
+                                "player_id": "wagneho01",
+                                "votes": 5.0
+                            }
+                        ],
+                        "evaluation": {
+                            "text_to_sql_input": "How many votes did these players receive?",
+                            "user_intention": "How many votes did the players inducted into the Hall of Fame in 1936 receive?",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID, VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT player_id, votes FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE yearid = 1936 AND player_id IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.592330932617188,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Did any of the players inducted into the Hall of Fame in 1936 win any awards in the same year?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Did any of them win any awards in the same year?",
+                        "agent_reply": "No, none of the players cobbty01, ruthba01, wagneho01, mathech01, or johnswa01 won any awards in 1936.",
+                        "evaluation": {
+                            "text_to_sql_input": "Did any of them win any awards in the same year?",
+                            "user_intention": "Did any of the players inducted into the Hall of Fame in 1936 win any awards in the same year?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT P.AWARD_ID, P.PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID AND P.YEAR_ = H.YEARID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT pa.player_id, pa.award_id, pa.year_  FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD pa WHERE pa.year_ = 1936 AND LOWER(pa.player_id) IN (LOWER('cobbty01'), LOWER('ruthba01'), LOWER('wagneho01'), LOWER('mathech01'), LOWER('johnswa01'))",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.70136022567749,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "6",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:08:51.318978",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Who won the Triple Crown in 1878?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who won the Triple Crown in 1878?",
+                        "agent_reply": "The player who won the Triple Crown in 1878 is identified by the ID 'hinespa01'.",
+                        "evaluation": {
+                            "text_to_sql_input": "Who won the Triple Crown in 1878?",
+                            "user_intention": "Who won the Triple Crown in 1878?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown' AND YEAR_ = 1878",
+                            "generated_sql": "SELECT player_id FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE LOWER(award_id) = LOWER('Triple Crown') AND year_ = 1878",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 7.830118894577026,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "How many points did the winner of the Triple Crown in 1878 earn?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many points did they win that year?",
+                        "agent_reply": "No information is available regarding the number of points won by the player with ID 'hinespa01' in 1878.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many points did the player with PLAYER_ID 'hinespa01' win in 1878?",
+                            "user_intention": "How many points did the winner of the Triple Crown in 1878 earn?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT V.POINTS_WON FROM THEHISTORYOFBASEBALL_PLAYER_AWARD A JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V ON A.PLAYER_ID = V.PLAYER_ID AND A.AWARD_ID = V.AWARD_ID AND A.YEAR_ = V.YEAR_ AND A.LEAGUE_ID = V.LEAGUE_ID WHERE A.AWARD_ID = 'Triple Crown' AND A.YEAR_ = 1878",
+                            "generated_sql": "SELECT points_won FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE LOWER(player_id) = 'hinespa01' AND year_ = 1878",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.024981498718262,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "What was the salary of the winner of the Triple Crown in 1878 in 1985?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What was their salary in 1985?",
+                        "agent_reply": "There is no available information about the salary of the player with ID 'hinespa01' in 1985.",
+                        "evaluation": {
+                            "text_to_sql_input": "What was the salary of the player with PLAYER_ID 'hinespa01' in 1985?",
+                            "user_intention": "What was the salary of the winner of the Triple Crown in 1878 in 1985?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER_AWARD A JOIN THEHISTORYOFBASEBALL_SALARY S ON A.PLAYER_ID = S.PLAYER_ID AND A.LEAGUE_ID = S.LEAGUE_ID WHERE A.AWARD_ID = 'Triple Crown' AND A.YEAR_ = 1878 AND S.YEAR_ = 1985",
+                            "generated_sql": "SELECT salary FROM kaggle.thehistoryofbaseball_salary WHERE player_id = 'hinespa01' AND year_ = 1985",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 7.655957221984863,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "7",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:09:14.888811",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Which players were inducted into the Hall of Fame in 1936?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": [
+                            "cobbty01",
+                            "ruthba01",
+                            "wagneho01",
+                            "mathech01",
+                            "johnswa01"
+                        ],
+                        "evaluation": {
+                            "text_to_sql_input": "Which players were inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Which players were inducted into the Hall of Fame in 1936?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';",
+                            "generated_sql": "SELECT player_id FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE yearid = 1936 AND LOWER(inducted) = LOWER('Y')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 7.913811683654785,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "What was the salary of the players inducted into the Hall of Fame in 1936 during the year 1985?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What was the salary of those players in 1985?",
+                        "agent_reply": "There is no salary data available for the players 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', and 'johnswa01' in 1985.",
+                        "evaluation": {
+                            "text_to_sql_input": "What was the salary of those players in 1985?",
+                            "user_intention": "What was the salary of the players inducted into the Hall of Fame in 1936 during the year 1985?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR_ = 1985;",
+                            "generated_sql": "SELECT player_id, salary FROM KAGGLE.THEHISTORYOFBASEBALL_SALARY WHERE year_ = 1985 AND player_id IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.08439016342163,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Which teams did the players inducted into the Hall of Fame in 1936 play for in 1985?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "And which teams did they play for in 1985?",
+                        "agent_reply": "There is no data available for the teams that the players 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', and 'johnswa01' played for in 1985.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which teams did the players 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01' play for in 1985?",
+                            "user_intention": "Which teams did the players inducted into the Hall of Fame in 1936 play for in 1985?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.PLAYER_ID, S.TEAM_ID FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR_ = 1985;",
+                            "generated_sql": "SELECT  team_id, player_id FROM KAGGLE.THEHISTORYOFBASEBALL_SALARY WHERE year_ = 1985 AND player_id IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.621979475021362,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "8",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:09:39.572078",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Who were inducted into the Hall of Fame in 1936?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": [
+                            "Ty Cobb (cobbty01)",
+                            "Babe Ruth (ruthba01)",
+                            "Honus Wagner (wagneho01)",
+                            "Christy Mathewson (mathech01)",
+                            "Walter Johnson (johnswa01)"
+                        ],
+                        "evaluation": {
+                            "text_to_sql_input": "Who were inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Who were inducted into the Hall of Fame in 1936?",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';",
+                            "generated_sql": "SELECT player_id FROM kaggle.thehistoryofbaseball_hall_of_fame WHERE yearid = 1936 AND LOWER(inducted) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 7.933072566986084,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What awards did those players win?",
+                        "agent_reply": "The players won a total of 124 awards, including 'Pitching Triple Crown', 'Baseball Magazine All-Star', 'TSN All-Star', among others. The awards span various years and leagues. Would you like details on a specific player or award?",
+                        "evaluation": {
+                            "text_to_sql_input": "What awards did the players cobbty01, ruthba01, wagneho01, mathech01, and johnswa01 win?",
+                            "user_intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT PA.AWARD_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME HF INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD PA ON HF.PLAYER_ID = PA.PLAYER_ID WHERE HF.YEARID = 1936 AND HF.INDUCTED = 'Y';",
+                            "generated_sql": "SELECT player_id, award_id, year_, league_id, tie, notes  FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD  WHERE player_id IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 9.36853313446045,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 9.36855149269104
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "What were the salaries of the players inducted into the Hall of Fame in 1936 in 1985?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "And what were their salaries in 1985?",
+                        "agent_reply": "No salary records were found for players Ty Cobb, Babe Ruth, Honus Wagner, Christy Mathewson, and Walter Johnson in the year 1985.",
+                        "evaluation": {
+                            "text_to_sql_input": "What were the salaries of players cobbty01, ruthba01, wagneho01, mathech01, and johnswa01 in the year 1985?",
+                            "user_intention": "What were the salaries of the players inducted into the Hall of Fame in 1936 in 1985?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME HF INNER JOIN THEHISTORYOFBASEBALL_SALARY S ON HF.PLAYER_ID = S.PLAYER_ID WHERE HF.YEARID = 1936 AND HF.INDUCTED = 'Y' AND S.YEAR_ = 1985;",
+                            "generated_sql": "SELECT player_id, year_, salary  FROM KAGGLE.THEHISTORYOFBASEBALL_SALARY  WHERE year_ = 1985 AND player_id IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.149114847183228,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "9",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:10:06.068399",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find players inducted into the Hall of Fame by the BBWAA in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who were inducted into the Hall of Fame by the BBWAA in 1936?",
+                        "agent_reply": [
+                            "Ty Cobb (PLAYER_ID: cobbty01)",
+                            "Babe Ruth (PLAYER_ID: ruthba01)",
+                            "Honus Wagner (PLAYER_ID: wagneho01)",
+                            "Christy Mathewson (PLAYER_ID: mathech01)",
+                            "Walter Johnson (PLAYER_ID: johnswa01)"
+                        ],
+                        "evaluation": {
+                            "text_to_sql_input": "Find the players inducted into the Hall of Fame by BBWAA in 1936.",
+                            "user_intention": "Find players inducted into the Hall of Fame by the BBWAA in 1936.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE VOTEDBY = 'BBWAA' AND YEARID = 1936 AND INDUCTED = 'Y';",
+                            "generated_sql": "SELECT player_id FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE yearid = 1936 AND LOWER(votedby) = 'bbwaa' AND LOWER(inducted) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.945952892303467,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the highest number of votes received by any player inducted into the Hall of Fame by the BBWAA in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What was the highest number of votes any of them received?",
+                        "agent_reply": "The highest number of votes received by any of the players inducted into the Hall of Fame by BBWAA in 1936 was 222.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the highest number of votes received by any of the players inducted into the Hall of Fame by BBWAA in 1936 (cobbty01, ruthba01, wagneho01, mathech01, johnswa01).",
+                            "user_intention": "Find the highest number of votes received by any player inducted into the Hall of Fame by the BBWAA in 1936.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT MAX(VOTES) FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE VOTEDBY = 'BBWAA' AND YEARID = 1936 AND INDUCTED = 'Y';",
+                            "generated_sql": "SELECT MAX(votes) AS max_votes FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME  WHERE inducted = 'Y' AND votedby = 'BBWAA' AND yearid = 1936 AND player_id IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01') FETCH FIRST 3 ROWS ONLY;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.615898132324219,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the required number of votes for induction into the Hall of Fame by the BBWAA in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What was the required number of votes for induction that year?",
+                        "agent_reply": "The required number of votes for induction into the Hall of Fame by BBWAA in 1936 was 170.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the required number of votes for induction into the Hall of Fame by BBWAA in 1936.",
+                            "user_intention": "Find the required number of votes for induction into the Hall of Fame by the BBWAA in 1936.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT NEEDED FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE VOTEDBY = 'BBWAA' AND YEARID = 1936 AND INDUCTED = 'Y' FETCH FIRST ROW ONLY;",
+                            "generated_sql": "SELECT needed FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE votedby = 'BBWAA' AND yearid = 1936",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.707046508789062,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "10",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:10:32.405639",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Who were inducted into the Hall of Fame in 1936?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": "The players inducted into the Hall of Fame in 1936 were Ty Cobb (cobbty01), Babe Ruth (ruthba01), Honus Wagner (wagneho01), Christy Mathewson (mathech01), and Walter Johnson (johnswa01).",
+                        "evaluation": {
+                            "text_to_sql_input": "Who were inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Who were inducted into the Hall of Fame in 1936?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT player_id FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE yearid = 1936 AND LOWER(inducted) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.900321006774902,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What awards did these players win?",
+                        "agent_reply": "The players Ty Cobb, Babe Ruth, Honus Wagner, Christy Mathewson, and Walter Johnson won various awards, including 'Pitching Triple Crown', 'Baseball Magazine All-Star', and 'TSN All-Star'. There are 124 records of awards won by these players. Let me know if you would like more specific details about the awards or a particular player.",
+                        "evaluation": {
+                            "text_to_sql_input": "What awards did Ty Cobb, Babe Ruth, Honus Wagner, Christy Mathewson, and Walter Johnson win?",
+                            "user_intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT P.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT pa.player_id, pa.award_id, pa.year_, pa.league_id, pa.notes  FROM kaggle.thehistoryofbaseball_player_award pa WHERE LOWER(pa.player_id) IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.646895408630371,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "How many votes did the players inducted into the Hall of Fame in 1936 receive for their induction?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many votes did they receive for their induction?",
+                        "agent_reply": "For their induction into the Hall of Fame: Ty Cobb received 222 votes, Babe Ruth received 215 votes, Honus Wagner received 215 votes, Christy Mathewson received 205 votes, and Walter Johnson received 189 votes. Note that Honus Wagner also has an additional record of receiving 5 votes separately.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many votes did Ty Cobb, Babe Ruth, Honus Wagner, Christy Mathewson, and Walter Johnson receive for their induction?",
+                            "user_intention": "How many votes did the players inducted into the Hall of Fame in 1936 receive for their induction?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID, VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT player_id, votes FROM kaggle.thehistoryofbaseball_hall_of_fame WHERE LOWER(player_id) IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.249994277954102,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "11",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:11:00.269503",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Which players were inducted into the Hall of Fame in 1936?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": [
+                            "Ty Cobb (cobbty01)",
+                            "Babe Ruth (ruthba01)",
+                            "Honus Wagner (wagneho01)",
+                            "Christy Mathewson (mathech01)",
+                            "Walter Johnson (johnswa01)"
+                        ],
+                        "evaluation": {
+                            "text_to_sql_input": "List all players who were inducted into the Hall of Fame in 1936.",
+                            "user_intention": "Which players were inducted into the Hall of Fame in 1936?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT player_id  FROM kaggle.thehistoryofbaseball_hall_of_fame  WHERE yearid = 1936 AND LOWER(inducted) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.006610870361328,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "What awards did the players inducted into the Hall of Fame in 1936 receive?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What awards did these players receive?",
+                        "agent_reply": "The players 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', and 'johnswa01' collectively won 124 awards. Some notable awards include 'Pitching Triple Crown' (1905, NL), 'Baseball Magazine All-Star' (1908, AL, RF), and 'TSN All-Star' (1931, ML, OF). Let me know if you need the full detailed list or specific year and award information.",
+                        "evaluation": {
+                            "text_to_sql_input": "List the awards won by the players with IDs 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01'.",
+                            "user_intention": "What awards did the players inducted into the Hall of Fame in 1936 receive?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT PA.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME HOF ON PA.PLAYER_ID = HOF.PLAYER_ID WHERE HOF.YEARID = 1936 AND HOF.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  pa.award_id, pa.year_, pa.league_id, pa.tie, pa.notes  FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD pa WHERE LOWER(pa.player_id) IN (LOWER('cobbty01'), LOWER('ruthba01'), LOWER('wagneho01'), LOWER('mathech01'), LOWER('johnswa01'))",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.351022958755493,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "How many votes did the players inducted into the Hall of Fame in 1936 receive for their awards?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many votes did they receive for their awards?",
+                        "agent_reply": "The players received the following votes for their awards: \n- Ty Cobb (cobbty01): 64 votes in 1911 (MVP), 17 votes in 1912 (MVP), 3 votes in 1913 (MVP), 7 votes in 1914 (MVP).\n- Babe Ruth (ruthba01): 64 votes in 1923 (MVP), 40 votes in 1931 (MVP), 26 votes in 1932 (MVP).\n- Honus Wagner (wagneho01): 23 votes in 1911 (MVP), 43 votes in 1912 (MVP), 11 votes in 1913 (MVP).\n- Christy Mathewson (mathech01): 25 votes in 1911 (MVP), 8 votes in 1912 (MVP), 21 votes in 1913 (MVP), 4 votes in 1914 (MVP).\n- Walter Johnson (johnswa01): 19 votes in 1911 (MVP), 28 votes in 1912 (MVP), 54 votes in 1913 (MVP), 1 vote in 1923 (MVP), 55 votes in 1924 (MVP). Let me know if you need further details.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the number of votes received for awards by players with IDs 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01'.",
+                            "user_intention": "How many votes did the players inducted into the Hall of Fame in 1936 receive for their awards?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PA.AWARD_ID, VOTES_FIRST FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE VOTE JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD PA ON VOTE.PLAYER_ID = PA.PLAYER_ID AND VOTE.AWARD_ID = PA.AWARD_ID JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME HOF ON PA.PLAYER_ID = HOF.PLAYER_ID WHERE HOF.YEARID = 1936 AND HOF.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT player_id, year_, award_id, points_won FROM kaggle.thehistoryofbaseball_player_award_vote WHERE LOWER(player_id) IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 10.571622371673584,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "12",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:11:28.260643",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Which players were inducted into the Hall of Fame in 1936?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": "The players inducted into the Hall of Fame in 1936 are Ty Cobb (cobbty01), Babe Ruth (ruthba01), Honus Wagner (wagneho01), Christy Mathewson (mathech01), and Walter Johnson (johnswa01).",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the players who were inducted into the Hall of Fame in 1936.",
+                            "user_intention": "Which players were inducted into the Hall of Fame in 1936?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT player_id FROM kaggle.thehistoryofbaseball_hall_of_fame WHERE yearid = 1936 AND LOWER(inducted) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.107572078704834,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What awards did these players win?",
+                        "agent_reply": "The players Ty Cobb (cobbty01), Babe Ruth (ruthba01), Honus Wagner (wagneho01), Christy Mathewson (mathech01), and Walter Johnson (johnswa01) have collectively won several awards over their careers, including the Pitching Triple Crown (Christy Mathewson, 1905), Baseball Magazine All-Star (e.g., Ty Cobb in 1908 for AL and ML), and TSN All-Star (e.g., Babe Ruth in 1930 for ML). The awards span different years and leagues. If you'd like specific details for a particular player or award, let me know!",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the awards won by the players with IDs 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', and 'johnswa01'.",
+                            "user_intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT P.AWARD_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD P ON H.PLAYER_ID = P.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT pa.player_id, pa.award_id, pa.year_, pa.league_id, pa.tie, pa.notes  FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD pa WHERE pa.player_id IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.196262836456299,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "What were the salaries of the players inducted into the Hall of Fame in 1936?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What were their salaries in 1936?",
+                        "agent_reply": "There is no salary data available for Ty Cobb, Babe Ruth, Honus Wagner, Christy Mathewson, and Walter Johnson in the year 1936.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the salaries of players with IDs 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', and 'johnswa01' in the year 1936.",
+                            "user_intention": "What were the salaries of the players inducted into the Hall of Fame in 1936?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H INNER JOIN THEHISTORYOFBASEBALL_SALARY S ON H.PLAYER_ID = S.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR_ = 1936",
+                            "generated_sql": "SELECT PLAYER_ID, SALARY  FROM KAGGLE.THEHISTORYOFBASEBALL_SALARY WHERE YEAR_ = 1936 AND PLAYER_ID IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.29053282737732,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "13",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2025-11-10T10:11:55.919434",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Who were inducted into the Hall of Fame in 1936?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": [
+                            "cobbty01",
+                            "ruthba01",
+                            "wagneho01",
+                            "mathech01",
+                            "johnswa01"
+                        ],
+                        "evaluation": {
+                            "text_to_sql_input": "Who were inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Who were inducted into the Hall of Fame in 1936?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';",
+                            "generated_sql": "SELECT player_id FROM kaggle.thehistoryofbaseball_hall_of_fame WHERE yearid = 1936 AND LOWER(inducted) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.400366067886353,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "What awards did the players inducted into the Hall of Fame in 1936 win in their career?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What awards did they win in their career?",
+                        "agent_reply": "The players 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', and 'johnswa01' have collectively won 124 awards in their careers. This includes awards like 'Pitching Triple Crown', 'Baseball Magazine All-Star', 'TSN All-Star', and many others across different years and leagues. Let me know if you would like a detailed breakdown of the awards.",
+                        "evaluation": {
+                            "text_to_sql_input": "What awards did 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', and 'johnswa01' win in their career?",
+                            "user_intention": "What awards did the players inducted into the Hall of Fame in 1936 win in their career?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y');",
+                            "generated_sql": "SELECT player_id, award_id, year_, league_id, tie, notes  FROM kaggle.thehistoryofbaseball_player_award  WHERE LOWER(player_id) IN (LOWER('cobbty01'), LOWER('ruthba01'), LOWER('wagneho01'), LOWER('mathech01'), LOWER('johnswa01'))",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.959355592727661,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "What is the highest salary earned by the players inducted into the Hall of Fame in 1936?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you also tell me their highest salary?",
+                        "agent_reply": "It seems there is no available data about the highest salaries for the players 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', and 'johnswa01' in the database.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the highest salary for the players 'cobbty01', 'ruthba01', 'wagneho01', 'mathech01', and 'johnswa01' in their careers?",
+                            "user_intention": "What is the highest salary earned by the players inducted into the Hall of Fame in 1936?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID, MAX(SALARY) AS HIGHEST_SALARY FROM THEHISTORYOFBASEBALL_SALARY WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y') GROUP BY PLAYER_ID;",
+                            "generated_sql": "SELECT player_id, MAX(salary) AS highest_salary FROM KAGGLE.THEHISTORYOFBASEBALL_SALARY WHERE LOWER(player_id) IN ('cobbty01', 'ruthba01', 'wagneho01', 'mathech01', 'johnswa01') GROUP BY player_id",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.182244062423706,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    }
+]

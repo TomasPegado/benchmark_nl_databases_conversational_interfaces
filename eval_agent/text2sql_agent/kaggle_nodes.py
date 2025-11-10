@@ -8,15 +8,15 @@ class TextToSQLAgentNodes:
         self.model = ""
         match self.env:
             case "tec":
-                # Importing the prompt for the mondial environment
-                from eval_agent.text2sql_agent.prompts_mondial import TEXT_TO_SQL_PROMPT as MONDIAL_TEXT_TO_SQL_PROMPT
+                # Importing the prompt for the kaggle environment
+                from eval_agent.text2sql_agent.prompts_kaggle import TEXT_TO_SQL_PROMPT as KAGGLE_TEXT_TO_SQL_PROMPT
                 from functions.gptconfig import MODEL_4O
                 self.model = MODEL_4O
-                self.TEXT_TO_SQL_PROMPT = MONDIAL_TEXT_TO_SQL_PROMPT
+                self.TEXT_TO_SQL_PROMPT = KAGGLE_TEXT_TO_SQL_PROMPT
 
-                # Importing the tools for the mondial environment
-                from eval_agent.text2sql_agent.tool_mondial import TOOLS as MONDIAL_TOOLS
-                self.TOOLS = MONDIAL_TOOLS
+                # Importing the tools for the kaggle environment
+                from eval_agent.text2sql_agent.tool_kaggle import TOOLS as KAGGLE_TOOLS
+                self.TOOLS = KAGGLE_TOOLS
             case _:
                 raise ValueError(f"Invalid environment: {self.env}")
    

@@ -66,22 +66,22 @@ your tool call: I want to know the nuclear power plants in Japan that are curren
 - Some tables use DATE, others TIMESTAMP (or TIMESTAMP WITH TIME ZONE). When filtering by time, be explicit and consistent with Oracle date/time functions and formats.
 
 The tool answer will be like:
-{
+{{
     "input": <what was inputed to the tool>,
     "schema_linking": <tables that the query will use>,
     "answer": <result from SQL query execution>,
     "sql": <SQL query>
-}
+}}
 
 YOU MUST ALWAYS FOLLOW FORMAT ABOVE IN JSON. There are two cases:
 1. If you come back from a tool call, make your answer as above.
 2. If you don't come back from a tool call, make your answer as below:
-{
+{{
     "input": <what was inputed to the tool>,
     "schema_linking": "",
     "answer": "Your answer here",
     "sql": ""
-}
+}}
 
 Always follow the format above in JSON!! Even in case of error or when the question is not related to the database.
 """
