@@ -1,5 +1,5 @@
 from eval_agent.user_agent.states.user_agent_state import UserState
-from eval_agent.user_agent.nodes.user_agent_nodes import EvaluatorNodes
+from eval_agent.user_agent.nodes.kaggle_user_agent_nodes import EvaluatorNodes
 from typing import Literal
 from langgraph.graph import StateGraph, START
 
