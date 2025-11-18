@@ -74,14 +74,14 @@ def get_embeddings(text, model=gptconfig.MODEL_EMBEDDING):
     #return np.array(embeddings)
 
 def get_client()->AzureOpenAI:
-    http_client = httpx.Client(verify=gptconfig.CA_CERTIFICATE)
+    # http_client = httpx.Client(verify=gptconfig.CA_CERTIFICATE)
 
     client = AzureOpenAI(
         api_key= gptconfig.OPENAI_API_KEY,  
         api_version= gptconfig.OPENAI_API_VERSION,
         # azure_endpoint=config['OPENAI']['OPENAI_API_BASE'],
         base_url=gptconfig.AZURE_OPENAI_BASE_URL,
-        http_client=http_client
+        # http_client=http_client
     )
 
     return client
