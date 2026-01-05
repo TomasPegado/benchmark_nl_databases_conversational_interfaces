@@ -17,7 +17,7 @@ from typing import List
 
 from pathlib import Path
 
-from paths import MONDIAL_GPT_EXTENDED_SCHEMA_PROMPT
+from paths import EXTENDED_SCHEMA_PROMPT
 
 class TextToSQLResult(BaseModel):
     sql_query: str = Field(..., description="The SQL query generated from the natural language input")
@@ -42,7 +42,10 @@ class TextToSQLExtendedSchema:
             raise FileNotFoundError(f"O arquivo {prompt_path} não foi encontrado.")
             
     def translate_text_to_sql(self, question):
-        context = self.__build_context(question)
+        if self.retriever is None:
+            context = ""
+        else:
+            context = self.__build_context(question)
 
         llm_with_structured_output = self.llm.with_structured_output(TextToSQLResult)
 
