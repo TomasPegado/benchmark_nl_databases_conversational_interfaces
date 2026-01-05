@@ -7,43 +7,41 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which mountains are located in Greece?",
-          "intention": "Which mountains are located in Greece?",
+          "utterance": "Can you tell me the airports located in the Czech Republic?",
+          "intention": "Can you tell me the airports located in the Czech Republic?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_COUNTRY",
-              "MONDIAL_GEO_MOUNTAIN",
-              "MONDIAL_MOUNTAIN"
+              "MONDIAL_AIRPORT",
+              "MONDIAL_COUNTRY"
             ],
-            "golden_sql": "SELECT MONDIAL_MOUNTAIN.NAME FROM MONDIAL_MOUNTAIN JOIN MONDIAL_GEO_MOUNTAIN ON MONDIAL_GEO_MOUNTAIN.MOUNTAIN = MONDIAL_MOUNTAIN.NAME JOIN MONDIAL_COUNTRY ON MONDIAL_GEO_MOUNTAIN.COUNTRY = MONDIAL_COUNTRY.CODE WHERE MONDIAL_COUNTRY.NAME = 'Greece'"
+            "golden_sql": "SELECT MONDIAL_AIRPORT.NAME FROM MONDIAL_AIRPORT JOIN MONDIAL_COUNTRY ON MONDIAL_AIRPORT.COUNTRY = MONDIAL_COUNTRY.CODE WHERE MONDIAL_COUNTRY.NAME = 'Czech Republic';"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What is the elevation of these mountains?",
-          "intention": "What is the elevation of the mountains located in Greece?",
+          "utterance": "What is the elevation of these airports?",
+          "intention": "What is the elevation of the airports located in the Czech Republic?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_COUNTRY",
-              "MONDIAL_GEO_MOUNTAIN",
-              "MONDIAL_MOUNTAIN"
+              "MONDIAL_AIRPORT",
+              "MONDIAL_COUNTRY"
             ],
-            "golden_sql": "SELECT MONDIAL_MOUNTAIN.NAME, MONDIAL_MOUNTAIN.ELEVATION FROM MONDIAL_MOUNTAIN JOIN MONDIAL_GEO_MOUNTAIN ON MONDIAL_GEO_MOUNTAIN.MOUNTAIN = MONDIAL_MOUNTAIN.NAME JOIN MONDIAL_COUNTRY ON MONDIAL_GEO_MOUNTAIN.COUNTRY = MONDIAL_COUNTRY.CODE WHERE MONDIAL_COUNTRY.NAME = 'Greece'"
+            "golden_sql": "SELECT MONDIAL_AIRPORT.NAME, MONDIAL_AIRPORT.ELEVATION FROM MONDIAL_AIRPORT JOIN MONDIAL_COUNTRY ON MONDIAL_AIRPORT.COUNTRY = MONDIAL_COUNTRY.CODE WHERE MONDIAL_COUNTRY.NAME = 'Czech Republic';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Are any of them volcanic?",
-          "intention": "Are any of the mountains located in Greece volcanic?",
+          "utterance": "And which cities are these airports located in?",
+          "intention": "Which cities are the airports located in the Czech Republic?",
           "ground_truths": {
             "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
               "MONDIAL_COUNTRY",
-              "MONDIAL_GEO_MOUNTAIN",
-              "MONDIAL_MOUNTAIN"
+              "MONDIAL_CITY"
             ],
-            "golden_sql": "SELECT MONDIAL_MOUNTAIN.NAME FROM MONDIAL_MOUNTAIN JOIN MONDIAL_GEO_MOUNTAIN ON MONDIAL_GEO_MOUNTAIN.MOUNTAIN = MONDIAL_MOUNTAIN.NAME JOIN MONDIAL_COUNTRY ON MONDIAL_GEO_MOUNTAIN.COUNTRY = MONDIAL_COUNTRY.CODE WHERE MONDIAL_COUNTRY.NAME = 'Greece' AND MONDIAL_MOUNTAIN.TYPE = 'volcanic'"
+            "golden_sql": "SELECT MONDIAL_AIRPORT.NAME, MONDIAL_CITY.NAME AS CITY_NAME FROM MONDIAL_AIRPORT JOIN MONDIAL_COUNTRY ON MONDIAL_AIRPORT.COUNTRY = MONDIAL_COUNTRY.CODE JOIN MONDIAL_CITY ON MONDIAL_AIRPORT.CITY = MONDIAL_CITY.NAME AND MONDIAL_AIRPORT.COUNTRY = MONDIAL_CITY.COUNTRY WHERE MONDIAL_COUNTRY.NAME = 'Czech Republic';"
           }
         }
       ]
@@ -55,38 +53,40 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which seas have an area greater than 1,000,000 square kilometers?",
-          "intention": "Which seas have an area greater than 1,000,000 square kilometers?",
+          "utterance": "Which airports are located in the Czech Republic?",
+          "intention": "Which airports are located in the Czech Republic?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_SEA"
+              "MONDIAL_AIRPORT",
+              "MONDIAL_COUNTRY"
             ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_SEA WHERE AREA > 1000000"
+            "golden_sql": "SELECT NAME FROM MONDIAL_AIRPORT WHERE COUNTRY = (SELECT CODE FROM MONDIAL_COUNTRY WHERE NAME = 'Czech Republic')"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What is the maximum depth of these seas?",
-          "intention": "What is the maximum depth of the seas retrieved in the previous interaction?",
+          "utterance": "What is the elevation of these airports?",
+          "intention": "What is the elevation of the airports located in the Czech Republic?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_SEA"
+              "MONDIAL_AIRPORT",
+              "MONDIAL_COUNTRY"
             ],
-            "golden_sql": "SELECT MAX(DEPTH) FROM MONDIAL_SEA WHERE AREA > 1000000"
+            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_AIRPORT WHERE COUNTRY = (SELECT CODE FROM MONDIAL_COUNTRY WHERE NAME = 'Czech Republic')"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Which countries border these seas?",
-          "intention": "Which countries border the seas retrieved in the first interaction?",
+          "utterance": "And what is the GMT offset for these airports?",
+          "intention": "What is the GMT offset for the airports located in the Czech Republic?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_SEA",
-              "MONDIAL_SEA"
+              "MONDIAL_AIRPORT",
+              "MONDIAL_COUNTRY"
             ],
-            "golden_sql": "SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_SEA WHERE SEA IN (SELECT NAME FROM MONDIAL_SEA WHERE AREA > 1000000)"
+            "golden_sql": "SELECT NAME, GMTOFFSET FROM MONDIAL_AIRPORT WHERE COUNTRY = (SELECT CODE FROM MONDIAL_COUNTRY WHERE NAME = 'Czech Republic')"
           }
         }
       ]
@@ -98,38 +98,38 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Can you tell me the population of Prishtine in 1991?",
-          "intention": "What is the population of Prishtine in 1991?",
+          "utterance": "Which countries border Albania?",
+          "intention": "Which countries border Albania?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_CITYPOPS"
+              "MONDIAL_BORDERS"
             ],
-            "golden_sql": "SELECT POPULATION FROM MONDIAL_CITYPOPS WHERE CITY = 'Prishtine' AND YEAR = 1991"
+            "golden_sql": "SELECT COUNTRY2 FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "Which province is Prishtine located in?",
-          "intention": "In which province is Prishtine located?",
+          "utterance": "What is the population of these neighboring countries in the year 2002?",
+          "intention": "What is the population of the countries bordering Albania in the year 2002?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_CITYPOPS",
-              "MONDIAL_PROVINCE"
+              "MONDIAL_BORDERS",
+              "MONDIAL_COUNTRYPOPS"
             ],
-            "golden_sql": "SELECT DISTINCT PROVINCE FROM MONDIAL_CITYPOPS WHERE CITY = 'Prishtine'"
+            "golden_sql": "SELECT C.COUNTRY, C.POPULATION FROM MONDIAL_COUNTRYPOPS C JOIN MONDIAL_BORDERS B ON C.COUNTRY = B.COUNTRY2 WHERE B.COUNTRY1 = 'AL' AND C.YEAR = 2002"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What is the area of that province?",
-          "intention": "What is the area of the province where Prishtine is located?",
+          "utterance": "Can you also tell me the total border length of Albania with these countries?",
+          "intention": "What is the total border length of Albania with its neighboring countries?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_PROVINCE"
+              "MONDIAL_BORDERS"
             ],
-            "golden_sql": "SELECT AREA FROM MONDIAL_PROVINCE WHERE NAME = (SELECT DISTINCT PROVINCE FROM MONDIAL_CITYPOPS WHERE CITY = 'Prishtine')"
+            "golden_sql": "SELECT SUM(LENGTH) AS TOTAL_BORDER_LENGTH FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL'"
           }
         }
       ]
@@ -141,38 +141,38 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "What is the population of Poland in 2002?",
-          "intention": "What is the population of Poland in 2002?",
+          "utterance": "What is the population of cities in the Moskovskaya province?",
+          "intention": "What is the population of cities in the Moskovskaya province?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_COUNTRYPOPS"
+              "MONDIAL_CITY"
             ],
-            "golden_sql": "SELECT POPULATION FROM MONDIAL_COUNTRYPOPS WHERE COUNTRY = 'PL' AND YEAR = 2002"
+            "golden_sql": "SELECT NAME, POPULATION FROM MONDIAL_CITY WHERE PROVINCE = 'Moskovskaya'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "Which continent does Poland belong to?",
-          "intention": "Which continent does Poland belong to?",
+          "utterance": "What is the elevation of these cities?",
+          "intention": "What is the elevation of cities in the Moskovskaya province?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_ENCOMPASSES"
+              "MONDIAL_CITY"
             ],
-            "golden_sql": "SELECT CONTINENT FROM MONDIAL_ENCOMPASSES WHERE COUNTRY = 'PL'"
+            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_CITY WHERE PROVINCE = 'Moskovskaya'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What is the area of that continent?",
-          "intention": "What is the area of the continent Poland belongs to?",
+          "utterance": "Do these cities have other names?",
+          "intention": "Do cities in the Moskovskaya province have other names?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_CONTINENT",
-              "MONDIAL_ENCOMPASSES"
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME"
             ],
-            "golden_sql": "SELECT AREA FROM MONDIAL_CONTINENT WHERE NAME = (SELECT CONTINENT FROM MONDIAL_ENCOMPASSES WHERE COUNTRY = 'PL')"
+            "golden_sql": "SELECT MONDIAL_CITY.NAME, MONDIAL_CITYOTHERNAME.OTHERNAME FROM MONDIAL_CITY JOIN MONDIAL_CITYOTHERNAME ON MONDIAL_CITY.NAME = MONDIAL_CITYOTHERNAME.CITY AND MONDIAL_CITY.PROVINCE = MONDIAL_CITYOTHERNAME.PROVINCE AND MONDIAL_CITY.COUNTRY = MONDIAL_CITYOTHERNAME.COUNTRY WHERE MONDIAL_CITY.PROVINCE = 'Moskovskaya'"
           }
         }
       ]
@@ -184,39 +184,41 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which deserts are located in Adrar?",
-          "intention": "Which deserts are located in Adrar?",
+          "utterance": "Which continents have an area greater than 10 million square kilometers?",
+          "intention": "Which continents have an area greater than 10 million square kilometers?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_DESERT"
+              "MONDIAL_CONTINENT"
             ],
-            "golden_sql": "SELECT DESERT FROM MONDIAL_GEO_DESERT WHERE PROVINCE = 'Adrar'"
+            "golden_sql": "SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA > 10000000;"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What are the areas of these deserts?",
-          "intention": "What are the areas of the deserts located in Adrar?",
+          "utterance": "What is the GDP of the countries in these continents?",
+          "intention": "What is the GDP of the countries located in the continents retrieved in the previous interaction?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_DESERT",
-              "MONDIAL_DESERT"
+              "MONDIAL_CONTINENT",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_ECONOMY"
             ],
-            "golden_sql": "SELECT MONDIAL_DESERT.AREA FROM MONDIAL_DESERT JOIN MONDIAL_GEO_DESERT ON MONDIAL_DESERT.NAME = MONDIAL_GEO_DESERT.DESERT WHERE MONDIAL_GEO_DESERT.PROVINCE = 'Adrar'"
+            "golden_sql": "SELECT ME.COUNTRY, ME.GDP FROM MONDIAL_ECONOMY ME JOIN MONDIAL_ENCOMPASSES ME2 ON ME.COUNTRY = ME2.COUNTRY WHERE ME2.CONTINENT IN (SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA > 10000000);"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What are the alternative names of the province hosting these deserts?",
-          "intention": "What are the alternative names of the province hosting the deserts located in Adrar?",
+          "utterance": "Can you also tell me the unemployment rate in those countries?",
+          "intention": "What is the unemployment rate in the countries located in the continents retrieved earlier?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_DESERT",
-              "MONDIAL_PROVINCEOTHERNAME"
+              "MONDIAL_CONTINENT",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_ECONOMY"
             ],
-            "golden_sql": "SELECT OTHERNAME FROM MONDIAL_PROVINCEOTHERNAME WHERE PROVINCE IN (SELECT PROVINCE FROM MONDIAL_GEO_DESERT WHERE PROVINCE = 'Adrar')"
+            "golden_sql": "SELECT ME.COUNTRY, ME.UNEMPLOYMENT FROM MONDIAL_ECONOMY ME JOIN MONDIAL_ENCOMPASSES ME2 ON ME.COUNTRY = ME2.COUNTRY WHERE ME2.CONTINENT IN (SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA > 10000000);"
           }
         }
       ]
@@ -228,39 +230,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "What is the percentage of the Sidama ethnic group in their country?",
-          "intention": "What is the percentage of the Sidama ethnic group in their country?",
+          "utterance": "Can you tell me the deserts with an area larger than 100,000 square kilometers?",
+          "intention": "Which deserts have an area larger than 100,000 square kilometers?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_ETHNICGROUP"
+              "MONDIAL_DESERT"
             ],
-            "golden_sql": "SELECT PERCENTAGE FROM MONDIAL_ETHNICGROUP WHERE NAME = 'Sidama'"
+            "golden_sql": "SELECT NAME FROM MONDIAL_DESERT WHERE AREA > 100000"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What is the population growth in the same country?",
-          "intention": "What is the population growth in the country where the Sidama ethnic group is present?",
+          "utterance": "Which provinces are these deserts located in?",
+          "intention": "Which provinces are the deserts retrieved in the previous interaction located in?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_ETHNICGROUP",
-              "MONDIAL_POPULATION"
+              "MONDIAL_DESERT",
+              "MONDIAL_GEO_DESERT"
             ],
-            "golden_sql": "SELECT POPULATION_GROWTH FROM MONDIAL_POPULATION WHERE COUNTRY = (SELECT COUNTRY FROM MONDIAL_ETHNICGROUP WHERE NAME = 'Sidama')"
+            "golden_sql": "SELECT MONDIAL_GEO_DESERT.PROVINCE FROM MONDIAL_GEO_DESERT INNER JOIN MONDIAL_DESERT ON MONDIAL_GEO_DESERT.DESERT = MONDIAL_DESERT.NAME WHERE MONDIAL_DESERT.AREA > 100000"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What languages are spoken in that country?",
-          "intention": "What languages are spoken in the country where the Sidama ethnic group is present?",
+          "utterance": "What are the alternative names for these provinces?",
+          "intention": "What are the alternative names for the provinces retrieved in the previous interaction?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_ETHNICGROUP",
-              "MONDIAL_LANGUAGE"
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_PROVINCEOTHERNAME"
             ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_LANGUAGE WHERE COUNTRY = (SELECT COUNTRY FROM MONDIAL_ETHNICGROUP WHERE NAME = 'Sidama')"
+            "golden_sql": "SELECT MONDIAL_PROVINCEOTHERNAME.OTHERNAME FROM MONDIAL_PROVINCEOTHERNAME INNER JOIN MONDIAL_GEO_DESERT ON MONDIAL_GEO_DESERT.PROVINCE = MONDIAL_PROVINCEOTHERNAME.PROVINCE AND MONDIAL_GEO_DESERT.COUNTRY = MONDIAL_PROVINCEOTHERNAME.COUNTRY WHERE MONDIAL_GEO_DESERT.DESERT IN (SELECT NAME FROM MONDIAL_DESERT WHERE AREA > 100000)"
           }
         }
       ]
@@ -272,38 +274,38 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "What rivers are located in the province of Aargau?",
-          "intention": "What rivers are located in the province of Aargau?",
+          "utterance": "Which rivers flow through the province of Sachsen-Anhalt?",
+          "intention": "Which rivers flow through the province of Sachsen-Anhalt?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "MONDIAL_GEO_ESTUARY"
             ],
-            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_ESTUARY WHERE PROVINCE = 'Aargau'"
+            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_ESTUARY WHERE PROVINCE = 'Sachsen-Anhalt'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "Which countries do these rivers flow through?",
-          "intention": "Which countries do the rivers from the previous interaction flow through?",
+          "utterance": "Can you tell me the countries of these rivers?",
+          "intention": "Can you tell me the countries of the rivers flowing through Sachsen-Anhalt?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "MONDIAL_GEO_ESTUARY"
             ],
-            "golden_sql": "SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_ESTUARY WHERE PROVINCE = 'Aargau'"
+            "golden_sql": "SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_ESTUARY WHERE PROVINCE = 'Sachsen-Anhalt'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "And what are their lengths?",
-          "intention": "What are the lengths of the rivers from the previous interaction?",
+          "utterance": "What are the sources of these rivers?",
+          "intention": "What are the sources of the rivers flowing through Sachsen-Anhalt?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "MONDIAL_GEO_ESTUARY",
-              "MONDIAL_RIVER"
+              "MONDIAL_GEO_SOURCE"
             ],
-            "golden_sql": "SELECT MGE.RIVER, MR.LENGTH FROM MONDIAL_GEO_ESTUARY MGE JOIN MONDIAL_RIVER MR ON MGE.RIVER = MR.NAME WHERE MGE.PROVINCE = 'Aargau'"
+            "golden_sql": "SELECT DISTINCT MONDIAL_GEO_SOURCE.RIVER, MONDIAL_GEO_SOURCE.COUNTRY, MONDIAL_GEO_SOURCE.PROVINCE FROM MONDIAL_GEO_SOURCE JOIN MONDIAL_GEO_ESTUARY ON MONDIAL_GEO_ESTUARY.RIVER = MONDIAL_GEO_SOURCE.RIVER WHERE MONDIAL_GEO_ESTUARY.PROVINCE = 'Sachsen-Anhalt'"
           }
         }
       ]
@@ -315,37 +317,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which seas are in France?",
-          "intention": "Which seas are located in France?",
+          "utterance": "Can you list all islands in Scotland?",
+          "intention": "Can you list all islands in Scotland?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_SEA"
+              "MONDIAL_GEO_ISLAND"
             ],
-            "golden_sql": "SELECT SEA FROM MONDIAL_GEO_SEA WHERE COUNTRY = 'F'"
+            "golden_sql": "SELECT ISLAND FROM MONDIAL_GEO_ISLAND WHERE PROVINCE = 'Scotland'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What is the area of the Mediterranean Sea?",
-          "intention": "What is the area of the Mediterranean Sea?",
+          "utterance": "What is the area of Skye island?",
+          "intention": "What is the area of Skye island?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_SEA"
+              "MONDIAL_ISLAND",
+              "MONDIAL_GEO_ISLAND"
             ],
-            "golden_sql": "SELECT AREA FROM MONDIAL_SEA WHERE NAME = 'Mediterranean Sea'"
+            "golden_sql": "SELECT AREA FROM MONDIAL_ISLAND WHERE NAME = 'Skye'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Which islands are in this sea?",
-          "intention": "Which islands are located in the Mediterranean Sea?",
+          "utterance": "What is the elevation of Skye island?",
+          "intention": "What is the elevation of Skye island?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_ISLANDIN"
+              "MONDIAL_ISLAND",
+              "MONDIAL_GEO_ISLAND"
             ],
-            "golden_sql": "SELECT ISLAND FROM MONDIAL_ISLANDIN WHERE SEA = 'Mediterranean Sea'"
+            "golden_sql": "SELECT ELEVATION FROM MONDIAL_ISLAND WHERE NAME = 'Skye'"
           }
         }
       ]
@@ -357,38 +361,41 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which organizations were established in 1964?",
-          "intention": "Which organizations were established in 1964?",
+          "utterance": "Can you list all the islands that have mountains?",
+          "intention": "Can you list all the islands that have mountains?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_ORGANIZATION"
+              "MONDIAL_ISLAND",
+              "MONDIAL_MOUNTAINONISLAND"
             ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_ORGANIZATION WHERE EXTRACT(YEAR FROM ESTABLISHED) = 1964"
+            "golden_sql": "SELECT DISTINCT MONDIAL_MOUNTAINONISLAND.ISLAND FROM MONDIAL_MOUNTAINONISLAND;"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "Where is the headquarters of these organizations?",
-          "intention": "Where is the headquarters of the organizations established in 1964?",
+          "utterance": "What is the area of these islands?",
+          "intention": "What is the area of the islands that have mountains?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_ORGANIZATION"
+              "MONDIAL_ISLAND",
+              "MONDIAL_MOUNTAINONISLAND"
             ],
-            "golden_sql": "SELECT NAME, CITY, COUNTRY FROM MONDIAL_ORGANIZATION WHERE EXTRACT(YEAR FROM ESTABLISHED) = 1964"
+            "golden_sql": "SELECT MONDIAL_ISLAND.NAME, MONDIAL_ISLAND.AREA FROM MONDIAL_ISLAND INNER JOIN MONDIAL_MOUNTAINONISLAND ON MONDIAL_ISLAND.NAME = MONDIAL_MOUNTAINONISLAND.ISLAND;"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "List the countries that are members of these organizations.",
-          "intention": "List the countries that are members of the organizations established in 1964.",
+          "utterance": "And which countries are these islands located in?",
+          "intention": "Which countries are the islands that have mountains located in?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_ORGANIZATION",
-              "MONDIAL_ISMEMBER"
+              "MONDIAL_ISLAND",
+              "MONDIAL_MOUNTAINONISLAND",
+              "MONDIAL_LOCATEDON"
             ],
-            "golden_sql": "SELECT DISTINCT MONDIAL_ISMEMBER.COUNTRY FROM MONDIAL_ISMEMBER INNER JOIN MONDIAL_ORGANIZATION ON MONDIAL_ISMEMBER.ORGANIZATION = MONDIAL_ORGANIZATION.ABBREVIATION WHERE EXTRACT(YEAR FROM MONDIAL_ORGANIZATION.ESTABLISHED) = 1964"
+            "golden_sql": "SELECT MONDIAL_ISLAND.NAME, MONDIAL_LOCATEDON.COUNTRY FROM MONDIAL_ISLAND INNER JOIN MONDIAL_MOUNTAINONISLAND ON MONDIAL_ISLAND.NAME = MONDIAL_MOUNTAINONISLAND.ISLAND INNER JOIN MONDIAL_LOCATEDON ON MONDIAL_ISLAND.NAME = MONDIAL_LOCATEDON.ISLAND;"
           }
         }
       ]
@@ -400,37 +407,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which lakes are connected to the river Aare?",
-          "intention": "Which lakes are connected to the river Aare?",
+          "utterance": "What seas are connected to the Andaman Sea?",
+          "intention": "What seas are connected to the Andaman Sea?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_RIVERTHROUGH"
+              "MONDIAL_MERGESWITH"
             ],
-            "golden_sql": "SELECT LAKE FROM MONDIAL_RIVERTHROUGH WHERE RIVER = 'Aare'"
+            "golden_sql": "SELECT SEA2 FROM MONDIAL_MERGESWITH WHERE SEA1 = 'Andaman Sea'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What is the area of Lake Brienzersee?",
-          "intention": "What is the area of Lake Brienzersee?",
+          "utterance": "What is the area of these seas?",
+          "intention": "What is the area of the seas connected to the Andaman Sea?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_LAKE"
+              "MONDIAL_MERGESWITH",
+              "MONDIAL_SEA"
             ],
-            "golden_sql": "SELECT AREA FROM MONDIAL_LAKE WHERE NAME = 'Brienzersee'"
+            "golden_sql": "SELECT MONDIAL_SEA.AREA FROM MONDIAL_MERGESWITH JOIN MONDIAL_SEA ON MONDIAL_MERGESWITH.SEA2 = MONDIAL_SEA.NAME WHERE MONDIAL_MERGESWITH.SEA1 = 'Andaman Sea'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What country is Lake Brienzersee located in?",
-          "intention": "What country is Lake Brienzersee located in?",
+          "utterance": "What is the depth of these seas?",
+          "intention": "What is the depth of the seas connected to the Andaman Sea?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_LAKE"
+              "MONDIAL_MERGESWITH",
+              "MONDIAL_SEA"
             ],
-            "golden_sql": "SELECT COUNTRY FROM MONDIAL_GEO_LAKE WHERE LAKE = 'Brienzersee'"
+            "golden_sql": "SELECT MONDIAL_SEA.DEPTH FROM MONDIAL_MERGESWITH JOIN MONDIAL_SEA ON MONDIAL_MERGESWITH.SEA2 = MONDIAL_SEA.NAME WHERE MONDIAL_MERGESWITH.SEA1 = 'Andaman Sea'"
           }
         }
       ]
@@ -442,37 +451,37 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "What seas are connected to the Andaman Sea?",
-          "intention": "What seas are connected to the Andaman Sea?",
+          "utterance": "Which cities in Germany had a population over 105000 in the year 1987?",
+          "intention": "Which cities in Germany had a population over 105000 in the year 1987?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_MERGESWITH"
+              "MONDIAL_CITYPOPS"
             ],
-            "golden_sql": "SELECT SEA2 FROM MONDIAL_MERGESWITH WHERE SEA1 = 'Andaman Sea' UNION SELECT SEA1 FROM MONDIAL_MERGESWITH WHERE SEA2 = 'Andaman Sea'"
+            "golden_sql": "SELECT CITY FROM MONDIAL_CITYPOPS WHERE COUNTRY = 'D' AND YEAR = 1987 AND POPULATION > 105000"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What is the area of the Indian Ocean?",
-          "intention": "What is the area of the Indian Ocean?",
+          "utterance": "What is the area of Germany?",
+          "intention": "What is the area of Germany?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_SEA"
+              "MONDIAL_COUNTRY"
             ],
-            "golden_sql": "SELECT AREA FROM MONDIAL_SEA WHERE NAME = 'Indian Ocean'"
+            "golden_sql": "SELECT AREA FROM MONDIAL_COUNTRY WHERE CODE = 'D'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What is the average depth of the Mediterranean Sea?",
-          "intention": "What is the average depth of the Mediterranean Sea?",
+          "utterance": "Does Germany have any mountains?",
+          "intention": "Does Germany have any mountains?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_SEA"
+              "MONDIAL_GEO_MOUNTAIN"
             ],
-            "golden_sql": "SELECT DEPTH FROM MONDIAL_SEA WHERE NAME = 'Mediterranean Sea'"
+            "golden_sql": "SELECT MOUNTAIN FROM MONDIAL_GEO_MOUNTAIN WHERE COUNTRY = 'D'"
           }
         }
       ]
@@ -484,1545 +493,43 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "List all the rivers in Serbia.",
-          "intention": "List all the rivers in Serbia.",
+          "utterance": "Which airports are located in Karlovy Vary?",
+          "intention": "Which airports are located in Karlovy Vary?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_RIVER"
+              "MONDIAL_AIRPORT"
             ],
-            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_RIVER WHERE COUNTRY = 'SRB'"
+            "golden_sql": "SELECT NAME, IATACODE FROM MONDIAL_AIRPORT WHERE CITY = 'Karlovy Vary';"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "Can you tell me about the provinces where these rivers are located?",
-          "intention": "Can you tell me about the provinces where the rivers in Serbia are located?",
+          "utterance": "What is the elevation of these airports?",
+          "intention": "What is the elevation of the airports located in Karlovy Vary?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_RIVER"
+              "MONDIAL_AIRPORT"
             ],
-            "golden_sql": "SELECT PROVINCE FROM MONDIAL_GEO_RIVER WHERE COUNTRY = 'SRB'"
+            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_AIRPORT WHERE CITY = 'Karlovy Vary';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What are their corresponding sources?",
-          "intention": "What are the sources of the rivers in Serbia?",
+          "utterance": "And what is the GMT offset for these airports?",
+          "intention": "What is the GMT offset for the airports located in Karlovy Vary?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_RIVER",
-              "MONDIAL_GEO_SOURCE"
+              "MONDIAL_AIRPORT"
             ],
-            "golden_sql": "SELECT MONDIAL_GEO_SOURCE.META_REPCOL FROM MONDIAL_GEO_SOURCE JOIN MONDIAL_GEO_RIVER ON MONDIAL_GEO_SOURCE.RIVER = MONDIAL_GEO_RIVER.RIVER WHERE MONDIAL_GEO_RIVER.COUNTRY = 'SRB'"
+            "golden_sql": "SELECT NAME, GMTOFFSET FROM MONDIAL_AIRPORT WHERE CITY = 'Karlovy Vary';"
           }
         }
       ]
     },
     {
       "experiment_id": "13",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What was the population of Prishtine in 1991?",
-          "intention": "What was the population of Prishtine in 1991?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITYPOPS"
-            ],
-            "golden_sql": "SELECT POPULATION FROM MONDIAL_CITYPOPS WHERE CITY = 'Prishtine' AND YEAR = 1991"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "Which province is Prishtine located in?",
-          "intention": "Which province is Prishtine located in?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITYPOPS"
-            ],
-            "golden_sql": "SELECT PROVINCE FROM MONDIAL_CITYPOPS WHERE CITY = 'Prishtine'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What was the population of that province in 1991?",
-          "intention": "What was the population of the province where Prishtine is located in 1991?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITYPOPS",
-              "MONDIAL_PROVPOPS"
-            ],
-            "golden_sql": "SELECT P.POPULATION FROM MONDIAL_CITYPOPS C JOIN MONDIAL_PROVPOPS P ON C.PROVINCE = P.PROVINCE AND C.COUNTRY = P.COUNTRY WHERE C.CITY = 'Prishtine' AND P.YEAR = 1991"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "14",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which countries have the Somali ethnic group?",
-          "intention": "Which countries have the Somali ethnic group?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ETHNICGROUP"
-            ],
-            "golden_sql": "SELECT COUNTRY FROM MONDIAL_ETHNICGROUP WHERE NAME = 'Somali'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What organizations are these countries part of?",
-          "intention": "What organizations are the countries with the Somali ethnic group part of?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ETHNICGROUP",
-              "MONDIAL_ISMEMBER"
-            ],
-            "golden_sql": "SELECT DISTINCT ORGANIZATION FROM MONDIAL_ISMEMBER WHERE COUNTRY IN (SELECT COUNTRY FROM MONDIAL_ETHNICGROUP WHERE NAME = 'Somali')"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What languages are spoken in these countries?",
-          "intention": "What languages are spoken in the countries with the Somali ethnic group?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ETHNICGROUP",
-              "MONDIAL_LANGUAGE"
-            ],
-            "golden_sql": "SELECT DISTINCT NAME FROM MONDIAL_LANGUAGE WHERE COUNTRY IN (SELECT COUNTRY FROM MONDIAL_ETHNICGROUP WHERE NAME = 'Somali')"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "15",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which cities in Rhône-Alpes have a population greater than 150,000?",
-          "intention": "Which cities in Rhône-Alpes have a population greater than 150,000?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITY"
-            ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_CITY WHERE PROVINCE = 'Rhône-Alpes' AND POPULATION > 150000;"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the elevation of these cities?",
-          "intention": "What is the elevation of the cities in Rhône-Alpes with a population greater than 150,000?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITY"
-            ],
-            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_CITY WHERE PROVINCE = 'Rhône-Alpes' AND POPULATION > 150000;"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Can you find out if these cities are located on any island?",
-          "intention": "Are the cities in Rhône-Alpes with a population greater than 150,000 located on any island?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITY",
-              "MONDIAL_LOCATEDON"
-            ],
-            "golden_sql": "SELECT MC.NAME, ML.ISLAND FROM MONDIAL_CITY MC JOIN MONDIAL_LOCATEDON ML ON MC.NAME = ML.CITY AND MC.COUNTRY = ML.COUNTRY AND MC.PROVINCE = ML.PROVINCE WHERE MC.PROVINCE = 'Rhône-Alpes' AND MC.POPULATION > 150000;"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "16",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which rivers flow through a lake?",
-          "intention": "Which rivers flow through a lake?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_RIVERTHROUGH"
-            ],
-            "golden_sql": "SELECT DISTINCT RIVER FROM MONDIAL_RIVERTHROUGH WHERE LAKE IS NOT NULL"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the length of these rivers?",
-          "intention": "What is the length of the rivers that flow through a lake?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_RIVER",
-              "MONDIAL_RIVERTHROUGH"
-            ],
-            "golden_sql": "SELECT MR.RIVER, MR.LENGTH FROM MONDIAL_RIVER MR JOIN MONDIAL_RIVERTHROUGH MRT ON MR.RIVER = MRT.RIVER WHERE MRT.LAKE IS NOT NULL"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And what are their source elevations?",
-          "intention": "What are the source elevations of the rivers that flow through a lake?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_RIVER",
-              "MONDIAL_RIVERTHROUGH"
-            ],
-            "golden_sql": "SELECT MR.RIVER, MR.SOURCEELEVATION FROM MONDIAL_RIVER MR JOIN MONDIAL_RIVERTHROUGH MRT ON MR.RIVER = MRT.RIVER WHERE MRT.LAKE IS NOT NULL"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "17",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What is the GDP of European countries?",
-          "intention": "What is the GDP of European countries?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ECONOMY",
-              "MONDIAL_ENCOMPASSES"
-            ],
-            "golden_sql": "SELECT MONDIAL_ECONOMY.GDP FROM MONDIAL_ECONOMY JOIN MONDIAL_ENCOMPASSES ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "Which of these countries has the highest inflation rate?",
-          "intention": "Which European country has the highest inflation rate?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ECONOMY",
-              "MONDIAL_ENCOMPASSES"
-            ],
-            "golden_sql": "SELECT MONDIAL_ECONOMY.COUNTRY, MONDIAL_ECONOMY.INFLATION FROM MONDIAL_ECONOMY JOIN MONDIAL_ENCOMPASSES ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe' ORDER BY MONDIAL_ECONOMY.INFLATION DESC FETCH FIRST 1 ROWS ONLY"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What is the unemployment rate in this country?",
-          "intention": "What is the unemployment rate in the country with the highest inflation rate in Europe?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ECONOMY"
-            ],
-            "golden_sql": "SELECT MONDIAL_ECONOMY.UNEMPLOYMENT FROM MONDIAL_ECONOMY WHERE MONDIAL_ECONOMY.COUNTRY = (SELECT MONDIAL_ECONOMY.COUNTRY FROM MONDIAL_ECONOMY JOIN MONDIAL_ENCOMPASSES ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe' ORDER BY MONDIAL_ECONOMY.INFLATION DESC FETCH FIRST 1 ROWS ONLY)"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "18",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What airports are located in Ushuaia?",
-          "intention": "What airports are located in Ushuaia?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT"
-            ],
-            "golden_sql": "SELECT NAME, IATACODE FROM MONDIAL_AIRPORT WHERE CITY = 'Ushuaia'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the elevation of these airports?",
-          "intention": "What is the elevation of the airports located in Ushuaia?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT"
-            ],
-            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_AIRPORT WHERE CITY = 'Ushuaia'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And in which province are they located?",
-          "intention": "In which province are the airports located in Ushuaia?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT"
-            ],
-            "golden_sql": "SELECT NAME, PROVINCE FROM MONDIAL_AIRPORT WHERE CITY = 'Ushuaia'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "19",
-      "total_expected_interactions": 4,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "List all cities in the Rhône-Alpes province.",
-          "intention": "List all cities in the Rhône-Alpes province.",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITY"
-            ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_CITY WHERE PROVINCE = 'Rhône-Alpes'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the population of Villeurbanne?",
-          "intention": "What is the population of Villeurbanne?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITY"
-            ],
-            "golden_sql": "SELECT POPULATION FROM MONDIAL_CITY WHERE NAME = 'Villeurbanne'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Which airport is closest to this city?",
-          "intention": "Which airport is closest to Villeurbanne?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT",
-              "MONDIAL_CITY"
-            ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_AIRPORT WHERE CITY = 'Villeurbanne'"
-          }
-        },
-        {
-          "interaction_id": "4",
-          "speaker": "User",
-          "utterance": "What is the elevation of that airport?",
-          "intention": "What is the elevation of the airport closest to Villeurbanne?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT"
-            ],
-            "golden_sql": "SELECT ELEVATION FROM MONDIAL_AIRPORT WHERE CITY = 'Villeurbanne'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "20",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What is the population of the province Peloponnisos in the year 2001?",
-          "intention": "What is the population of the province Peloponnisos in the year 2001?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_PROVPOPS"
-            ],
-            "golden_sql": "SELECT POPULATION FROM MONDIAL_PROVPOPS WHERE PROVINCE = 'Peloponnisos' AND YEAR = 2001"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the country associated with this province?",
-          "intention": "What is the country associated with the province Peloponnisos?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_PROVPOPS"
-            ],
-            "golden_sql": "SELECT COUNTRY FROM MONDIAL_PROVPOPS WHERE PROVINCE = 'Peloponnisos'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What was the population of this country in the year 2002?",
-          "intention": "What was the population of the country associated with the province Peloponnisos in the year 2002?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_COUNTRYPOPS"
-            ],
-            "golden_sql": "SELECT POPULATION FROM MONDIAL_COUNTRYPOPS WHERE COUNTRY = (SELECT COUNTRY FROM MONDIAL_PROVPOPS WHERE PROVINCE = 'Peloponnisos' AND ROWNUM = 1) AND YEAR = 2002"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "21",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which continents have an area greater than 10 million square kilometers?",
-          "intention": "Which continents have an area greater than 10 million square kilometers?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CONTINENT"
-            ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA > 10000000"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the GDP of countries in those continents?",
-          "intention": "What is the GDP of countries in the continents retrieved in the previous interaction?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CONTINENT",
-              "MONDIAL_ENCOMPASSES",
-              "MONDIAL_ECONOMY"
-            ],
-            "golden_sql": "SELECT MONDIAL_ECONOMY.COUNTRY, MONDIAL_ECONOMY.GDP FROM MONDIAL_ECONOMY JOIN MONDIAL_ENCOMPASSES ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT IN (SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA > 10000000)"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Can you also tell me the unemployment rates for those countries?",
-          "intention": "What are the unemployment rates for the countries retrieved in the previous interaction?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CONTINENT",
-              "MONDIAL_ENCOMPASSES",
-              "MONDIAL_ECONOMY"
-            ],
-            "golden_sql": "SELECT MONDIAL_ECONOMY.COUNTRY, MONDIAL_ECONOMY.UNEMPLOYMENT FROM MONDIAL_ECONOMY JOIN MONDIAL_ENCOMPASSES ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT IN (SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA > 10000000)"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "22",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which deserts are located in the country AL?",
-          "intention": "Which deserts are located in the country AL?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_DESERT"
-            ],
-            "golden_sql": "SELECT DESERT FROM MONDIAL_GEO_DESERT WHERE COUNTRY = 'AL'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the area of these deserts?",
-          "intention": "What is the area of the deserts located in the country AL?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_DESERT",
-              "MONDIAL_DESERT"
-            ],
-            "golden_sql": "SELECT MONDIAL_DESERT.NAME, MONDIAL_DESERT.AREA FROM MONDIAL_DESERT JOIN MONDIAL_GEO_DESERT ON MONDIAL_DESERT.NAME = MONDIAL_GEO_DESERT.DESERT WHERE MONDIAL_GEO_DESERT.COUNTRY = 'AL'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Which languages are spoken in that country?",
-          "intention": "Which languages are spoken in the country AL?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LANGUAGE"
-            ],
-            "golden_sql": "SELECT NAME, PERCENTAGE FROM MONDIAL_LANGUAGE WHERE COUNTRY = 'AL'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "23",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which rivers have their estuaries in Switzerland?",
-          "intention": "Which rivers have their estuaries in Switzerland?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_ESTUARY"
-            ],
-            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'CH'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What are the provinces of these rivers?",
-          "intention": "What are the provinces of the rivers retrieved in the previous interaction?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_ESTUARY"
-            ],
-            "golden_sql": "SELECT RIVER, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'CH'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And tell me the source elevation of these rivers.",
-          "intention": "What is the source elevation of the rivers retrieved in the previous interactions?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_ESTUARY",
-              "MONDIAL_GEO_RIVER",
-              "MONDIAL_GEO_SOURCE",
-              "MONDIAL_RIVER"
-            ],
-            "golden_sql": "SELECT MGE.RIVER, MR.SOURCEELEVATION FROM MONDIAL_GEO_ESTUARY MGE JOIN MONDIAL_RIVER MR ON MGE.RIVER = MR.NAME WHERE MGE.COUNTRY = 'CH'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "24",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What are the mountains located on islands?",
-          "intention": "What are the names of mountains that are located on islands?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_MOUNTAINONISLAND"
-            ],
-            "golden_sql": "SELECT MOUNTAIN FROM MONDIAL_MOUNTAINONISLAND"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "Which islands are these mountains on?",
-          "intention": "Which islands are the mountains from the previous query located on?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_MOUNTAINONISLAND"
-            ],
-            "golden_sql": "SELECT ISLAND FROM MONDIAL_MOUNTAINONISLAND"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What type are these islands?",
-          "intention": "What are the types of the islands from the previous query?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ISLAND",
-              "MONDIAL_MOUNTAINONISLAND"
-            ],
-            "golden_sql": "SELECT MI.TYPE FROM MONDIAL_ISLAND MI JOIN MONDIAL_MOUNTAINONISLAND MMO ON MI.NAME = MMO.ISLAND"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "25",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which organizations are located in cities by the Pacific Ocean?",
-          "intention": "Which organizations are located in cities by the Pacific Ocean?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LOCATED",
-              "MONDIAL_ORGANIZATION"
-            ],
-            "golden_sql": "SELECT MO.NAME FROM MONDIAL_ORGANIZATION MO JOIN MONDIAL_LOCATED ML ON MO.CITY = ML.CITY WHERE ML.SEA = 'Pacific Ocean'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the country of these organizations?",
-          "intention": "What is the country of organizations located in cities by the Pacific Ocean?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LOCATED",
-              "MONDIAL_ORGANIZATION"
-            ],
-            "golden_sql": "SELECT MO.NAME, MO.COUNTRY FROM MONDIAL_ORGANIZATION MO JOIN MONDIAL_LOCATED ML ON MO.CITY = ML.CITY WHERE ML.SEA = 'Pacific Ocean'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What type of memberships do they have?",
-          "intention": "What type of memberships do organizations located in cities by the Pacific Ocean have?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LOCATED",
-              "MONDIAL_ORGANIZATION",
-              "MONDIAL_ISMEMBER"
-            ],
-            "golden_sql": "SELECT MO.NAME, MI.TYPE FROM MONDIAL_ORGANIZATION MO JOIN MONDIAL_LOCATED ML ON MO.CITY = ML.CITY JOIN MONDIAL_ISMEMBER MI ON MO.ABBREVIATION = MI.ORGANIZATION WHERE ML.SEA = 'Pacific Ocean'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "26",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which cities are located on islands?",
-          "intention": "Which cities are located on islands?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LOCATEDON"
-            ],
-            "golden_sql": "SELECT CITY FROM MONDIAL_LOCATEDON WHERE ISLAND IS NOT NULL"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What seas are near these cities?",
-          "intention": "What seas are near the cities located on islands?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LOCATED",
-              "MONDIAL_LOCATEDON"
-            ],
-            "golden_sql": "SELECT ML.SEA FROM MONDIAL_LOCATED ML JOIN MONDIAL_LOCATEDON MLO ON ML.CITY = MLO.CITY AND ML.COUNTRY = MLO.COUNTRY AND ML.PROVINCE = MLO.PROVINCE WHERE MLO.ISLAND IS NOT NULL"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Do any of these cities have a river nearby?",
-          "intention": "Do any of the cities located on islands have a river nearby?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LOCATED",
-              "MONDIAL_LOCATEDON"
-            ],
-            "golden_sql": "SELECT ML.CITY, ML.RIVER FROM MONDIAL_LOCATED ML JOIN MONDIAL_LOCATEDON MLO ON ML.CITY = MLO.CITY AND ML.COUNTRY = MLO.COUNTRY AND ML.PROVINCE = MLO.PROVINCE WHERE MLO.ISLAND IS NOT NULL AND ML.RIVER IS NOT NULL"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "27",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which countries gained independence from the Ottoman Empire?",
-          "intention": "Which countries gained independence from the Ottoman Empire?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_POLITICS"
-            ],
-            "golden_sql": "SELECT COUNTRY FROM MONDIAL_POLITICS WHERE WASDEPENDENT = 'Ottoman Empire'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the form of government in these countries?",
-          "intention": "What is the form of government in the countries that gained independence from the Ottoman Empire?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_POLITICS"
-            ],
-            "golden_sql": "SELECT COUNTRY, GOVERNMENT FROM MONDIAL_POLITICS WHERE WASDEPENDENT = 'Ottoman Empire'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And what is their population growth rate?",
-          "intention": "What is the population growth rate of the countries that gained independence from the Ottoman Empire?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_POLITICS",
-              "MONDIAL_POPULATION"
-            ],
-            "golden_sql": "SELECT MP.COUNTRY, MP.POPULATION_GROWTH FROM MONDIAL_POPULATION MP JOIN MONDIAL_POLITICS MPOL ON MP.COUNTRY = MPOL.COUNTRY WHERE MPOL.WASDEPENDENT = 'Ottoman Empire'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "28",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which mountains are located in Gilgit-Baltistan?",
-          "intention": "Which mountains are located in Gilgit-Baltistan?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_MOUNTAIN"
-            ],
-            "golden_sql": "SELECT MOUNTAIN FROM MONDIAL_GEO_MOUNTAIN WHERE PROVINCE = 'Gilgit-Baltistan'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the elevation of Gasherbrum I?",
-          "intention": "What is the elevation of Gasherbrum I?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_MOUNTAIN"
-            ],
-            "golden_sql": "SELECT ELEVATION FROM MONDIAL_MOUNTAIN WHERE NAME = 'Gasherbrum I'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Is the mountain located on an island?",
-          "intention": "Is Gasherbrum I located on an island?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_MOUNTAINONISLAND"
-            ],
-            "golden_sql": "SELECT ISLAND FROM MONDIAL_MOUNTAINONISLAND WHERE MOUNTAIN = 'Gasherbrum I'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "29",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which cities in France have a population greater than 150,000?",
-          "intention": "Which cities in France have a population greater than 150,000?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "mondial_city"
-            ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_CITY WHERE COUNTRY = 'F' AND POPULATION > 150000;"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What are the provinces of these cities?",
-          "intention": "What are the provinces of the cities retrieved in the previous interaction?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "mondial_city"
-            ],
-            "golden_sql": "SELECT NAME, PROVINCE FROM MONDIAL_CITY WHERE COUNTRY = 'F' AND POPULATION > 150000;"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And what are the religions in France?",
-          "intention": "What are the religions in France?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "mondial_religion"
-            ],
-            "golden_sql": "SELECT NAME, PERCENTAGE FROM MONDIAL_RELIGION WHERE COUNTRY = 'F';"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "30",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What is the GDP of countries in Europe?",
-          "intention": "What is the GDP of countries in Europe?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ECONOMY",
-              "MONDIAL_ENCOMPASSES"
-            ],
-            "golden_sql": "SELECT MONDIAL_ECONOMY.COUNTRY, MONDIAL_ECONOMY.GDP FROM MONDIAL_ECONOMY JOIN MONDIAL_ENCOMPASSES ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What percentage of each country's landmass is in Europe?",
-          "intention": "What percentage of each country's landmass is in Europe?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ENCOMPASSES"
-            ],
-            "golden_sql": "SELECT COUNTRY, PERCENTAGE FROM MONDIAL_ENCOMPASSES WHERE CONTINENT = 'Europe'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What is the unemployment rate for these countries?",
-          "intention": "What is the unemployment rate for these countries in Europe?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ECONOMY",
-              "MONDIAL_ENCOMPASSES"
-            ],
-            "golden_sql": "SELECT MONDIAL_ECONOMY.COUNTRY, MONDIAL_ECONOMY.UNEMPLOYMENT FROM MONDIAL_ECONOMY JOIN MONDIAL_ENCOMPASSES ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "31",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What is the area of islands that are volcanic?",
-          "intention": "What is the area of islands that are volcanic?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ISLAND"
-            ],
-            "golden_sql": "SELECT AREA FROM MONDIAL_ISLAND WHERE TYPE = 'volcanic'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "Which seas surround these islands?",
-          "intention": "Which seas surround the islands that are volcanic?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ISLAND",
-              "MONDIAL_ISLANDIN"
-            ],
-            "golden_sql": "SELECT MI.NAME, MI.AREA, MIN.SEA FROM MONDIAL_ISLAND MI JOIN MONDIAL_ISLANDIN MIN ON MI.NAME = MIN.ISLAND WHERE MI.TYPE = 'volcanic'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And what countries are they located in?",
-          "intention": "What countries are the volcanic islands located in?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ISLAND",
-              "MONDIAL_GEO_ISLAND"
-            ],
-            "golden_sql": "SELECT MI.NAME, MG.COUNTRY FROM MONDIAL_ISLAND MI JOIN MONDIAL_GEO_ISLAND MG ON MI.NAME = MG.ISLAND WHERE MI.TYPE = 'volcanic'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "32",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which seas have an area greater than 500,000 square kilometers?",
-          "intention": "Which seas have an area greater than 500,000 square kilometers?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_SEA"
-            ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_SEA WHERE AREA > 500000"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "Can you tell me the maximum depth of these seas?",
-          "intention": "What is the maximum depth of the seas retrieved in the previous interaction?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_SEA"
-            ],
-            "golden_sql": "SELECT NAME, DEPTH FROM MONDIAL_SEA WHERE AREA > 500000"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Which countries do these seas border?",
-          "intention": "Which countries are bordered by the seas retrieved in the previous interaction?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_SEA",
-              "MONDIAL_SEA"
-            ],
-            "golden_sql": "SELECT DISTINCT MONDIAL_GEO_SEA.COUNTRY FROM MONDIAL_GEO_SEA JOIN MONDIAL_SEA ON MONDIAL_GEO_SEA.SEA = MONDIAL_SEA.NAME WHERE MONDIAL_SEA.AREA > 500000"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "33",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What languages are spoken in Albania?",
-          "intention": "What languages are spoken in Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LANGUAGE"
-            ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_LANGUAGE WHERE COUNTRY = 'AL'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What percentage of the population speaks Greek in Albania?",
-          "intention": "What percentage of the population speaks Greek in Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LANGUAGE"
-            ],
-            "golden_sql": "SELECT PERCENTAGE FROM MONDIAL_LANGUAGE WHERE COUNTRY = 'AL' AND NAME = 'Greek'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Which rivers flow through Albania?",
-          "intention": "Which rivers flow through Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_ESTUARY"
-            ],
-            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'AL'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "34",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which airports are located in provinces with islands?",
-          "intention": "Which airports are located in provinces with islands?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT",
-              "MONDIAL_GEO_ISLAND"
-            ],
-            "golden_sql": "SELECT MONDIAL_AIRPORT.NAME FROM MONDIAL_AIRPORT JOIN MONDIAL_GEO_ISLAND ON MONDIAL_AIRPORT.PROVINCE = MONDIAL_GEO_ISLAND.PROVINCE AND MONDIAL_AIRPORT.COUNTRY = MONDIAL_GEO_ISLAND.COUNTRY WHERE MONDIAL_GEO_ISLAND.ISLAND IS NOT NULL"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What are the religions in the countries of these airports?",
-          "intention": "What are the religions in the countries of the airports located in provinces with islands?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT",
-              "MONDIAL_GEO_ISLAND",
-              "MONDIAL_RELIGION"
-            ],
-            "golden_sql": "SELECT DISTINCT MONDIAL_RELIGION.NAME, MONDIAL_RELIGION.PERCENTAGE FROM MONDIAL_RELIGION JOIN MONDIAL_AIRPORT ON MONDIAL_RELIGION.COUNTRY = MONDIAL_AIRPORT.COUNTRY JOIN MONDIAL_GEO_ISLAND ON MONDIAL_AIRPORT.PROVINCE = MONDIAL_GEO_ISLAND.PROVINCE AND MONDIAL_AIRPORT.COUNTRY = MONDIAL_GEO_ISLAND.COUNTRY WHERE MONDIAL_GEO_ISLAND.ISLAND IS NOT NULL"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "List the latitude and longitude of these airports.",
-          "intention": "What are the latitude and longitude of the airports located in provinces with islands?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT",
-              "MONDIAL_GEO_ISLAND"
-            ],
-            "golden_sql": "SELECT MONDIAL_AIRPORT.LATITUDE, MONDIAL_AIRPORT.LONGITUDE FROM MONDIAL_AIRPORT JOIN MONDIAL_GEO_ISLAND ON MONDIAL_AIRPORT.PROVINCE = MONDIAL_GEO_ISLAND.PROVINCE AND MONDIAL_AIRPORT.COUNTRY = MONDIAL_GEO_ISLAND.COUNTRY WHERE MONDIAL_GEO_ISLAND.ISLAND IS NOT NULL"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "35",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which airports are located in the province of Formosa?",
-          "intention": "Which airports are located in the province of Formosa?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT"
-            ],
-            "golden_sql": "SELECT NAME, IATACODE FROM MONDIAL_AIRPORT WHERE PROVINCE = 'Formosa'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the elevation of these airports?",
-          "intention": "What is the elevation of airports located in the province of Formosa?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT"
-            ],
-            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_AIRPORT WHERE PROVINCE = 'Formosa'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Can you also tell me their GMT offset?",
-          "intention": "What is the GMT offset of airports located in the province of Formosa?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_AIRPORT"
-            ],
-            "golden_sql": "SELECT NAME, GMTOFFSET FROM MONDIAL_AIRPORT WHERE PROVINCE = 'Formosa'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "36",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What was the population of Prishtine in 1991?",
-          "intention": "What was the population of Prishtine in 1991?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITYPOPS"
-            ],
-            "golden_sql": "SELECT POPULATION FROM MONDIAL_CITYPOPS WHERE CITY = 'Prishtine' AND YEAR = 1991"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the province of this city?",
-          "intention": "What is the province of Prishtine?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITYPOPS"
-            ],
-            "golden_sql": "SELECT PROVINCE FROM MONDIAL_CITYPOPS WHERE CITY = 'Prishtine'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What is the population of this province in the same year?",
-          "intention": "What is the population of the province of Prishtine in 1991?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CITYPOPS",
-              "MONDIAL_PROVPOPS"
-            ],
-            "golden_sql": "SELECT P.POPULATION FROM MONDIAL_PROVPOPS P JOIN MONDIAL_CITYPOPS C ON P.PROVINCE = C.PROVINCE AND P.COUNTRY = C.COUNTRY AND P.YEAR = C.YEAR WHERE C.CITY = 'Prishtine' AND C.YEAR = 1991"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "37",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which continents are listed in the database?",
-          "intention": "Which continents are listed in the database?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CONTINENT"
-            ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_CONTINENT"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the area of Europe?",
-          "intention": "What is the area of Europe?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CONTINENT"
-            ],
-            "golden_sql": "SELECT AREA FROM MONDIAL_CONTINENT WHERE NAME = 'Europe'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Which deserts are located in countries within Europe?",
-          "intention": "Which deserts are located in countries within Europe?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_CONTINENT",
-              "MONDIAL_ENCOMPASSES",
-              "MONDIAL_GEO_DESERT",
-              "MONDIAL_DESERT"
-            ],
-            "golden_sql": "SELECT MD.NAME FROM MONDIAL_DESERT MD JOIN MONDIAL_GEO_DESERT MGD ON MD.NAME = MGD.DESERT JOIN MONDIAL_ENCOMPASSES ME ON MGD.COUNTRY = ME.COUNTRY WHERE ME.CONTINENT = 'Europe'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "38",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What is the GDP and inflation rate of countries with parliamentary democracy?",
-          "intention": "What is the GDP and inflation rate of countries with parliamentary democracy?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ECONOMY",
-              "MONDIAL_POLITICS"
-            ],
-            "golden_sql": "SELECT MONDIAL_ECONOMY.GDP, MONDIAL_ECONOMY.INFLATION FROM MONDIAL_ECONOMY JOIN MONDIAL_POLITICS ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_POLITICS.COUNTRY WHERE MONDIAL_POLITICS.GOVERNMENT = 'parliamentary democracy'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the unemployment rate in these countries?",
-          "intention": "What is the unemployment rate in countries with parliamentary democracy?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ECONOMY",
-              "MONDIAL_POLITICS"
-            ],
-            "golden_sql": "SELECT MONDIAL_ECONOMY.UNEMPLOYMENT FROM MONDIAL_ECONOMY JOIN MONDIAL_POLITICS ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_POLITICS.COUNTRY WHERE MONDIAL_POLITICS.GOVERNMENT = 'parliamentary democracy'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And tell me their population growth too.",
-          "intention": "What is the population growth rate of countries with parliamentary democracy?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ECONOMY",
-              "MONDIAL_POLITICS",
-              "MONDIAL_POPULATION"
-            ],
-            "golden_sql": "SELECT MONDIAL_POPULATION.POPULATION_GROWTH FROM MONDIAL_POPULATION JOIN MONDIAL_POLITICS ON MONDIAL_POPULATION.COUNTRY = MONDIAL_POLITICS.COUNTRY WHERE MONDIAL_POLITICS.GOVERNMENT = 'parliamentary democracy'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "39",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which rivers flow through Serbia?",
-          "intention": "Which rivers flow through Serbia?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_RIVER"
-            ],
-            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_RIVER WHERE COUNTRY = 'SRB'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What are their provinces?",
-          "intention": "What are the provinces of the rivers flowing through Serbia?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_RIVER"
-            ],
-            "golden_sql": "SELECT RIVER, PROVINCE FROM MONDIAL_GEO_RIVER WHERE COUNTRY = 'SRB'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Which seas do these rivers ultimately flow into?",
-          "intention": "Which seas do the rivers flowing through Serbia ultimately flow into?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_RIVER",
-              "MONDIAL_RIVER"
-            ],
-            "golden_sql": "SELECT MG.RIVER, MR.SEA FROM MONDIAL_GEO_RIVER MG JOIN MONDIAL_RIVER MR ON MG.RIVER = MR.RIVER WHERE MG.COUNTRY = 'SRB'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "40",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which mountains are located in the province of Gilgit-Baltistan?",
-          "intention": "Which mountains are located in the province of Gilgit-Baltistan?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_MOUNTAIN"
-            ],
-            "golden_sql": "SELECT MOUNTAIN FROM MONDIAL_GEO_MOUNTAIN WHERE PROVINCE = 'Gilgit-Baltistan'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "Are any of these mountains also located on an island?",
-          "intention": "Are any of the mountains retrieved previously also located on an island?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_MOUNTAIN",
-              "MONDIAL_MOUNTAINONISLAND"
-            ],
-            "golden_sql": "SELECT MOUNTAIN FROM MONDIAL_MOUNTAINONISLAND WHERE MOUNTAIN IN (SELECT MOUNTAIN FROM MONDIAL_GEO_MOUNTAIN WHERE PROVINCE = 'Gilgit-Baltistan')"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What are the dominant religions in the countries where these mountains are located?",
-          "intention": "What are the dominant religions in the countries where the mountains retrieved previously are located?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_GEO_MOUNTAIN",
-              "MONDIAL_RELIGION"
-            ],
-            "golden_sql": "SELECT DISTINCT MONDIAL_RELIGION.NAME, MONDIAL_RELIGION.PERCENTAGE FROM MONDIAL_RELIGION INNER JOIN MONDIAL_GEO_MOUNTAIN ON MONDIAL_RELIGION.COUNTRY = MONDIAL_GEO_MOUNTAIN.COUNTRY WHERE MONDIAL_GEO_MOUNTAIN.PROVINCE = 'Gilgit-Baltistan'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "41",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which islands are located near a lake?",
-          "intention": "Which islands are located near a lake?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ISLAND",
-              "MONDIAL_ISLANDIN"
-            ],
-            "golden_sql": "SELECT MONDIAL_ISLAND.NAME FROM MONDIAL_ISLAND JOIN MONDIAL_ISLANDIN ON MONDIAL_ISLAND.NAME = MONDIAL_ISLANDIN.ISLAND WHERE MONDIAL_ISLANDIN.LAKE IS NOT NULL"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the area of these islands?",
-          "intention": "What is the area of the islands located near a lake?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ISLAND",
-              "MONDIAL_ISLANDIN"
-            ],
-            "golden_sql": "SELECT MONDIAL_ISLAND.AREA FROM MONDIAL_ISLAND JOIN MONDIAL_ISLANDIN ON MONDIAL_ISLAND.NAME = MONDIAL_ISLANDIN.ISLAND WHERE MONDIAL_ISLANDIN.LAKE IS NOT NULL"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Can you tell me the types of these islands?",
-          "intention": "What are the types of the islands located near a lake?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_ISLAND",
-              "MONDIAL_ISLANDIN"
-            ],
-            "golden_sql": "SELECT MONDIAL_ISLAND.TYPE FROM MONDIAL_ISLAND JOIN MONDIAL_ISLANDIN ON MONDIAL_ISLAND.NAME = MONDIAL_ISLANDIN.ISLAND WHERE MONDIAL_ISLANDIN.LAKE IS NOT NULL"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "42",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which countries does Albania share a border with?",
-          "intention": "Which countries share a border with Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_BORDERS",
-              "MONDIAL_COUNTRY"
-            ],
-            "golden_sql": "SELECT MC2.NAME FROM MONDIAL_BORDERS MB JOIN MONDIAL_COUNTRY MC1 ON MB.COUNTRY1 = MC1.CODE JOIN MONDIAL_COUNTRY MC2 ON MB.COUNTRY2 = MC2.CODE WHERE MC1.NAME = 'Albania'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What are the capitals of those countries?",
-          "intention": "What are the capitals of the countries that share a border with Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_BORDERS",
-              "MONDIAL_COUNTRY"
-            ],
-            "golden_sql": "SELECT DISTINCT MC2.CAPITAL FROM MONDIAL_BORDERS MB JOIN MONDIAL_COUNTRY MC1 ON MB.COUNTRY1 = MC1.CODE JOIN MONDIAL_COUNTRY MC2 ON MB.COUNTRY2 = MC2.CODE WHERE MC1.NAME = 'Albania'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And how large are those countries in terms of area?",
-          "intention": "What is the area of the countries that share a border with Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_BORDERS",
-              "MONDIAL_COUNTRY"
-            ],
-            "golden_sql": "SELECT DISTINCT MC2.AREA FROM MONDIAL_BORDERS MB JOIN MONDIAL_COUNTRY MC1 ON MB.COUNTRY1 = MC1.CODE JOIN MONDIAL_COUNTRY MC2 ON MB.COUNTRY2 = MC2.CODE WHERE MC1.NAME = 'Albania'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "43",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which lakes are located in Afghanistan?",
-          "intention": "Which lakes are located in Afghanistan?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LAKE",
-              "MONDIAL_GEO_SOURCE"
-            ],
-            "golden_sql": "SELECT DISTINCT MONDIAL_LAKE.NAME FROM MONDIAL_LAKE JOIN MONDIAL_GEO_SOURCE ON MONDIAL_LAKE.RIVER = MONDIAL_GEO_SOURCE.RIVER WHERE MONDIAL_GEO_SOURCE.COUNTRY = 'AFG'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What are the area and depth of these lakes?",
-          "intention": "What are the area and depth of the lakes located in Afghanistan?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LAKE",
-              "MONDIAL_GEO_SOURCE"
-            ],
-            "golden_sql": "SELECT NAME, AREA, DEPTH FROM MONDIAL_LAKE WHERE RIVER IN (SELECT DISTINCT MONDIAL_GEO_SOURCE.RIVER FROM MONDIAL_GEO_SOURCE WHERE MONDIAL_GEO_SOURCE.COUNTRY = 'AFG')"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And tell me also which rivers flow through these lakes.",
-          "intention": "Which rivers flow through the lakes located in Afghanistan?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LAKE",
-              "MONDIAL_GEO_SOURCE"
-            ],
-            "golden_sql": "SELECT NAME, RIVER FROM MONDIAL_LAKE WHERE RIVER IN (SELECT DISTINCT MONDIAL_GEO_SOURCE.RIVER FROM MONDIAL_GEO_SOURCE WHERE MONDIAL_GEO_SOURCE.COUNTRY = 'AFG')"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "44",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What are the religions practiced in Albania?",
-          "intention": "What are the religions practiced in Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_RELIGION"
-            ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_RELIGION WHERE COUNTRY = 'AL'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What percentage of the population follows each religion?",
-          "intention": "What percentage of the population follows each religion in Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_RELIGION"
-            ],
-            "golden_sql": "SELECT NAME, PERCENTAGE FROM MONDIAL_RELIGION WHERE COUNTRY = 'AL'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Which countries border Albania?",
-          "intention": "Which countries border Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_BORDERS"
-            ],
-            "golden_sql": "SELECT COUNTRY2 FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL' UNION SELECT COUNTRY1 FROM MONDIAL_BORDERS WHERE COUNTRY2 = 'AL'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "45",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which countries border Albania?",
-          "intention": "Which countries share a border with Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_BORDERS",
-              "MONDIAL_COUNTRY"
-            ],
-            "golden_sql": "SELECT NAME FROM MONDIAL_COUNTRY WHERE CODE IN (SELECT COUNTRY2 FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL')"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the population of these countries?",
-          "intention": "What is the population of the countries that share a border with Albania?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_BORDERS",
-              "MONDIAL_COUNTRY"
-            ],
-            "golden_sql": "SELECT NAME, POPULATION FROM MONDIAL_COUNTRY WHERE CODE IN (SELECT COUNTRY2 FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL')"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And what type of government do they have?",
-          "intention": "What type of government do the countries that share a border with Albania have?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_BORDERS",
-              "MONDIAL_COUNTRY",
-              "MONDIAL_POLITICS"
-            ],
-            "golden_sql": "SELECT C.NAME, P.GOVERNMENT FROM MONDIAL_COUNTRY C JOIN MONDIAL_POLITICS P ON C.CODE = P.COUNTRY WHERE C.CODE IN (SELECT COUNTRY2 FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL')"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "46",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which lakes are connected to the river Aare?",
-          "intention": "Which lakes are connected to the river Aare?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LAKE",
-              "MONDIAL_RIVERTHROUGH"
-            ],
-            "golden_sql": "SELECT MONDIAL_LAKE.NAME FROM MONDIAL_LAKE INNER JOIN MONDIAL_RIVERTHROUGH ON MONDIAL_LAKE.NAME = MONDIAL_RIVERTHROUGH.LAKE WHERE MONDIAL_RIVERTHROUGH.RIVER = 'Aare'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What is the area of these lakes?",
-          "intention": "What is the area of the lakes connected to the river Aare?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LAKE",
-              "MONDIAL_RIVERTHROUGH"
-            ],
-            "golden_sql": "SELECT MONDIAL_LAKE.NAME, MONDIAL_LAKE.AREA FROM MONDIAL_LAKE INNER JOIN MONDIAL_RIVERTHROUGH ON MONDIAL_LAKE.NAME = MONDIAL_RIVERTHROUGH.LAKE WHERE MONDIAL_RIVERTHROUGH.RIVER = 'Aare'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "And their elevations?",
-          "intention": "What are the elevations of the lakes connected to the river Aare?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "MONDIAL_LAKE",
-              "MONDIAL_RIVERTHROUGH"
-            ],
-            "golden_sql": "SELECT MONDIAL_LAKE.NAME, MONDIAL_LAKE.ELEVATION FROM MONDIAL_LAKE INNER JOIN MONDIAL_RIVERTHROUGH ON MONDIAL_LAKE.NAME = MONDIAL_RIVERTHROUGH.LAKE WHERE MONDIAL_RIVERTHROUGH.RIVER = 'Aare'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "47",
       "total_expected_interactions": 3,
       "interactions": [
         {
@@ -2040,26 +547,1498 @@
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "Which country or province does this desert belong to?",
-          "intention": "Which country or province does the Kalahari desert belong to?",
+          "utterance": "Which countries does this desert pass through?",
+          "intention": "Which countries does the Kalahari desert pass through?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "MONDIAL_GEO_DESERT"
             ],
-            "golden_sql": "SELECT COUNTRY, PROVINCE FROM MONDIAL_GEO_DESERT WHERE DESERT = 'Kalahari';"
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_GEO_DESERT WHERE DESERT = 'Kalahari';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the population of the provinces in these countries?",
+          "intention": "What is the population of the provinces in the countries where the Kalahari desert is located?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_PROVPOPS",
+              "MONDIAL_GEO_DESERT"
+            ],
+            "golden_sql": "SELECT MP.PROVINCE, MP.POPULATION FROM MONDIAL_PROVPOPS MP JOIN MONDIAL_GEO_DESERT MG ON MP.PROVINCE = MG.PROVINCE AND MP.COUNTRY = MG.COUNTRY WHERE MG.DESERT = 'Kalahari';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "14",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers flow through the province of Aargau?",
+          "intention": "Which rivers flow through the province of Aargau?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_RIVER"
+            ],
+            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_RIVER WHERE PROVINCE = 'Aargau';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What countries do these rivers flow through?",
+          "intention": "What countries do the rivers flowing through the province of Aargau flow through?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_RIVER"
+            ],
+            "golden_sql": "SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_RIVER WHERE PROVINCE = 'Aargau';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Are there any cities located along these rivers?",
+          "intention": "Are there any cities located along the rivers flowing through the province of Aargau?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_RIVER",
+              "MONDIAL_LOCATED"
+            ],
+            "golden_sql": "SELECT DISTINCT CITY FROM MONDIAL_LOCATED WHERE RIVER IN (SELECT RIVER FROM MONDIAL_GEO_RIVER WHERE PROVINCE = 'Aargau');"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "15",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the elevation of Mt. Bintumani?",
+          "intention": "What is the elevation of Mt. Bintumani?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MOUNTAIN"
+            ],
+            "golden_sql": "SELECT ELEVATION FROM MONDIAL_MOUNTAIN WHERE NAME = 'Mt. Bintumani';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "On which island is this mountain located?",
+          "intention": "On which island is Mt. Bintumani located?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MOUNTAINONISLAND"
+            ],
+            "golden_sql": "SELECT ISLAND FROM MONDIAL_MOUNTAINONISLAND WHERE MOUNTAIN = 'Mt. Bintumani';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the country where this mountain is found?",
+          "intention": "What is the country where Mt. Bintumani is found?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_MOUNTAIN"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_GEO_MOUNTAIN WHERE MOUNTAIN = 'Mt. Bintumani';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "16",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers flow into the North Sea?",
+          "intention": "Which rivers flow into the North Sea?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER"
+            ],
+            "golden_sql": "SELECT NAME FROM MONDIAL_RIVER WHERE SEA = 'North Sea';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the length of these rivers?",
+          "intention": "What is the length of the rivers that flow into the North Sea?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER"
+            ],
+            "golden_sql": "SELECT NAME, LENGTH FROM MONDIAL_RIVER WHERE SEA = 'North Sea';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Do these rivers pass through any lakes?",
+          "intention": "Do the rivers that flow into the North Sea pass through any lakes?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER",
+              "MONDIAL_RIVERTHROUGH"
+            ],
+            "golden_sql": "SELECT MR.NAME, MRT.LAKE FROM MONDIAL_RIVER MR LEFT JOIN MONDIAL_RIVERTHROUGH MRT ON MR.NAME = MRT.RIVER WHERE MR.SEA = 'North Sea';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "17",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "List all airports located in the province of Praha.",
+          "intention": "List all airports located in the province of Praha.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, IATACODE FROM MONDIAL_AIRPORT WHERE PROVINCE = 'Praha'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the elevation of these airports?",
+          "intention": "What is the elevation of the airports located in the province of Praha?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_AIRPORT WHERE PROVINCE = 'Praha'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Do any of these airports have an island?",
+          "intention": "Do any of the airports located in the province of Praha have an island?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, ISLAND FROM MONDIAL_AIRPORT WHERE PROVINCE = 'Praha' AND ISLAND IS NOT NULL"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "18",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which mountains are located on islands?",
+          "intention": "Which mountains are located on islands?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MOUNTAINONISLAND"
+            ],
+            "golden_sql": "SELECT MOUNTAIN, ISLAND FROM MONDIAL_MOUNTAINONISLAND"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the elevation of these mountains?",
+          "intention": "What is the elevation of the mountains located on islands?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MOUNTAIN",
+              "MONDIAL_MOUNTAINONISLAND"
+            ],
+            "golden_sql": "SELECT MONDIAL_MOUNTAIN.NAME, MONDIAL_MOUNTAIN.ELEVATION FROM MONDIAL_MOUNTAIN JOIN MONDIAL_MOUNTAINONISLAND ON MONDIAL_MOUNTAIN.NAME = MONDIAL_MOUNTAINONISLAND.MOUNTAIN"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which islands are they located on and what is the area of these islands?",
+          "intention": "Which islands are the mountains located on and what is the area of these islands?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLAND",
+              "MONDIAL_MOUNTAINONISLAND"
+            ],
+            "golden_sql": "SELECT MONDIAL_ISLAND.NAME, MONDIAL_ISLAND.AREA FROM MONDIAL_ISLAND JOIN MONDIAL_MOUNTAINONISLAND ON MONDIAL_ISLAND.NAME = MONDIAL_MOUNTAINONISLAND.ISLAND"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "19",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What are the organizations established in 1945?",
+          "intention": "What are the organizations established in 1945?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ORGANIZATION"
+            ],
+            "golden_sql": "SELECT NAME FROM MONDIAL_ORGANIZATION WHERE ESTABLISHED = DATE '1945-11-15'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which countries are members of these organizations?",
+          "intention": "Which countries are members of the organizations established in 1945?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISMEMBER",
+              "MONDIAL_ORGANIZATION"
+            ],
+            "golden_sql": "SELECT DISTINCT MONDIAL_ISMEMBER.COUNTRY FROM MONDIAL_ISMEMBER JOIN MONDIAL_ORGANIZATION ON MONDIAL_ISMEMBER.ORGANIZATION = MONDIAL_ORGANIZATION.ABBREVIATION WHERE MONDIAL_ORGANIZATION.ESTABLISHED = DATE '1945-11-15'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What type of membership do these countries have?",
+          "intention": "What type of membership do the countries have in the organizations established in 1945?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISMEMBER",
+              "MONDIAL_ORGANIZATION"
+            ],
+            "golden_sql": "SELECT MONDIAL_ISMEMBER.COUNTRY, MONDIAL_ISMEMBER.TYPE FROM MONDIAL_ISMEMBER JOIN MONDIAL_ORGANIZATION ON MONDIAL_ISMEMBER.ORGANIZATION = MONDIAL_ORGANIZATION.ABBREVIATION WHERE MONDIAL_ORGANIZATION.ESTABLISHED = DATE '1945-11-15'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "20",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries share a border with Albania?",
+          "intention": "Which countries share a border with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT COUNTRY2 FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the GDP of those countries?",
+          "intention": "What is the GDP of the countries that share a border with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT ME.COUNTRY, ME.GDP FROM MONDIAL_ECONOMY ME INNER JOIN MONDIAL_BORDERS MB ON ME.COUNTRY = MB.COUNTRY2 WHERE MB.COUNTRY1 = 'AL'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "And what is the population of those countries in 2012?",
+          "intention": "What is the population in 2012 of the countries that share a border with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_COUNTRYPOPS"
+            ],
+            "golden_sql": "SELECT MCP.COUNTRY, MCP.POPULATION FROM MONDIAL_COUNTRYPOPS MCP INNER JOIN MONDIAL_BORDERS MB ON MCP.COUNTRY = MB.COUNTRY2 WHERE MB.COUNTRY1 = 'AL' AND MCP.YEAR = 2012"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "21",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What are the alternative names for cities in the Samarskaya province?",
+          "intention": "What are the alternative names for cities in the Samarskaya province?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT OTHERNAME FROM MONDIAL_CITYOTHERNAME WHERE PROVINCE = 'Samarskaya'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What country does the city Tolyatti belong to?",
+          "intention": "What country does the city Tolyatti belong to?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_CITYOTHERNAME WHERE CITY = 'Tolyatti'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the name of the river near Tolyatti?",
+          "intention": "What is the name of the river near Tolyatti?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LOCATED"
+            ],
+            "golden_sql": "SELECT RIVER FROM MONDIAL_LOCATED WHERE CITY = 'Tolyatti'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "22",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which continents have an area larger than 10 million square kilometers?",
+          "intention": "Which continents have an area larger than 10 million square kilometers?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT"
+            ],
+            "golden_sql": "SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA > 10000000"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What countries belong entirely to these continents?",
+          "intention": "What countries belong entirely to the continents retrieved in the previous interaction?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_CONTINENT"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_ENCOMPASSES WHERE CONTINENT IN (SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA > 10000000) AND PERCENTAGE = 100.0"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the ethnic groups in these countries?",
+          "intention": "What are the ethnic groups in the countries retrieved in the previous interaction?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ETHNICGROUP",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_CONTINENT"
+            ],
+            "golden_sql": "SELECT NAME, PERCENTAGE FROM MONDIAL_ETHNICGROUP WHERE COUNTRY IN (SELECT COUNTRY FROM MONDIAL_ENCOMPASSES WHERE CONTINENT IN (SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA > 10000000) AND PERCENTAGE = 100.0)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "23",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries have deserts and what are their names?",
+          "intention": "List the countries that have deserts and the names of those deserts.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_DESERT"
+            ],
+            "golden_sql": "SELECT COUNTRY, DESERT FROM MONDIAL_GEO_DESERT;"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the area of these deserts?",
+          "intention": "What is the area of the deserts listed in the previous interaction?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT MG.DESERT, MD.AREA FROM MONDIAL_GEO_DESERT MG JOIN MONDIAL_DESERT MD ON MG.DESERT = MD.NAME;"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "And which provinces are they located in?",
+          "intention": "Which provinces are the deserts listed in the previous interaction located in?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_DESERT"
+            ],
+            "golden_sql": "SELECT DESERT, PROVINCE FROM MONDIAL_GEO_DESERT;"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "24",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Can you tell me all the rivers in the province of Sachsen-Anhalt?",
+          "intention": "Can you tell me all the rivers in the province of Sachsen-Anhalt?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY"
+            ],
+            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_ESTUARY WHERE PROVINCE = 'Sachsen-Anhalt'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which countries do these rivers pass through?",
+          "intention": "Which countries do the rivers in Sachsen-Anhalt pass through?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY"
+            ],
+            "golden_sql": "SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_ESTUARY WHERE PROVINCE = 'Sachsen-Anhalt'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Are there any cities located on these rivers?",
+          "intention": "Are there any cities located on the rivers in Sachsen-Anhalt?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY",
+              "MONDIAL_LOCATED"
+            ],
+            "golden_sql": "SELECT DISTINCT CITY FROM MONDIAL_LOCATED WHERE RIVER IN (SELECT RIVER FROM MONDIAL_GEO_ESTUARY WHERE PROVINCE = 'Sachsen-Anhalt')"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "25",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which lakes are located in the Xinjiang province?",
+          "intention": "Which lakes are located in the Xinjiang province?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT LAKE FROM MONDIAL_GEO_LAKE WHERE PROVINCE = 'Xinjiang'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the area of the lakes found in the previous question?",
+          "intention": "What is the area of the lakes found in the previous question?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT AREA FROM MONDIAL_LAKE WHERE NAME IN (SELECT LAKE FROM MONDIAL_GEO_LAKE WHERE PROVINCE = 'Xinjiang')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Can you tell me their maximum depth?",
+          "intention": "Can you tell me the maximum depth of the lakes found in the previous question?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT DEPTH FROM MONDIAL_LAKE WHERE NAME IN (SELECT LAKE FROM MONDIAL_GEO_LAKE WHERE PROVINCE = 'Xinjiang')"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "26",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries have a parliamentary democracy?",
+          "intention": "Which countries have a parliamentary democracy?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_POLITICS"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_POLITICS WHERE GOVERNMENT = 'parliamentary democracy'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the religions in these countries?",
+          "intention": "What are the religions in the countries with a parliamentary democracy?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_POLITICS",
+              "MONDIAL_RELIGION"
+            ],
+            "golden_sql": "SELECT DISTINCT MONDIAL_RELIGION.NAME FROM MONDIAL_RELIGION INNER JOIN MONDIAL_POLITICS ON MONDIAL_POLITICS.COUNTRY = MONDIAL_RELIGION.COUNTRY WHERE MONDIAL_POLITICS.GOVERNMENT = 'parliamentary democracy'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which organizations are these countries members of?",
+          "intention": "Which organizations are the countries with a parliamentary democracy members of?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_POLITICS",
+              "MONDIAL_ISMEMBER",
+              "MONDIAL_ORGANIZATION"
+            ],
+            "golden_sql": "SELECT DISTINCT MONDIAL_ORGANIZATION.NAME FROM MONDIAL_ORGANIZATION INNER JOIN MONDIAL_ISMEMBER ON MONDIAL_ORGANIZATION.ABBREVIATION = MONDIAL_ISMEMBER.ORGANIZATION INNER JOIN MONDIAL_POLITICS ON MONDIAL_POLITICS.COUNTRY = MONDIAL_ISMEMBER.COUNTRY WHERE MONDIAL_POLITICS.GOVERNMENT = 'parliamentary democracy'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "27",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries gained independence from the Ottoman Empire?",
+          "intention": "Which countries gained independence from the Ottoman Empire?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_POLITICS"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_POLITICS WHERE WASDEPENDENT = 'Ottoman Empire';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the population growth of these countries?",
+          "intention": "What is the population growth of the countries that gained independence from the Ottoman Empire?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_POLITICS",
+              "MONDIAL_POPULATION"
+            ],
+            "golden_sql": "SELECT MP.COUNTRY, MP.POPULATION_GROWTH FROM MONDIAL_POPULATION MP INNER JOIN MONDIAL_POLITICS MPOL ON MP.COUNTRY = MPOL.COUNTRY WHERE MPOL.WASDEPENDENT = 'Ottoman Empire';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "And what are the forms of government in these countries?",
+          "intention": "What are the forms of government in the countries that gained independence from the Ottoman Empire?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_POLITICS"
+            ],
+            "golden_sql": "SELECT COUNTRY, GOVERNMENT FROM MONDIAL_POLITICS WHERE WASDEPENDENT = 'Ottoman Empire';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "28",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which seas are connected to the Andaman Sea?",
+          "intention": "Which seas are connected to the Andaman Sea?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MERGESWITH"
+            ],
+            "golden_sql": "SELECT SEA2 FROM MONDIAL_MERGESWITH WHERE SEA1 = 'Andaman Sea'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the area of these seas?",
+          "intention": "What is the area of the seas connected to the Andaman Sea?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_SEA",
+              "MONDIAL_MERGESWITH"
+            ],
+            "golden_sql": "SELECT MS.NAME, MS.AREA FROM MONDIAL_SEA MS JOIN MONDIAL_MERGESWITH MM ON MS.NAME = MM.SEA2 WHERE MM.SEA1 = 'Andaman Sea'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which of them has the greatest depth?",
+          "intention": "Which of the seas connected to the Andaman Sea has the greatest depth?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_SEA",
+              "MONDIAL_MERGESWITH"
+            ],
+            "golden_sql": "SELECT MS.NAME, MS.DEPTH FROM MONDIAL_SEA MS JOIN MONDIAL_MERGESWITH MM ON MS.NAME = MM.SEA2 WHERE MM.SEA1 = 'Andaman Sea' ORDER BY MS.DEPTH DESC FETCH FIRST 1 ROWS ONLY"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "29",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What are the names of the islands in Scotland?",
+          "intention": "What are the names of the islands in Scotland?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ISLAND"
+            ],
+            "golden_sql": "SELECT ISLAND FROM MONDIAL_GEO_ISLAND WHERE PROVINCE = 'Scotland';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which country are these islands part of?",
+          "intention": "Which country are the islands in Scotland part of?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ISLAND"
+            ],
+            "golden_sql": "SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_ISLAND WHERE PROVINCE = 'Scotland';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "How many provinces does this country have?",
+          "intention": "How many provinces does the country that the islands in Scotland belong to have?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT COUNT(*) FROM MONDIAL_PROVINCE WHERE COUNTRY = (SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_ISLAND WHERE PROVINCE = 'Scotland');"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "30",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries have an unemployment rate above 20%?",
+          "intention": "Which countries have an unemployment rate above 20%?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_ECONOMY WHERE UNEMPLOYMENT > 20"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the population growth rate in those countries?",
+          "intention": "What is the population growth rate in the countries with an unemployment rate above 20%?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY",
+              "MONDIAL_POPULATION"
+            ],
+            "golden_sql": "SELECT MONDIAL_POPULATION.COUNTRY, MONDIAL_POPULATION.POPULATION_GROWTH FROM MONDIAL_POPULATION INNER JOIN MONDIAL_ECONOMY ON MONDIAL_POPULATION.COUNTRY = MONDIAL_ECONOMY.COUNTRY WHERE MONDIAL_ECONOMY.UNEMPLOYMENT > 20"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What ethnic groups are present in these countries?",
+          "intention": "What ethnic groups are present in the countries with an unemployment rate above 20%?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY",
+              "MONDIAL_ETHNICGROUP"
+            ],
+            "golden_sql": "SELECT MONDIAL_ETHNICGROUP.COUNTRY, MONDIAL_ETHNICGROUP.NAME, MONDIAL_ETHNICGROUP.PERCENTAGE FROM MONDIAL_ETHNICGROUP INNER JOIN MONDIAL_ECONOMY ON MONDIAL_ETHNICGROUP.COUNTRY = MONDIAL_ECONOMY.COUNTRY WHERE MONDIAL_ECONOMY.UNEMPLOYMENT > 20"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "31",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries gained independence from the Ottoman Empire?",
+          "intention": "Which countries gained independence from the Ottoman Empire?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_POLITICS"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_POLITICS WHERE WASDEPENDENT = 'Ottoman Empire'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What type of government do these countries have?",
+          "intention": "What type of government do the countries that gained independence from the Ottoman Empire have?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_POLITICS"
+            ],
+            "golden_sql": "SELECT COUNTRY, GOVERNMENT FROM MONDIAL_POLITICS WHERE WASDEPENDENT = 'Ottoman Empire'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which religions are present in these countries?",
+          "intention": "Which religions are present in the countries that gained independence from the Ottoman Empire?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_POLITICS",
+              "MONDIAL_RELIGION"
+            ],
+            "golden_sql": "SELECT DISTINCT MR.COUNTRY, MR.NAME FROM MONDIAL_RELIGION MR JOIN MONDIAL_POLITICS MP ON MR.COUNTRY = MP.COUNTRY WHERE MP.WASDEPENDENT = 'Ottoman Empire'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "32",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which seas have an area greater than 1,000,000 square kilometers?",
+          "intention": "Which seas have an area greater than 1,000,000 square kilometers?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT NAME FROM MONDIAL_SEA WHERE AREA > 1000000"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the depth of the Mediterranean Sea?",
+          "intention": "What is the depth of the Mediterranean Sea?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT DEPTH FROM MONDIAL_SEA WHERE NAME = 'Mediterranean Sea'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which seas does it merge with?",
+          "intention": "Which seas does the Mediterranean Sea merge with?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MERGESWITH"
+            ],
+            "golden_sql": "SELECT SEA2 FROM MONDIAL_MERGESWITH WHERE SEA1 = 'Mediterranean Sea'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "33",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which provinces in Denmark have a population greater than one million?",
+          "intention": "Which provinces in Denmark have a population greater than one million?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT NAME FROM MONDIAL_PROVINCE WHERE COUNTRY = 'DK' AND POPULATION > 1000000"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the area of those provinces?",
+          "intention": "What is the area of the provinces in Denmark with a population greater than one million?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT NAME, AREA FROM MONDIAL_PROVINCE WHERE COUNTRY = 'DK' AND POPULATION > 1000000"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Can you also tell me their capitals?",
+          "intention": "What are the capitals of the provinces in Denmark with a population greater than one million?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT NAME, CAPITAL FROM MONDIAL_PROVINCE WHERE COUNTRY = 'DK' AND POPULATION > 1000000"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "34",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries in Europe have the highest GDP?",
+          "intention": "Which countries in Europe have the highest GDP?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY",
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT MONDIAL_ECONOMY.COUNTRY, MONDIAL_ECONOMY.GDP FROM MONDIAL_ECONOMY JOIN MONDIAL_ENCOMPASSES ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe' ORDER BY MONDIAL_ECONOMY.GDP DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the unemployment rates in these countries?",
+          "intention": "What are the unemployment rates in the countries in Europe with the highest GDP?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY",
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT MONDIAL_ECONOMY.COUNTRY, MONDIAL_ECONOMY.UNEMPLOYMENT FROM MONDIAL_ECONOMY JOIN MONDIAL_ENCOMPASSES ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe' ORDER BY MONDIAL_ECONOMY.GDP DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Also, what are the main ethnic groups in these countries?",
+          "intention": "What are the main ethnic groups in the countries in Europe with the highest GDP?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_ETHNICGROUP"
+            ],
+            "golden_sql": "SELECT MONDIAL_ETHNICGROUP.COUNTRY, MONDIAL_ETHNICGROUP.NAME, MONDIAL_ETHNICGROUP.PERCENTAGE FROM MONDIAL_ETHNICGROUP JOIN MONDIAL_ENCOMPASSES ON MONDIAL_ETHNICGROUP.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY JOIN MONDIAL_ECONOMY ON MONDIAL_ECONOMY.COUNTRY = MONDIAL_ETHNICGROUP.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe' ORDER BY MONDIAL_ECONOMY.GDP DESC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "35",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which airports are located in Karlovy Vary?",
+          "intention": "Which airports are located in Karlovy Vary?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, IATACODE FROM MONDIAL_AIRPORT WHERE CITY = 'Karlovy Vary'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the elevation of these airports?",
+          "intention": "What is the elevation of the airports located in Karlovy Vary?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_AIRPORT WHERE CITY = 'Karlovy Vary'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Can you also tell me their latitude and longitude?",
+          "intention": "What are the latitude and longitude of the airports located in Karlovy Vary?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, LATITUDE, LONGITUDE FROM MONDIAL_AIRPORT WHERE CITY = 'Karlovy Vary'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "36",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the population of Ulm?",
+          "intention": "What is the population of Ulm?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS"
+            ],
+            "golden_sql": "SELECT POPULATION FROM MONDIAL_CITYPOPS WHERE CITY = 'Ulm'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which province is Ulm located in?",
+          "intention": "Which province is Ulm located in?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS"
+            ],
+            "golden_sql": "SELECT PROVINCE FROM MONDIAL_CITYPOPS WHERE CITY = 'Ulm'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
           "utterance": "What is the population of that province?",
-          "intention": "What is the population of the province where the Kalahari desert is located?",
+          "intention": "What is the population of the province retrieved in the previous interaction?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_PROVINCE",
-              "MONDIAL_GEO_DESERT"
+              "MONDIAL_PROVINCE"
             ],
-            "golden_sql": "SELECT P.POPULATION FROM MONDIAL_PROVINCE P JOIN MONDIAL_GEO_DESERT G ON P.NAME = G.PROVINCE WHERE G.DESERT = 'Kalahari';"
+            "golden_sql": "SELECT POPULATION FROM MONDIAL_PROVINCE WHERE NAME = (SELECT DISTINCT PROVINCE FROM MONDIAL_CITYPOPS WHERE CITY = 'Ulm')"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "37",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries are located in Europe?",
+          "intention": "Which countries are located in Europe?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_ENCOMPASSES WHERE CONTINENT = 'Europe'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the GDP of these countries?",
+          "intention": "What is the GDP of the countries located in Europe?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT ME.COUNTRY, ME.GDP FROM MONDIAL_ECONOMY ME JOIN MONDIAL_ENCOMPASSES ME2 ON ME.COUNTRY = ME2.COUNTRY WHERE ME2.CONTINENT = 'Europe'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the population of these countries in 2012?",
+          "intention": "What is the population of the countries located in Europe in 2012?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_COUNTRYPOPS"
+            ],
+            "golden_sql": "SELECT MCP.COUNTRY, MCP.POPULATION FROM MONDIAL_COUNTRYPOPS MCP JOIN MONDIAL_ENCOMPASSES ME ON MCP.COUNTRY = ME.COUNTRY WHERE ME.CONTINENT = 'Europe' AND MCP.YEAR = 2012"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "38",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which deserts have an area larger than 1000000 square kilometers?",
+          "intention": "Which deserts have an area larger than 1000000 square kilometers?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT NAME FROM MONDIAL_DESERT WHERE AREA > 1000000"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "In which country can I find these deserts?",
+          "intention": "In which country can I find the deserts retrieved in the previous interaction?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_GEO_DESERT WHERE DESERT IN (SELECT NAME FROM MONDIAL_DESERT WHERE AREA > 1000000)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What languages are spoken in these countries?",
+          "intention": "What languages are spoken in the countries retrieved in the previous interaction?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LANGUAGE",
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT NAME, PERCENTAGE FROM MONDIAL_LANGUAGE WHERE COUNTRY IN (SELECT COUNTRY FROM MONDIAL_GEO_DESERT WHERE DESERT IN (SELECT NAME FROM MONDIAL_DESERT WHERE AREA > 1000000))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "39",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers flow through the province of Sachsen-Anhalt?",
+          "intention": "Which rivers flow through the province of Sachsen-Anhalt?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY"
+            ],
+            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_ESTUARY WHERE PROVINCE = 'Sachsen-Anhalt'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the countries these rivers pass through?",
+          "intention": "What are the countries the rivers from Sachsen-Anhalt pass through?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY"
+            ],
+            "golden_sql": "SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_ESTUARY WHERE PROVINCE = 'Sachsen-Anhalt'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Provide the names of these rivers’ sources.",
+          "intention": "What are the names of the sources of the rivers from Sachsen-Anhalt?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY",
+              "MONDIAL_GEO_SOURCE"
+            ],
+            "golden_sql": "SELECT DISTINCT MONDIAL_GEO_SOURCE.RIVER, MONDIAL_GEO_SOURCE.META_REPCOL FROM MONDIAL_GEO_SOURCE JOIN MONDIAL_GEO_ESTUARY ON MONDIAL_GEO_SOURCE.RIVER = MONDIAL_GEO_ESTUARY.RIVER WHERE MONDIAL_GEO_ESTUARY.PROVINCE = 'Sachsen-Anhalt'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "40",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which lakes are located in Xinjiang?",
+          "intention": "Which lakes are in Xinjiang?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT LAKE FROM MONDIAL_GEO_LAKE WHERE PROVINCE = 'Xinjiang';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the areas of these lakes?",
+          "intention": "What are the areas of the lakes located in Xinjiang?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT MONDIAL_LAKE.NAME, MONDIAL_LAKE.AREA FROM MONDIAL_LAKE JOIN MONDIAL_GEO_LAKE ON MONDIAL_GEO_LAKE.LAKE = MONDIAL_LAKE.NAME WHERE MONDIAL_GEO_LAKE.PROVINCE = 'Xinjiang';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the depth of each?",
+          "intention": "What is the depth of the lakes located in Xinjiang?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT MONDIAL_LAKE.NAME, MONDIAL_LAKE.DEPTH FROM MONDIAL_LAKE JOIN MONDIAL_GEO_LAKE ON MONDIAL_GEO_LAKE.LAKE = MONDIAL_LAKE.NAME WHERE MONDIAL_GEO_LAKE.PROVINCE = 'Xinjiang';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "41",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which seas are connected to the Andaman Sea?",
+          "intention": "Which seas are connected to the Andaman Sea?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MERGESWITH"
+            ],
+            "golden_sql": "SELECT SEA2 FROM MONDIAL_MERGESWITH WHERE SEA1 = 'Andaman Sea'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the provinces along the Sea of Japan?",
+          "intention": "What are the provinces along the Sea of Japan?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA"
+            ],
+            "golden_sql": "SELECT PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which rivers flow into the North Sea?",
+          "intention": "Which rivers flow into the North Sea?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER"
+            ],
+            "golden_sql": "SELECT NAME FROM MONDIAL_RIVER WHERE SEA = 'North Sea'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "42",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which lakes are located in Xinjiang province?",
+          "intention": "Which lakes are located in Xinjiang province?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT LAKE FROM MONDIAL_GEO_LAKE WHERE PROVINCE = 'Xinjiang'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the area of these lakes?",
+          "intention": "What is the area of the lakes located in Xinjiang province?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT MONDIAL_LAKE.AREA FROM MONDIAL_GEO_LAKE JOIN MONDIAL_LAKE ON MONDIAL_GEO_LAKE.LAKE = MONDIAL_LAKE.NAME WHERE MONDIAL_GEO_LAKE.PROVINCE = 'Xinjiang'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "And what are their elevation levels?",
+          "intention": "What are the elevation levels of the lakes located in Xinjiang province?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT MONDIAL_LAKE.ELEVATION FROM MONDIAL_GEO_LAKE JOIN MONDIAL_LAKE ON MONDIAL_GEO_LAKE.LAKE = MONDIAL_LAKE.NAME WHERE MONDIAL_GEO_LAKE.PROVINCE = 'Xinjiang'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "43",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which mountains have an elevation greater than 1500 meters?",
+          "intention": "Which mountains have an elevation greater than 1500 meters?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MOUNTAIN"
+            ],
+            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_MOUNTAIN WHERE ELEVATION > 1500"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Where are these mountains located?",
+          "intention": "Where are the mountains with elevation greater than 1500 meters located?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MOUNTAIN",
+              "MONDIAL_GEO_MOUNTAIN"
+            ],
+            "golden_sql": "SELECT MONDIAL_GEO_MOUNTAIN.COUNTRY, MONDIAL_GEO_MOUNTAIN.PROVINCE FROM MONDIAL_GEO_MOUNTAIN INNER JOIN MONDIAL_MOUNTAIN ON MONDIAL_GEO_MOUNTAIN.MOUNTAIN = MONDIAL_MOUNTAIN.NAME WHERE MONDIAL_MOUNTAIN.ELEVATION > 1500"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Are any of these mountains on an island?",
+          "intention": "Are any of the mountains with elevation greater than 1500 meters located on an island?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MOUNTAIN",
+              "MONDIAL_MOUNTAINONISLAND"
+            ],
+            "golden_sql": "SELECT MONDIAL_MOUNTAINONISLAND.ISLAND FROM MONDIAL_MOUNTAINONISLAND INNER JOIN MONDIAL_MOUNTAIN ON MONDIAL_MOUNTAINONISLAND.MOUNTAIN = MONDIAL_MOUNTAIN.NAME WHERE MONDIAL_MOUNTAIN.ELEVATION > 1500"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "44",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries share a border with Albania?",
+          "intention": "Which countries share a border with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT COUNTRY2 FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the infant mortality rate in these neighboring countries?",
+          "intention": "What is the infant mortality rate in the countries that share a border with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_POPULATION"
+            ],
+            "golden_sql": "SELECT MB.COUNTRY2, MP.INFANT_MORTALITY FROM MONDIAL_BORDERS MB JOIN MONDIAL_POPULATION MP ON MB.COUNTRY2 = MP.COUNTRY WHERE MB.COUNTRY1 = 'AL'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the population growth rate in these neighboring countries?",
+          "intention": "What is the population growth rate in the countries that share a border with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_POPULATION"
+            ],
+            "golden_sql": "SELECT MB.COUNTRY2, MP.POPULATION_GROWTH FROM MONDIAL_BORDERS MB JOIN MONDIAL_POPULATION MP ON MB.COUNTRY2 = MP.COUNTRY WHERE MB.COUNTRY1 = 'AL'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "45",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers flow into the North Sea?",
+          "intention": "Which rivers flow into the North Sea?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER"
+            ],
+            "golden_sql": "SELECT NAME FROM MONDIAL_RIVER WHERE SEA = 'North Sea'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the length of these rivers?",
+          "intention": "What is the length of the rivers flowing into the North Sea?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER"
+            ],
+            "golden_sql": "SELECT NAME, LENGTH FROM MONDIAL_RIVER WHERE SEA = 'North Sea'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "And what are the source elevations of these rivers?",
+          "intention": "What are the source elevations of the rivers flowing into the North Sea?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER"
+            ],
+            "golden_sql": "SELECT NAME, SOURCEELEVATION FROM MONDIAL_RIVER WHERE SEA = 'North Sea'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "46",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the population of countries in Europe in 2012?",
+          "intention": "What is the population of countries in Europe in 2012?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRYPOPS",
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT MONDIAL_COUNTRYPOPS.POPULATION FROM MONDIAL_COUNTRYPOPS JOIN MONDIAL_ENCOMPASSES ON MONDIAL_COUNTRYPOPS.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe' AND MONDIAL_COUNTRYPOPS.YEAR = 2012"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What languages are spoken in these countries?",
+          "intention": "What languages are spoken in the countries of Europe?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LANGUAGE",
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT DISTINCT MONDIAL_LANGUAGE.NAME FROM MONDIAL_LANGUAGE JOIN MONDIAL_ENCOMPASSES ON MONDIAL_LANGUAGE.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the percentage of the largest language in each country?",
+          "intention": "What is the percentage of the largest spoken language in each country of Europe?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LANGUAGE",
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT MONDIAL_LANGUAGE.COUNTRY, MONDIAL_LANGUAGE.NAME, MAX(MONDIAL_LANGUAGE.PERCENTAGE) AS MAX_PERCENTAGE FROM MONDIAL_LANGUAGE JOIN MONDIAL_ENCOMPASSES ON MONDIAL_LANGUAGE.COUNTRY = MONDIAL_ENCOMPASSES.COUNTRY WHERE MONDIAL_ENCOMPASSES.CONTINENT = 'Europe' GROUP BY MONDIAL_LANGUAGE.COUNTRY, MONDIAL_LANGUAGE.NAME"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "47",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which lakes are located in the Xinjiang province?",
+          "intention": "Which lakes are located in the Xinjiang province?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT LAKE FROM MONDIAL_GEO_LAKE WHERE PROVINCE = 'Xinjiang';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the provinces of the countries where these lakes are located?",
+          "intention": "What are the provinces of the countries where the lakes retrieved in the previous interaction are located?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT DISTINCT PROVINCE FROM MONDIAL_GEO_LAKE WHERE LAKE IN (SELECT LAKE FROM MONDIAL_GEO_LAKE WHERE PROVINCE = 'Xinjiang');"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Can you also tell me the area of the lakes in those provinces?",
+          "intention": "Can you also tell me the area of the lakes in the provinces retrieved in the previous interaction?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT MONDIAL_LAKE.NAME, MONDIAL_LAKE.AREA FROM MONDIAL_LAKE INNER JOIN MONDIAL_GEO_LAKE ON MONDIAL_LAKE.NAME = MONDIAL_GEO_LAKE.LAKE WHERE MONDIAL_GEO_LAKE.PROVINCE IN (SELECT DISTINCT PROVINCE FROM MONDIAL_GEO_LAKE WHERE LAKE IN (SELECT LAKE FROM MONDIAL_GEO_LAKE WHERE PROVINCE = 'Xinjiang'));"
           }
         }
       ]
@@ -2071,40 +2050,38 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which lakes are located in the province of Adamaoua?",
-          "intention": "Find the lakes located in the province of Adamaoua.",
+          "utterance": "Which organizations were established before 1950?",
+          "intention": "Which organizations were established before 1950?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_LAKE",
-              "MONDIAL_LOCATED"
+              "MONDIAL_ORGANIZATION"
             ],
-            "golden_sql": "SELECT DISTINCT MONDIAL_GEO_LAKE.LAKE FROM MONDIAL_GEO_LAKE JOIN MONDIAL_LOCATED ON MONDIAL_GEO_LAKE.LAKE = MONDIAL_LOCATED.LAKE WHERE MONDIAL_GEO_LAKE.PROVINCE = 'Adamaoua'"
+            "golden_sql": "SELECT NAME FROM MONDIAL_ORGANIZATION WHERE ESTABLISHED < TO_DATE('1950-01-01', 'YYYY-MM-DD')"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What is the population growth rate of the country where these lakes are located?",
-          "intention": "What is the population growth rate of the country where the lakes from the previous query are located?",
+          "utterance": "In which country is UNESCO located?",
+          "intention": "In which country is UNESCO located?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_LAKE",
-              "MONDIAL_POPULATION"
+              "MONDIAL_ORGANIZATION"
             ],
-            "golden_sql": "SELECT DISTINCT MONDIAL_POPULATION.POPULATION_GROWTH FROM MONDIAL_POPULATION JOIN MONDIAL_GEO_LAKE ON MONDIAL_POPULATION.COUNTRY = MONDIAL_GEO_LAKE.COUNTRY WHERE MONDIAL_GEO_LAKE.PROVINCE = 'Adamaoua'"
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_ORGANIZATION WHERE ABBREVIATION = 'UNESCO'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Can you also tell me the infant mortality rate in that country?",
-          "intention": "What is the infant mortality rate in the country where the lakes from the first query are located?",
+          "utterance": "What is the population of that country?",
+          "intention": "What is the population of the country where UNESCO is located?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_LAKE",
-              "MONDIAL_POPULATION"
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ORGANIZATION"
             ],
-            "golden_sql": "SELECT DISTINCT MONDIAL_POPULATION.INFANT_MORTALITY FROM MONDIAL_POPULATION JOIN MONDIAL_GEO_LAKE ON MONDIAL_POPULATION.COUNTRY = MONDIAL_GEO_LAKE.COUNTRY WHERE MONDIAL_GEO_LAKE.PROVINCE = 'Adamaoua'"
+            "golden_sql": "SELECT POPULATION FROM MONDIAL_COUNTRY WHERE CODE = (SELECT COUNTRY FROM MONDIAL_ORGANIZATION WHERE ABBREVIATION = 'UNESCO')"
           }
         }
       ]
@@ -2116,42 +2093,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "What are the bordering countries of Albania?",
-          "intention": "What are the bordering countries of Albania?",
+          "utterance": "What is the population of countries in the most recent year available?",
+          "intention": "What is the population of countries in the most recent year available?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_BORDERS",
-              "MONDIAL_COUNTRY"
+              "MONDIAL_COUNTRYPOPS"
             ],
-            "golden_sql": "SELECT C2.NAME FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C1 ON B.COUNTRY1 = C1.CODE JOIN MONDIAL_COUNTRY C2 ON B.COUNTRY2 = C2.CODE WHERE C1.NAME = 'Albania'"
+            "golden_sql": "SELECT COUNTRY, POPULATION FROM MONDIAL_COUNTRYPOPS WHERE YEAR = (SELECT MAX(YEAR) FROM MONDIAL_COUNTRYPOPS)"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What is the population of these countries?",
-          "intention": "What is the population of the countries bordering Albania?",
+          "utterance": "Which islands are part of these countries?",
+          "intention": "Which islands are part of the countries mentioned in the previous interaction?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_BORDERS",
-              "MONDIAL_COUNTRY"
+              "MONDIAL_COUNTRYPOPS",
+              "MONDIAL_GEO_ISLAND"
             ],
-            "golden_sql": "SELECT C2.NAME, C2.POPULATION FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C1 ON B.COUNTRY1 = C1.CODE JOIN MONDIAL_COUNTRY C2 ON B.COUNTRY2 = C2.CODE WHERE C1.NAME = 'Albania'"
+            "golden_sql": "SELECT DISTINCT MONDIAL_GEO_ISLAND.ISLAND, MONDIAL_GEO_ISLAND.COUNTRY FROM MONDIAL_GEO_ISLAND INNER JOIN MONDIAL_COUNTRYPOPS ON MONDIAL_GEO_ISLAND.COUNTRY = MONDIAL_COUNTRYPOPS.COUNTRY WHERE MONDIAL_COUNTRYPOPS.YEAR = (SELECT MAX(YEAR) FROM MONDIAL_COUNTRYPOPS)"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Are there any mountains in those countries?",
-          "intention": "Are there any mountains in the countries bordering Albania?",
+          "utterance": "What are the cities located on these islands?",
+          "intention": "What are the cities located on the islands mentioned in the previous interaction?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_BORDERS",
-              "MONDIAL_COUNTRY",
-              "MONDIAL_GEO_MOUNTAIN",
-              "MONDIAL_MOUNTAIN"
+              "MONDIAL_GEO_ISLAND",
+              "MONDIAL_LOCATEDON"
             ],
-            "golden_sql": "SELECT DISTINCT M.NAME FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C1 ON B.COUNTRY1 = C1.CODE JOIN MONDIAL_COUNTRY C2 ON B.COUNTRY2 = C2.CODE JOIN MONDIAL_GEO_MOUNTAIN GM ON C2.CODE = GM.COUNTRY JOIN MONDIAL_MOUNTAIN M ON GM.MOUNTAIN = M.NAME WHERE C1.NAME = 'Albania'"
+            "golden_sql": "SELECT DISTINCT MONDIAL_LOCATEDON.CITY, MONDIAL_LOCATEDON.ISLAND FROM MONDIAL_LOCATEDON INNER JOIN MONDIAL_GEO_ISLAND ON MONDIAL_LOCATEDON.ISLAND = MONDIAL_GEO_ISLAND.ISLAND WHERE MONDIAL_LOCATEDON.ISLAND IN (SELECT MONDIAL_GEO_ISLAND.ISLAND FROM MONDIAL_GEO_ISLAND INNER JOIN MONDIAL_COUNTRYPOPS ON MONDIAL_GEO_ISLAND.COUNTRY = MONDIAL_COUNTRYPOPS.COUNTRY WHERE MONDIAL_COUNTRYPOPS.YEAR = (SELECT MAX(YEAR) FROM MONDIAL_COUNTRYPOPS))"
           }
         }
       ]
@@ -2163,38 +2137,37 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which rivers are located in Serbia?",
-          "intention": "Which rivers are located in Serbia?",
+          "utterance": "Which seas are associated with Japan?",
+          "intention": "Which seas are associated with Japan?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_RIVER"
+              "MONDIAL_GEO_SEA"
             ],
-            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_RIVER WHERE COUNTRY = 'SRB'"
+            "golden_sql": "SELECT DISTINCT SEA FROM MONDIAL_GEO_SEA WHERE COUNTRY = 'J'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What provinces do these rivers pass through?",
-          "intention": "What provinces do the rivers from the previous query pass through?",
+          "utterance": "What is the area of the Sea of Japan?",
+          "intention": "What is the area of the Sea of Japan?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_RIVER"
+              "MONDIAL_SEA"
             ],
-            "golden_sql": "SELECT DISTINCT PROVINCE FROM MONDIAL_GEO_RIVER WHERE COUNTRY = 'SRB'"
+            "golden_sql": "SELECT AREA FROM MONDIAL_SEA WHERE NAME = 'Sea of Japan'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What is the population of these provinces?",
-          "intention": "What is the population of the provinces from the previous query?",
+          "utterance": "And what is its maximum depth?",
+          "intention": "What is the maximum depth of the Sea of Japan?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "MONDIAL_GEO_RIVER",
-              "MONDIAL_PROVINCE"
+              "MONDIAL_SEA"
             ],
-            "golden_sql": "SELECT MONDIAL_PROVINCE.NAME, MONDIAL_PROVINCE.POPULATION FROM MONDIAL_PROVINCE JOIN MONDIAL_GEO_RIVER ON MONDIAL_GEO_RIVER.PROVINCE = MONDIAL_PROVINCE.NAME AND MONDIAL_GEO_RIVER.COUNTRY = MONDIAL_PROVINCE.COUNTRY WHERE MONDIAL_GEO_RIVER.COUNTRY = 'SRB'"
+            "golden_sql": "SELECT DEPTH FROM MONDIAL_SEA WHERE NAME = 'Sea of Japan'"
           }
         }
       ]
