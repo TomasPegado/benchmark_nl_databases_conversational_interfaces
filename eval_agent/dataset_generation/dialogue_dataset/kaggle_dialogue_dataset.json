@@ -7,38 +7,38 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "What is the average scale score for all students in Alaska in 2017?",
-          "intention": "What is the average scale score for all students in Alaska in 2017?",
+          "utterance": "Which states have an average math score for 8th grade students below 270 in 2017?",
+          "intention": "Which states have an average math score for 8th grade students below 270 in 2017?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8"
             ],
-            "golden_sql": "SELECT AVERAGE_SCALE_SCORE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE STATE = 'Alaska' AND YEAR = 2017"
+            "golden_sql": "SELECT STATE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE YEAR = 2017 AND AVERAGE_SCALE_SCORE < 270"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "How many records are there for Alaska in the financial data?",
-          "intention": "How many records are there for Alaska in the financial data?",
+          "utterance": "What is the total federal revenue for these states?",
+          "intention": "What is the total federal revenue for the states retrieved in the previous interaction?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
+              "STUDENTMATHSCORE_FINREV_FED_KEY_17",
+              "STUDENTMATHSCORE_FINREV_FED_17"
             ],
-            "golden_sql": "SELECT RECORDS_CNT FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 WHERE STATE = 'Alaska'"
+            "golden_sql": "SELECT SFFK.STATE, SUM(SFF.T_FED_REV) AS TOTAL_FED_REV FROM STUDENTMATHSCORE_FINREV_FED_17 SFF JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 SFFK ON SFF.STATE_CODE = SFFK.STATE_CODE WHERE SFFK.STATE IN (SELECT STATE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE YEAR = 2017 AND AVERAGE_SCALE_SCORE < 270) GROUP BY SFFK.STATE"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What was the total federal revenue for school districts in Alaska during 2017?",
-          "intention": "What was the total federal revenue for school districts in Alaska during 2017?",
+          "utterance": "Can you also provide the number of records for these states?",
+          "intention": "Can you provide the number of records for the states retrieved in the previous interactions?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "STUDENTMATHSCORE_FINREV_FED_17",
               "STUDENTMATHSCORE_FINREV_FED_KEY_17"
             ],
-            "golden_sql": "SELECT SUM(T_FED_REV) AS TOTAL_FEDERAL_REVENUE FROM STUDENTMATHSCORE_FINREV_FED_17 INNER JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_FINREV_FED_17.STATE_CODE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE_CODE WHERE STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE = 'Alaska' AND STUDENTMATHSCORE_FINREV_FED_17.YR_DATA = 2017"
+            "golden_sql": "SELECT STATE, RECORDS_CNT FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 WHERE STATE IN (SELECT STATE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE YEAR = 2017 AND AVERAGE_SCALE_SCORE < 270)"
           }
         }
       ]
@@ -50,38 +50,37 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which commodities were tested in September 2015?",
-          "intention": "Which commodities were tested in September 2015?",
+          "utterance": "Which commodity has the maximum quantity in the sample data?",
+          "intention": "Which commodity has the maximum quantity in the sample data?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "PESTICIDE_SAMPLEDATA15"
             ],
-            "golden_sql": "SELECT DISTINCT COMMOD FROM PESTICIDE_SAMPLEDATA15 WHERE YEAR = '15' AND MONTH = '09'"
+            "golden_sql": "SELECT COMMOD FROM PESTICIDE_SAMPLEDATA15 WHERE QUANTITY = (SELECT MAX(QUANTITY) FROM PESTICIDE_SAMPLEDATA15)"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What were the test classes for these commodities?",
-          "intention": "What were the test classes for the commodities tested in September 2015?",
+          "utterance": "What is the origin of this commodity?",
+          "intention": "What is the origin of the commodity retrieved in the previous interaction?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "PESTICIDE_RESULTSDATA15",
               "PESTICIDE_SAMPLEDATA15"
             ],
-            "golden_sql": "SELECT DISTINCT TESTCLASS FROM PESTICIDE_RESULTSDATA15 JOIN PESTICIDE_SAMPLEDATA15 ON PESTICIDE_RESULTSDATA15.SAMPLE_PK = PESTICIDE_SAMPLEDATA15.SAMPLE_PK WHERE PESTICIDE_SAMPLEDATA15.YEAR = '15' AND PESTICIDE_SAMPLEDATA15.MONTH = '09'"
+            "golden_sql": "SELECT ORIGIN FROM PESTICIDE_SAMPLEDATA15 WHERE COMMOD = (SELECT COMMOD FROM PESTICIDE_SAMPLEDATA15 WHERE QUANTITY = (SELECT MAX(QUANTITY) FROM PESTICIDE_SAMPLEDATA15))"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "And which states were these samples collected from?",
-          "intention": "From which states were the samples for the commodities tested in September 2015 collected?",
+          "utterance": "Can you tell me the pest codes associated with this commodity?",
+          "intention": "What are the pest codes associated with the commodity retrieved in the previous interactions?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "PESTICIDE_SAMPLEDATA15"
+              "PESTICIDE_RESULTSDATA15"
             ],
-            "golden_sql": "SELECT DISTINCT STATE FROM PESTICIDE_SAMPLEDATA15 WHERE YEAR = '15' AND MONTH = '09'"
+            "golden_sql": "SELECT PESTCODE FROM PESTICIDE_RESULTSDATA15 WHERE COMMOD = (SELECT COMMOD FROM PESTICIDE_SAMPLEDATA15 WHERE QUANTITY = (SELECT MAX(QUANTITY) FROM PESTICIDE_SAMPLEDATA15))"
           }
         }
       ]
@@ -93,8 +92,8 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Who were inducted into the Hall of Fame in 1936?",
-          "intention": "Who were inducted into the Hall of Fame in 1936?",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_HALL_OF_FAME"
@@ -112,20 +111,20 @@
               "THEHISTORYOFBASEBALL_HALL_OF_FAME",
               "THEHISTORYOFBASEBALL_PLAYER"
             ],
-            "golden_sql": "SELECT THEHISTORYOFBASEBALL_PLAYER.NAME_FIRST, THEHISTORYOFBASEBALL_PLAYER.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.YEARID = 1936 AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y'"
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y')"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Did any of these players receive an award?",
-          "intention": "Did any of the players inducted into the Hall of Fame in 1936 receive an award?",
+          "utterance": "Did any of these players win awards?",
+          "intention": "Did any of the players inducted into the Hall of Fame in 1936 win awards?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_HALL_OF_FAME",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT DISTINCT THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID, THEHISTORYOFBASEBALL_PLAYER_AWARD.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME ON THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID = THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.YEARID = 1936 AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y'"
+            "golden_sql": "SELECT DISTINCT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y')"
           }
         }
       ]
@@ -137,39 +136,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Who were the players inducted into the Hall of Fame in 1936?",
-          "intention": "Who were the players inducted into the Hall of Fame in 1936?",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_HALL_OF_FAME INNER JOIN THEHISTORYOFBASEBALL_PLAYER ON THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID WHERE YEARID = 1936 AND INDUCTED = 'Y';"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What is the birth country of these players?",
-          "intention": "What is the birth country of the players inducted into the Hall of Fame in 1936?",
+          "utterance": "What are the full names of these players?",
+          "intention": "What are the full names of the players inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_HALL_OF_FAME",
               "THEHISTORYOFBASEBALL_PLAYER"
             ],
-            "golden_sql": "SELECT DISTINCT THEHISTORYOFBASEBALL_PLAYER.BIRTH_COUNTRY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME INNER JOIN THEHISTORYOFBASEBALL_PLAYER ON THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.YEARID = 1936 AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y';"
+            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "How many votes did these players receive?",
-          "intention": "How many votes did the players inducted into the Hall of Fame in 1936 receive?",
+          "utterance": "Did any of these players ever win an award?",
+          "intention": "Did any of the players inducted into the Hall of Fame in 1936 ever win an award?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_HALL_OF_FAME",
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT THEHISTORYOFBASEBALL_PLAYER.NAME_FIRST, THEHISTORYOFBASEBALL_PLAYER.NAME_LAST, THEHISTORYOFBASEBALL_HALL_OF_FAME.VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME INNER JOIN THEHISTORYOFBASEBALL_PLAYER ON THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.YEARID = 1936 AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y';"
+            "golden_sql": "SELECT DISTINCT H.PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON H.PLAYER_ID = A.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
           }
         }
       ]
@@ -181,39 +180,37 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Who won the 'Pitching Triple Crown' award?",
-          "intention": "Who won the 'Pitching Triple Crown' award?",
+          "utterance": "Who won the Cy Young award in 1956?",
+          "intention": "Who won the Cy Young award in 1956?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT PLAYER_ID, YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Pitching Triple Crown'"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE AWARD_ID = 'Cy Young' AND YEAR = 1956 ORDER BY VOTES_FIRST DESC FETCH FIRST ROW ONLY"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What was the salary of these players in the years they won?",
-          "intention": "What was the salary of these players in the years they won the 'Pitching Triple Crown' award?",
+          "utterance": "What was the maximum number of points possible for this award?",
+          "intention": "What was the maximum number of points possible for the Cy Young award in 1956?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_SALARY"
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT PA.PLAYER_ID, PA.YEAR, S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_SALARY S ON PA.PLAYER_ID = S.PLAYER_ID AND PA.YEAR = S.YEAR AND PA.LEAGUE_ID = S.LEAGUE_ID WHERE PA.AWARD_ID = 'Pitching Triple Crown'"
+            "golden_sql": "SELECT POINTS_MAX FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE AWARD_ID = 'Cy Young' AND YEAR = 1956 FETCH FIRST ROW ONLY"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "How many first-place votes did these players receive in those years?",
-          "intention": "How many first-place votes did these players receive in the years they won the 'Pitching Triple Crown' award?",
+          "utterance": "Which league was this award associated with?",
+          "intention": "Which league was the Cy Young award associated with in 1956?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT PA.PLAYER_ID, PA.YEAR, V.VOTES_FIRST FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V ON PA.PLAYER_ID = V.PLAYER_ID AND PA.AWARD_ID = V.AWARD_ID AND PA.YEAR = V.YEAR AND PA.LEAGUE_ID = V.LEAGUE_ID WHERE PA.AWARD_ID = 'Pitching Triple Crown'"
+            "golden_sql": "SELECT LEAGUE_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE AWARD_ID = 'Cy Young' AND YEAR = 1956 FETCH FIRST ROW ONLY"
           }
         }
       ]
@@ -225,39 +222,38 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which players received the 'Triple Crown' award?",
-          "intention": "Which players received the 'Triple Crown' award?",
+          "utterance": "Which artists released music in 1985?",
+          "intention": "Which artists released music in 1985?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+              "WHATCDHIPHOP_TORRENTS"
             ],
-            "golden_sql": "SELECT PLAYER_ID, YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT DISTINCT ARTIST FROM WHATCDHIPHOP_TORRENTS WHERE GROUP_YEAR = 1985;"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "For those players, which teams did they play for in those years?",
-          "intention": "For the players who received the 'Triple Crown' award, which teams did they play for in the years they received the award?",
+          "utterance": "What type of releases did they have?",
+          "intention": "What type of releases did the artists from 1985 have?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_SALARY"
+              "WHATCDHIPHOP_TORRENTS"
             ],
-            "golden_sql": "SELECT DISTINCT S.TEAM_ID, S.YEAR, S.PLAYER_ID FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON S.PLAYER_ID = A.PLAYER_ID AND S.YEAR = A.YEAR WHERE A.AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT DISTINCT RELEASE_TYPE FROM WHATCDHIPHOP_TORRENTS WHERE GROUP_YEAR = 1985;"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What were their salaries in those years?",
-          "intention": "What were the salaries of the players who received the 'Triple Crown' award in the years they received the award?",
+          "utterance": "Could you also check if there are any related tags?",
+          "intention": "What tags are related to the music released in 1985?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_SALARY"
+              "WHATCDHIPHOP_TAGS",
+              "WHATCDHIPHOP_TORRENTS"
             ],
-            "golden_sql": "SELECT S.SALARY, S.YEAR, S.PLAYER_ID FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON S.PLAYER_ID = A.PLAYER_ID AND S.YEAR = A.YEAR WHERE A.AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT DISTINCT T.TAG FROM WHATCDHIPHOP_TAGS T JOIN WHATCDHIPHOP_TORRENTS W ON T.ID = W.ID WHERE W.GROUP_YEAR = 1985;"
           }
         }
       ]
@@ -269,39 +265,37 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which player had the highest points in the Cy Young award in 1956?",
-          "intention": "Which player had the highest points in the Cy Young award in 1956?",
+          "utterance": "Which matches were played in Norway in 2009?",
+          "intention": "Which matches were played in Norway in 2009?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+              "WORLDSOCCERDATABASE_BETFRONT"
             ],
-            "golden_sql": "SELECT PLAYER_ID, POINTS_WON FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE AWARD_ID = 'Cy Young' AND YEAR = 1956 ORDER BY POINTS_WON DESC FETCH FIRST 1 ROWS ONLY"
+            "golden_sql": "SELECT MATCH FROM WORLDSOCCERDATABASE_BETFRONT WHERE COUNTRY = 'norway' AND YEAR = 2009"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What was the salary of this player in 1956?",
-          "intention": "What was the salary of the player with the highest points in the Cy Young award in 1956?",
+          "utterance": "What was the opening odds for home, draw, and away for these matches?",
+          "intention": "What were the opening odds for home, draw, and away for the matches played in Norway in 2009?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE",
-              "THEHISTORYOFBASEBALL_SALARY"
+              "WORLDSOCCERDATABASE_BETFRONT"
             ],
-            "golden_sql": "SELECT S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE P ON S.PLAYER_ID = P.PLAYER_ID AND S.YEAR = P.YEAR WHERE P.AWARD_ID = 'Cy Young' AND P.YEAR = 1956 ORDER BY P.POINTS_WON DESC FETCH FIRST 1 ROWS ONLY"
+            "golden_sql": "SELECT HOME_OPENING, DRAW_OPENING, AWAY_OPENING FROM WORLDSOCCERDATABASE_BETFRONT WHERE COUNTRY = 'norway' AND YEAR = 2009"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What was his team that year?",
-          "intention": "What was the team of the player with the highest points in the Cy Young award in 1956?",
+          "utterance": "Can you also provide the closing odds for these matches?",
+          "intention": "What were the closing odds for home, draw, and away for the matches played in Norway in 2009?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE",
-              "THEHISTORYOFBASEBALL_SALARY"
+              "WORLDSOCCERDATABASE_BETFRONT"
             ],
-            "golden_sql": "SELECT S.TEAM_ID FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE P ON S.PLAYER_ID = P.PLAYER_ID AND S.YEAR = P.YEAR WHERE P.AWARD_ID = 'Cy Young' AND P.YEAR = 1956 ORDER BY P.POINTS_WON DESC FETCH FIRST 1 ROWS ONLY"
+            "golden_sql": "SELECT HOME_CLOSING, DRAW_CLOSING, AWAY_CLOSING FROM WORLDSOCCERDATABASE_BETFRONT WHERE COUNTRY = 'norway' AND YEAR = 2009"
           }
         }
       ]
@@ -313,39 +307,37 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
-          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "utterance": "Which matches were played in Norway in 2009?",
+          "intention": "Which matches were played in Norway in 2009?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "WORLDSOCCERDATABASE_BETFRONT"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+            "golden_sql": "SELECT MATCH FROM WORLDSOCCERDATABASE_BETFRONT WHERE COUNTRY = 'norway' AND YEAR = 2009"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What are the full names of these players?",
-          "intention": "What are the full names of the players inducted into the Hall of Fame in 1936?",
+          "utterance": "What were the opening odds for these matches?",
+          "intention": "What were the opening odds for the matches played in Norway in 2009?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER",
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "WORLDSOCCERDATABASE_BETFRONT"
             ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y')"
+            "golden_sql": "SELECT MATCH, HOME_OPENING, DRAW_OPENING, AWAY_OPENING FROM WORLDSOCCERDATABASE_BETFRONT WHERE COUNTRY = 'norway' AND YEAR = 2009"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Can you tell me their birth countries?",
-          "intention": "What are the birth countries of the players inducted into the Hall of Fame in 1936?",
+          "utterance": "And what were the closing odds for these matches?",
+          "intention": "What were the closing odds for the matches played in Norway in 2009?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER",
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "WORLDSOCCERDATABASE_BETFRONT"
             ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST, BIRTH_COUNTRY FROM THEHISTORYOFBASEBALL_PLAYER WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y')"
+            "golden_sql": "SELECT MATCH, HOME_CLOSING, DRAW_CLOSING, AWAY_CLOSING FROM WORLDSOCCERDATABASE_BETFRONT WHERE COUNTRY = 'norway' AND YEAR = 2009"
           }
         }
       ]
@@ -357,38 +349,38 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Who was awarded the Triple Crown?",
-          "intention": "Who was awarded the Triple Crown?",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What year did this happen?",
-          "intention": "What year was the Triple Crown awarded to the player?",
+          "utterance": "What are the first and last names of these players?",
+          "intention": "What are the first and last names of the players inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER"
             ],
-            "golden_sql": "SELECT YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Can you tell me the first and last name of this player?",
-          "intention": "What is the first and last name of the player who was awarded the Triple Crown?",
+          "utterance": "Can you tell me the total votes each of them received?",
+          "intention": "What are the total votes received by the players inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER",
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID WHERE THEHISTORYOFBASEBALL_PLAYER_AWARD.AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT PLAYER_ID, VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
           }
         }
       ]
@@ -400,39 +392,38 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
-          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "utterance": "Which players have won the Pitching Triple Crown award?",
+          "intention": "Which players have won the Pitching Triple Crown award?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Pitching Triple Crown';"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What awards did these players win?",
-          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+          "utterance": "What years did they win the award?",
+          "intention": "What years did the players who won the Pitching Triple Crown award receive it?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT DISTINCT PA.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME HF ON PA.PLAYER_ID = HF.PLAYER_ID WHERE HF.YEARID = 1936 AND HF.INDUCTED = 'Y'"
+            "golden_sql": "SELECT PLAYER_ID, YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Pitching Triple Crown';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "How many votes did they receive for awards?",
-          "intention": "How many votes did the players inducted into the Hall of Fame in 1936 receive for awards?",
+          "utterance": "What were their salaries in those years?",
+          "intention": "What were the salaries of the players who won the Pitching Triple Crown award in the years they received the award?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE",
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
+              "THEHISTORYOFBASEBALL_SALARY"
             ],
-            "golden_sql": "SELECT V.PLAYER_ID, SUM(V.POINTS_WON) AS TOTAL_POINTS FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME HF ON V.PLAYER_ID = HF.PLAYER_ID WHERE HF.YEARID = 1936 AND HF.INDUCTED = 'Y' GROUP BY V.PLAYER_ID"
+            "golden_sql": "SELECT S.PLAYER_ID, S.SALARY, S.YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID AND P.YEAR = S.YEAR WHERE P.AWARD_ID = 'Pitching Triple Crown';"
           }
         }
       ]
@@ -444,38 +435,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Who has won a Triple Crown award?",
-          "intention": "Which players have won a Triple Crown award?",
+          "utterance": "Who was inducted into the Hall of Fame in 1936?",
+          "intention": "Who was inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT DISTINCT THEHISTORYOFBASEBALL_PLAYER.NAME_FIRST, THEHISTORYOFBASEBALL_PLAYER.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID WHERE THEHISTORYOFBASEBALL_PLAYER_AWARD.AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What year did they win this award?",
-          "intention": "What year did the players who won the Triple Crown award receive it?",
+          "utterance": "What awards did those players win?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
           "ground_truths": {
             "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT DISTINCT P.AWARD_ID, P.YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Can you tell me their league as well?",
-          "intention": "What is the league of the players who won the Triple Crown award?",
+          "utterance": "What were their salaries in 1985?",
+          "intention": "What were the salaries of the players inducted into the Hall of Fame in 1936 in 1985?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_SALARY"
             ],
-            "golden_sql": "SELECT LEAGUE_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR = 1985"
           }
         }
       ]
@@ -487,305 +479,46 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which players were inducted into the Hall of Fame by BBWAA in 1936?",
-          "intention": "Which players were inducted into the Hall of Fame by BBWAA in 1936?",
+          "utterance": "Which players were born in Mobile, AL?",
+          "intention": "Which players were born in Mobile, AL?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE VOTEDBY = 'BBWAA' AND YEARID = 1936 AND INDUCTED = 'Y';"
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_CITY = 'Mobile' AND BIRTH_STATE = 'AL'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What were the votes they received?",
-          "intention": "What were the votes received by the players inducted into the Hall of Fame by BBWAA in 1936?",
+          "utterance": "Did any of them win award votes?",
+          "intention": "Did any of the players born in Mobile, AL win award votes?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT PLAYER_ID, VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE VOTEDBY = 'BBWAA' AND YEARID = 1936 AND INDUCTED = 'Y';"
+            "golden_sql": "SELECT DISTINCT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V ON P.PLAYER_ID = V.PLAYER_ID WHERE P.BIRTH_CITY = 'Mobile' AND P.BIRTH_STATE = 'AL'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Can you also tell me the category they were inducted under?",
-          "intention": "What is the category under which the players inducted into the Hall of Fame by BBWAA in 1936 were inducted?",
+          "utterance": "Can you check if they received votes in their first year of salary records?",
+          "intention": "Did the players born in Mobile, AL who won award votes receive votes in their first year of salary records?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE",
+              "THEHISTORYOFBASEBALL_SALARY"
             ],
-            "golden_sql": "SELECT PLAYER_ID, CATEGORY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE VOTEDBY = 'BBWAA' AND YEARID = 1936 AND INDUCTED = 'Y';"
+            "golden_sql": "SELECT DISTINCT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V ON P.PLAYER_ID = V.PLAYER_ID JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID WHERE P.BIRTH_CITY = 'Mobile' AND P.BIRTH_STATE = 'AL' AND S.YEAR = (SELECT MIN(S2.YEAR) FROM THEHISTORYOFBASEBALL_SALARY S2 WHERE S2.PLAYER_ID = P.PLAYER_ID)"
           }
         }
       ]
     },
     {
       "experiment_id": "13",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which players were born in the USA?",
-          "intention": "Which players were born in the USA?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER"
-            ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_COUNTRY = 'USA';"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What are their birth years?",
-          "intention": "What are the birth years of the players born in the USA?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER"
-            ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST, BIRTH_YEAR FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_COUNTRY = 'USA';"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Can you also tell me their birth cities?",
-          "intention": "What are the birth cities of the players born in the USA?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER"
-            ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST, BIRTH_CITY FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_COUNTRY = 'USA';"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "14",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
-          "intention": "Which players were inducted into the Hall of Fame in 1936?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
-            ],
-            "golden_sql": "SELECT DISTINCT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What awards did these players win?",
-          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
-            ],
-            "golden_sql": "SELECT DISTINCT A.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD A JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON A.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What were the salaries of these players in 1985?",
-          "intention": "What were the salaries of the players inducted into the Hall of Fame in 1936 during the year 1985?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_SALARY",
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
-            ],
-            "golden_sql": "SELECT DISTINCT S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR = 1985"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "15",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What is the concentration of pesticides for the commodity 'AP' and commodity type 'FR'?",
-          "intention": "What is the concentration of pesticides for the commodity 'AP' and commodity type 'FR'?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "PESTICIDE_RESULTSdata15"
-            ],
-            "golden_sql": "SELECT CONCEN FROM PESTICIDE_RESULTSdata15 WHERE COMMOD = 'AP' AND COMMTYPE = 'FR'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "Which testing lab analyzed these samples?",
-          "intention": "Which testing lab analyzed the samples with commodity 'AP' and commodity type 'FR'?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "PESTICIDE_RESULTSdata15"
-            ],
-            "golden_sql": "SELECT DISTINCT LAB FROM PESTICIDE_RESULTSdata15 WHERE COMMOD = 'AP' AND COMMTYPE = 'FR'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What is the origin of the samples analyzed by this lab?",
-          "intention": "What is the origin of the samples analyzed by the lab identified in the previous interaction?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "PESTICIDE_SAMPLEdata15",
-              "PESTICIDE_RESULTSdata15"
-            ],
-            "golden_sql": "SELECT DISTINCT ORIGIN FROM PESTICIDE_SAMPLEdata15 WHERE SAMPLE_PK IN (SELECT SAMPLE_PK FROM PESTICIDE_RESULTSdata15 WHERE COMMOD = 'AP' AND COMMTYPE = 'FR' AND LAB = 'WA1')"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "16",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "What is the average scale score for all students in Alaska in 2017?",
-          "intention": "What is the average scale score for all students in Alaska in 2017?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8"
-            ],
-            "golden_sql": "SELECT AVERAGE_SCALE_SCORE FROM STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8 WHERE STATE = 'Alaska' AND YEAR = 2017"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "How many records are there for Alaska?",
-          "intention": "How many records are there for Alaska?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
-            ],
-            "golden_sql": "SELECT RECORDS_CNT FROM STUDENTMATHSCORE_FINREV_FED_KEY_17 WHERE STATE = 'Alaska'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What is the total federal revenue for Alaska in 2017?",
-          "intention": "What is the total federal revenue for Alaska in 2017?",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "STUDENTMATHSCORE_FINREV_FED_17",
-              "STUDENTMATHSCORE_FINREV_FED_KEY_17"
-            ],
-            "golden_sql": "SELECT T_FED_REV FROM STUDENTMATHSCORE_FINREV_FED_17 JOIN STUDENTMATHSCORE_FINREV_FED_KEY_17 ON STUDENTMATHSCORE_FINREV_FED_17.STATE_CODE = STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE_CODE WHERE STUDENTMATHSCORE_FINREV_FED_KEY_17.STATE = 'Alaska' AND YR_DATA = 2017"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "17",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
-          "intention": "Find the players who were inducted into the Hall of Fame in the year 1936.",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
-            ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What are the full names of these players?",
-          "intention": "Find the full names of the players who were inducted into the Hall of Fame in 1936.",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
-              "THEHISTORYOFBASEBALL_PLAYER"
-            ],
-            "golden_sql": "SELECT THEHISTORYOFBASEBALL_PLAYER.NAME_FIRST, THEHISTORYOFBASEBALL_PLAYER.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.YEARID = 1936 AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y'"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "What were their birth years and countries?",
-          "intention": "Find the birth years and countries of the players who were inducted into the Hall of Fame in 1936.",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
-              "THEHISTORYOFBASEBALL_PLAYER"
-            ],
-            "golden_sql": "SELECT THEHISTORYOFBASEBALL_PLAYER.BIRTH_YEAR, THEHISTORYOFBASEBALL_PLAYER.BIRTH_COUNTRY FROM THEHISTORYOFBASEBALL_PLAYER JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.YEARID = 1936 AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y'"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "18",
-      "total_expected_interactions": 3,
-      "interactions": [
-        {
-          "interaction_id": "1",
-          "speaker": "User",
-          "utterance": "Who were the players inducted into the Hall of Fame by BBWAA?",
-          "intention": "Find the players inducted into the Hall of Fame by BBWAA.",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
-              "THEHISTORYOFBASEBALL_PLAYER"
-            ],
-            "golden_sql": "SELECT THEHISTORYOFBASEBALL_PLAYER.NAME_FIRST, THEHISTORYOFBASEBALL_PLAYER.NAME_LAST FROM THEHISTORYOFBASEBALL_HALL_OF_FAME JOIN THEHISTORYOFBASEBALL_PLAYER ON THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.VOTEDBY = 'BBWAA' AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y';"
-          }
-        },
-        {
-          "interaction_id": "2",
-          "speaker": "User",
-          "utterance": "What year were they inducted?",
-          "intention": "Find the year the players inducted into the Hall of Fame by BBWAA were inducted.",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
-              "THEHISTORYOFBASEBALL_PLAYER"
-            ],
-            "golden_sql": "SELECT THEHISTORYOFBASEBALL_PLAYER.NAME_FIRST, THEHISTORYOFBASEBALL_PLAYER.NAME_LAST, THEHISTORYOFBASEBALL_HALL_OF_FAME.YEARID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME JOIN THEHISTORYOFBASEBALL_PLAYER ON THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.VOTEDBY = 'BBWAA' AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y';"
-          }
-        },
-        {
-          "interaction_id": "3",
-          "speaker": "User",
-          "utterance": "Did any of these players receive an award?",
-          "intention": "Find out if any of the players inducted into the Hall of Fame by BBWAA received an award.",
-          "ground_truths": {
-            "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
-              "THEHISTORYOFBASEBALL_PLAYER",
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
-            ],
-            "golden_sql": "SELECT DISTINCT THEHISTORYOFBASEBALL_PLAYER.NAME_FIRST, THEHISTORYOFBASEBALL_PLAYER.NAME_LAST, THEHISTORYOFBASEBALL_PLAYER_AWARD.AWARD_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME JOIN THEHISTORYOFBASEBALL_PLAYER ON THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.VOTEDBY = 'BBWAA' AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y';"
-          }
-        }
-      ]
-    },
-    {
-      "experiment_id": "19",
       "total_expected_interactions": 3,
       "interactions": [
         {
@@ -803,28 +536,292 @@
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "Which awards did these players receive?",
-          "intention": "Which awards were received by the players inducted into the Hall of Fame in 1936?",
+          "utterance": "Did any of these players win awards?",
+          "intention": "Did any of the players inducted into the Hall of Fame in 1936 win awards?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_HALL_OF_FAME",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT DISTINCT P.AWARD_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD P ON H.PLAYER_ID = P.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
+            "golden_sql": "SELECT DISTINCT P.PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD P ON H.PLAYER_ID = P.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "How many votes did they receive for each award?",
-          "intention": "How many votes did the players inducted into the Hall of Fame in 1936 receive for each award?",
+          "utterance": "What awards did they win?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_HALL_OF_FAME",
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT P.PLAYER_ID, P.AWARD_ID, P.YEAR FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD P ON H.PLAYER_ID = P.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "14",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Who were the players born in Mobile, Alabama?",
+          "intention": "Who were the players born in Mobile, Alabama?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER"
+            ],
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_CITY = 'Mobile' AND BIRTH_STATE = 'AL';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Did any of these players win an award?",
+          "intention": "Did any of the players born in Mobile, Alabama win an award?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT DISTINCT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.BIRTH_CITY = 'Mobile' AND P.BIRTH_STATE = 'AL';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What was the highest salary for these players?",
+          "intention": "What was the highest salary for the players born in Mobile, Alabama?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT MAX(S.SALARY) FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID WHERE P.BIRTH_CITY = 'Mobile' AND P.BIRTH_STATE = 'AL';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "15",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Who were inducted into the Hall of Fame in 1936?",
+          "intention": "Who were inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What awards did they win?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT V.AWARD_ID, V.VOTES_FIRST FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD P ON H.PLAYER_ID = P.PLAYER_ID JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V ON P.AWARD_ID = V.AWARD_ID AND P.YEAR = V.YEAR AND P.PLAYER_ID = V.PLAYER_ID AND P.LEAGUE_ID = V.LEAGUE_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
+            "golden_sql": "SELECT DISTINCT P.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What was their salary in 1985?",
+          "intention": "What was the salary of the players inducted into the Hall of Fame in 1936 in 1985?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR = 1985;"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "16",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Who are the baseball players born in Denver, Colorado?",
+          "intention": "Who are the baseball players born in Denver, Colorado?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER"
+            ],
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_CITY = 'Denver' AND BIRTH_STATE = 'CO'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What awards have been won by these players?",
+          "intention": "What awards have been won by the players born in Denver, Colorado?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT AWARD_ID, YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_CITY = 'Denver' AND BIRTH_STATE = 'CO')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "And in what years did they receive votes for awards?",
+          "intention": "In what years did the players born in Denver, Colorado receive votes for awards?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+            ],
+            "golden_sql": "SELECT YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_CITY = 'Denver' AND BIRTH_STATE = 'CO')"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "17",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which artists released an album in 1985?",
+          "intention": "Which artists released an album in 1985?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "WHATCDHIPHOP_TORRENTS"
+            ],
+            "golden_sql": "SELECT ARTIST FROM WHATCDHIPHOP_TORRENTS WHERE GROUP_YEAR = 1985 AND RELEASE_TYPE = 'album';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many times has their albums been snatched?",
+          "intention": "How many times have the albums released by these artists in 1985 been snatched?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "WHATCDHIPHOP_TORRENTS"
+            ],
+            "golden_sql": "SELECT ARTIST, SUM(TOTAL_SNATCHED) AS TOTAL_SNATCHED FROM WHATCDHIPHOP_TORRENTS WHERE GROUP_YEAR = 1985 AND RELEASE_TYPE = 'album' GROUP BY ARTIST;"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the tags associated with their albums?",
+          "intention": "What are the tags associated with the albums released by these artists in 1985?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "WHATCDHIPHOP_TORRENTS",
+              "WHATCDHIPHOP_TAGS"
+            ],
+            "golden_sql": "SELECT T.ARTIST, WT.TAG FROM WHATCDHIPHOP_TORRENTS T JOIN WHATCDHIPHOP_TAGS WT ON T.ID = WT.ID WHERE T.GROUP_YEAR = 1985 AND T.RELEASE_TYPE = 'album';"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "18",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the full names of these players?",
+          "intention": "What are the full names of the players inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER"
+            ],
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y');"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What was the salary of these players in 1985?",
+          "intention": "What was the salary of the players inducted into the Hall of Fame in 1936 in 1985?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_SALARY"
+            ],
+            "golden_sql": "SELECT PLAYER_ID, SALARY FROM THEHISTORYOFBASEBALL_SALARY WHERE YEAR = 1985 AND PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y');"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "19",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Who were inducted into the Hall of Fame in 1936?",
+          "intention": "Who were inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+            ],
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER INNER JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.YEARID = 1936 AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y';"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What were their birth countries?",
+          "intention": "What were the birth countries of the players inducted into the Hall of Fame in 1936?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER"
+            ],
+            "golden_sql": "SELECT DISTINCT THEHISTORYOFBASEBALL_PLAYER.NAME_FIRST, THEHISTORYOFBASEBALL_PLAYER.NAME_LAST, THEHISTORYOFBASEBALL_PLAYER.BIRTH_COUNTRY FROM THEHISTORYOFBASEBALL_PLAYER INNER JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.YEARID = 1936 AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y';"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Did any of them win a Triple Crown?",
+          "intention": "Did any of the players inducted into the Hall of Fame in 1936 win a Triple Crown?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+            ],
+            "golden_sql": "SELECT DISTINCT THEHISTORYOFBASEBALL_PLAYER.NAME_FIRST, THEHISTORYOFBASEBALL_PLAYER.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER INNER JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_HALL_OF_FAME.PLAYER_ID INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID WHERE THEHISTORYOFBASEBALL_HALL_OF_FAME.YEARID = 1936 AND THEHISTORYOFBASEBALL_HALL_OF_FAME.INDUCTED = 'Y' AND THEHISTORYOFBASEBALL_PLAYER_AWARD.AWARD_ID = 'Triple Crown';"
           }
         }
       ]
@@ -837,38 +834,36 @@
           "interaction_id": "1",
           "speaker": "User",
           "utterance": "Which players were inducted into the Hall of Fame in 1936?",
-          "intention": "Find the players who were inducted into the Hall of Fame in 1936.",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What are the full names of these players?",
-          "intention": "What are the full names of the players inducted into the Hall of Fame in 1936?",
+          "utterance": "What were the votes they received?",
+          "intention": "What were the votes received by the players inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER",
               "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
+            "golden_sql": "SELECT PLAYER_ID, VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What were their birthplaces?",
-          "intention": "What are the birthplaces of the players inducted into the Hall of Fame in 1936?",
+          "utterance": "Also, tell me who voted for them.",
+          "intention": "Who voted for the players inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER",
               "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT P.BIRTH_CITY, P.BIRTH_STATE, P.BIRTH_COUNTRY FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
+            "golden_sql": "SELECT PLAYER_ID, VOTEDBY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
           }
         }
       ]
@@ -880,38 +875,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Who won the Triple Crown award?",
-          "intention": "Who won the Triple Crown award?",
+          "utterance": "Which players were born in the USA and weigh more than 200 pounds?",
+          "intention": "Which players were born in the USA and weigh more than 200 pounds?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+              "THEHISTORYOFBASEBALL_PLAYER"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_COUNTRY = 'USA' AND WEIGHT > 200"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "Which year did they win it?",
-          "intention": "Which year did the players who won the Triple Crown award win it?",
+          "utterance": "Did any of these players win the Triple Crown award?",
+          "intention": "Did any of the players born in the USA and weighing more than 200 pounds win the Triple Crown award?",
           "ground_truths": {
             "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_PLAYER",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT PLAYER_ID, YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.BIRTH_COUNTRY = 'USA' AND P.WEIGHT > 200 AND A.AWARD_ID = 'Triple Crown'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What were their total points won in those years?",
-          "intention": "What were the total points won by the players who won the Triple Crown award in their winning years?",
+          "utterance": "For those who won, in which year did they receive the award?",
+          "intention": "For the players born in the USA and weighing more than 200 pounds who won the Triple Crown award, in which year did they receive the award?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT P.PLAYER_ID, V.POINTS_WON FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V ON P.AWARD_ID = V.AWARD_ID AND P.YEAR = V.YEAR AND P.PLAYER_ID = V.PLAYER_ID WHERE P.AWARD_ID = 'Triple Crown'"
+            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.YEAR FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.BIRTH_COUNTRY = 'USA' AND P.WEIGHT > 200 AND A.AWARD_ID = 'Triple Crown'"
           }
         }
       ]
@@ -923,39 +919,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which players were born in the USA?",
-          "intention": "Find the players who were born in the USA.",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_COUNTRY = 'USA'"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What awards have they received?",
-          "intention": "What awards have the players retrieved in the previous interaction received?",
+          "utterance": "What awards did these players win?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID, A.YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD A JOIN THEHISTORYOFBASEBALL_PLAYER P ON A.PLAYER_ID = P.PLAYER_ID WHERE P.BIRTH_COUNTRY = 'USA'"
+            "golden_sql": "SELECT DISTINCT P.AWARD_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD P ON H.PLAYER_ID = P.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Can you tell me their salaries as well?",
-          "intention": "What are the salaries of the players retrieved in the first interaction?",
+          "utterance": "And what were their salaries in 1985?",
+          "intention": "What were the salaries of the players inducted into the Hall of Fame in 1936 in 1985?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_SALARY",
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_SALARY"
             ],
-            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_PLAYER P ON S.PLAYER_ID = P.PLAYER_ID WHERE P.BIRTH_COUNTRY = 'USA'"
+            "golden_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_SALARY S ON H.PLAYER_ID = S.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR = 1985;"
           }
         }
       ]
@@ -967,40 +963,40 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Who were inducted into the Hall of Fame by BBWAA in 1936?",
-          "intention": "Who were inducted into the Hall of Fame by BBWAA in 1936?",
+          "utterance": "Who are the players born in Mobile, Alabama?",
+          "intention": "Who are the players born in Mobile, Alabama?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER"
             ],
-            "golden_sql": "SELECT PLAYER_ID, YEARID, VOTEDBY, BALLOTS, NEEDED, VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE VOTEDBY = 'BBWAA' AND YEARID = 1936 AND INDUCTED = 'Y'"
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_CITY = 'Mobile' AND BIRTH_STATE = 'AL'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "Which awards did these players win?",
-          "intention": "Which awards did the players inducted into the Hall of Fame by BBWAA in 1936 win?",
+          "utterance": "What awards have they won?",
+          "intention": "What awards have the players born in Mobile, Alabama won?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE",
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT A.AWARD_ID, A.YEAR, A.LEAGUE_ID, A.PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME P ON A.PLAYER_ID = P.PLAYER_ID WHERE P.VOTEDBY = 'BBWAA' AND P.YEARID = 1936 AND P.INDUCTED = 'Y'"
+            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID, A.YEAR FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.BIRTH_CITY = 'Mobile' AND P.BIRTH_STATE = 'AL'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What were their salaries in the years they won these awards?",
-          "intention": "What were the salaries of the players inducted into the Hall of Fame by BBWAA in 1936 in the years they won these awards?",
+          "utterance": "What were their salaries in the years they won awards?",
+          "intention": "What were the salaries of players born in Mobile, Alabama in the years they won awards?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_SALARY",
+              "THEHISTORYOFBASEBALL_PLAYER",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE",
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_SALARY"
             ],
-            "golden_sql": "SELECT S.PLAYER_ID, S.YEAR, S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON S.PLAYER_ID = A.PLAYER_ID AND S.YEAR = A.YEAR JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME P ON P.PLAYER_ID = S.PLAYER_ID WHERE P.VOTEDBY = 'BBWAA' AND P.YEARID = 1936 AND P.INDUCTED = 'Y'"
+            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.YEAR, S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON P.PLAYER_ID = A.PLAYER_ID JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID WHERE P.BIRTH_CITY = 'Mobile' AND P.BIRTH_STATE = 'AL' AND A.YEAR = S.YEAR"
           }
         }
       ]
@@ -1012,40 +1008,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "What awards did Hank win?",
-          "intention": "What awards did Hank win?",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER",
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT DISTINCT AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE PLAYER_ID = (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER WHERE NAME_FIRST = 'Hank' AND NAME_LAST = 'Aaron')"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "How many points did Hank win for those awards?",
-          "intention": "How many points did Hank win for those awards?",
+          "utterance": "What are the first and last names of these players?",
+          "intention": "What are the first and last names of the players inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER",
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER"
             ],
-            "golden_sql": "SELECT SUM(POINTS_WON) FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE PLAYER_ID = (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER WHERE NAME_FIRST = 'Hank' AND NAME_LAST = 'Aaron')"
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y')"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What was the maximum points he earned in a year?",
-          "intention": "What was the maximum points Hank earned in a year?",
+          "utterance": "Did any of these players receive points in award votes?",
+          "intention": "Did any of the players inducted into the Hall of Fame in 1936 receive points in award votes?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT MAX(POINTS_WON) FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE PLAYER_ID = (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER WHERE NAME_FIRST = 'Hank' AND NAME_LAST = 'Aaron')"
+            "golden_sql": "SELECT DISTINCT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE PLAYER_ID IN (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y') AND POINTS_WON > 0"
           }
         }
       ]
@@ -1057,39 +1052,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
-          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "utterance": "Which players were born in Mobile, Alabama?",
+          "intention": "Which players were born in Mobile, Alabama?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_CITY = 'Mobile' AND BIRTH_STATE = 'AL'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What awards did these players win?",
-          "intention": "What awards were won by the players inducted into the Hall of Fame in 1936?",
+          "utterance": "What awards did they win?",
+          "intention": "What awards did the players born in Mobile, Alabama win?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT DISTINCT P.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
+            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID, A.YEAR FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.BIRTH_CITY = 'Mobile' AND P.BIRTH_STATE = 'AL'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What were their salaries in the same year?",
-          "intention": "What were the salaries of players inducted into the Hall of Fame in 1936 during the same year?",
+          "utterance": "And what were their salaries?",
+          "intention": "What were the salaries of the players born in Mobile, Alabama?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_SALARY",
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_SALARY"
             ],
-            "golden_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR = 1936"
+            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, S.SALARY, S.YEAR FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID WHERE P.BIRTH_CITY = 'Mobile' AND P.BIRTH_STATE = 'AL'"
           }
         }
       ]
@@ -1101,39 +1096,40 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which players won the 'Pitching Triple Crown' award before 1900?",
-          "intention": "Which players won the 'Pitching Triple Crown' award before 1900?",
+          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
+          "intention": "Which players were inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT PLAYER_ID, YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Pitching Triple Crown' AND YEAR < 1900"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What was their salary in the same year?",
-          "intention": "What was the salary of these players in the same year they won the 'Pitching Triple Crown' award before 1900?",
+          "utterance": "What awards did those players win?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_SALARY"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER_AWARD A JOIN THEHISTORYOFBASEBALL_SALARY S ON A.PLAYER_ID = S.PLAYER_ID AND A.YEAR = S.YEAR WHERE A.AWARD_ID = 'Pitching Triple Crown' AND A.YEAR < 1900"
+            "golden_sql": "SELECT DISTINCT PA.AWARD_ID, PA.YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME HF ON PA.PLAYER_ID = HF.PLAYER_ID WHERE HF.YEARID = 1936 AND HF.INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "How many points did they win for this award?",
-          "intention": "How many points did these players win for the 'Pitching Triple Crown' award in the same year before 1900?",
+          "utterance": "How many first-place votes did they receive for those awards?",
+          "intention": "How many first-place votes did the players inducted into the Hall of Fame in 1936 receive for the awards they won?",
           "ground_truths": {
             "tables_from_schema_linking": [
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT V.PLAYER_ID, V.POINTS_WON FROM THEHISTORYOFBASEBALL_PLAYER_AWARD A JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V ON A.PLAYER_ID = V.PLAYER_ID AND A.YEAR = V.YEAR WHERE A.AWARD_ID = 'Pitching Triple Crown' AND A.YEAR < 1900"
+            "golden_sql": "SELECT V.AWARD_ID, V.VOTES_FIRST FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD PA ON V.AWARD_ID = PA.AWARD_ID AND V.YEAR = PA.YEAR AND V.LEAGUE_ID = PA.LEAGUE_ID AND V.PLAYER_ID = PA.PLAYER_ID JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME HF ON PA.PLAYER_ID = HF.PLAYER_ID WHERE HF.YEARID = 1936 AND HF.INDUCTED = 'Y';"
           }
         }
       ]
@@ -1145,39 +1141,38 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which players received the 'Pitching Triple Crown' award?",
-          "intention": "Which players received the 'Pitching Triple Crown' award?",
+          "utterance": "Which players won the Triple Crown award?",
+          "intention": "Which players won the Triple Crown award?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Pitching Triple Crown'"
+            "golden_sql": "SELECT PLAYER_ID, YEAR, LEAGUE_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown';"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What is the birth country of these players?",
-          "intention": "What is the birth country of the players who received the 'Pitching Triple Crown' award?",
+          "utterance": "What is the latest year a player won this award?",
+          "intention": "What is the latest year a player won the Triple Crown award?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT P.BIRTH_COUNTRY FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD PA ON P.PLAYER_ID = PA.PLAYER_ID WHERE PA.AWARD_ID = 'Pitching Triple Crown'"
+            "golden_sql": "SELECT MAX(YEAR) AS LATEST_YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Can you tell me their birth years as well?",
-          "intention": "What are the birth years of the players who received the 'Pitching Triple Crown' award?",
+          "utterance": "How much was the salary of the player who won it in that year?",
+          "intention": "What was the salary of the player who won the Triple Crown award in the latest year?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_SALARY"
             ],
-            "golden_sql": "SELECT P.BIRTH_YEAR FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD PA ON P.PLAYER_ID = PA.PLAYER_ID WHERE PA.AWARD_ID = 'Pitching Triple Crown'"
+            "golden_sql": "SELECT S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID AND P.YEAR = S.YEAR WHERE P.AWARD_ID = 'Triple Crown' AND P.YEAR = (SELECT MAX(YEAR) FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown');"
           }
         }
       ]
@@ -1189,39 +1184,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which players from the USA weigh more than 200 pounds?",
-          "intention": "Find the players born in the USA who weigh more than 200 pounds.",
+          "utterance": "Who were inducted into the Hall of Fame in 1936?",
+          "intention": "Who were inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_COUNTRY = 'USA' AND WEIGHT > 200"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What awards did they win?",
-          "intention": "Find the awards won by the players born in the USA who weigh more than 200 pounds.",
+          "utterance": "What is the birth year and birthplace of these players?",
+          "intention": "What is the birth year and birthplace of the players inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER",
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER"
             ],
-            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.BIRTH_COUNTRY = 'USA' AND P.WEIGHT > 200"
+            "golden_sql": "SELECT P.PLAYER_ID, P.BIRTH_YEAR, P.BIRTH_COUNTRY, P.BIRTH_STATE, P.BIRTH_CITY FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "When did they win their first award?",
-          "intention": "Find the year when the players born in the USA who weigh more than 200 pounds won their first award.",
+          "utterance": "Did any of them win awards?",
+          "intention": "Did any of the players inducted into the Hall of Fame in 1936 win awards?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
               "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, MIN(A.YEAR) AS FIRST_AWARD_YEAR FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.BIRTH_COUNTRY = 'USA' AND P.WEIGHT > 200 GROUP BY P.NAME_FIRST, P.NAME_LAST"
+            "golden_sql": "SELECT DISTINCT PA.PLAYER_ID, PA.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON PA.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
           }
         }
       ]
@@ -1233,39 +1228,40 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Who were inducted into the Hall of Fame in 1936?",
-          "intention": "Find the players who were inducted into the Hall of Fame in 1936.",
+          "utterance": "Which songs from 1985 are tagged as electro?",
+          "intention": "Which songs from 1985 have the tag electro?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
+              "WHATCDHIPHOP_TAGS",
+              "WHATCDHIPHOP_TORRENTS"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+            "golden_sql": "SELECT WHATCDHIPHOP_TORRENTS.GROUP_NAME FROM WHATCDHIPHOP_TAGS INNER JOIN WHATCDHIPHOP_TORRENTS ON WHATCDHIPHOP_TAGS.ID = WHATCDHIPHOP_TORRENTS.ID WHERE WHATCDHIPHOP_TAGS.TAG = 'electro' AND WHATCDHIPHOP_TORRENTS.GROUP_YEAR = 1985"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What awards have they won?",
-          "intention": "Find the awards won by the players inducted into the Hall of Fame in 1936.",
+          "utterance": "How many times were these songs snatched?",
+          "intention": "How many times were the songs tagged as electro from 1985 snatched?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
+              "WHATCDHIPHOP_TAGS",
+              "WHATCDHIPHOP_TORRENTS"
             ],
-            "golden_sql": "SELECT DISTINCT P.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
+            "golden_sql": "SELECT SUM(WHATCDHIPHOP_TORRENTS.TOTAL_SNATCHED) FROM WHATCDHIPHOP_TAGS INNER JOIN WHATCDHIPHOP_TORRENTS ON WHATCDHIPHOP_TAGS.ID = WHATCDHIPHOP_TORRENTS.ID WHERE WHATCDHIPHOP_TAGS.TAG = 'electro' AND WHATCDHIPHOP_TORRENTS.GROUP_YEAR = 1985"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What is the salary of those players in 1985?",
-          "intention": "Find the salary in 1985 of the players inducted into the Hall of Fame in 1936.",
+          "utterance": "What are the release types of these songs?",
+          "intention": "What are the release types of the songs tagged as electro from 1985?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
-              "THEHISTORYOFBASEBALL_SALARY"
+              "WHATCDHIPHOP_TAGS",
+              "WHATCDHIPHOP_TORRENTS"
             ],
-            "golden_sql": "SELECT S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR = 1985"
+            "golden_sql": "SELECT DISTINCT WHATCDHIPHOP_TORRENTS.RELEASE_TYPE FROM WHATCDHIPHOP_TAGS INNER JOIN WHATCDHIPHOP_TORRENTS ON WHATCDHIPHOP_TAGS.ID = WHATCDHIPHOP_TORRENTS.ID WHERE WHATCDHIPHOP_TAGS.TAG = 'electro' AND WHATCDHIPHOP_TORRENTS.GROUP_YEAR = 1985"
           }
         }
       ]
@@ -1277,37 +1273,40 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Who are the players born in Alabama, USA?",
-          "intention": "Who are the players born in Alabama, USA?",
+          "utterance": "Who was inducted into the Hall of Fame in 1936?",
+          "intention": "Who was inducted into the Hall of Fame in 1936?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME"
             ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_STATE = 'AL' AND BIRTH_COUNTRY = 'USA';"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What are their birth years?",
-          "intention": "What are the birth years of the players born in Alabama, USA?",
+          "utterance": "What awards did they win?",
+          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST, BIRTH_YEAR FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_STATE = 'AL' AND BIRTH_COUNTRY = 'USA';"
+            "golden_sql": "SELECT DISTINCT PA.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME HF ON PA.PLAYER_ID = HF.PLAYER_ID WHERE HF.YEARID = 1936 AND HF.INDUCTED = 'Y';"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "Can you also list their weights?",
-          "intention": "What are the weights of the players born in Alabama, USA?",
+          "utterance": "How many votes did they receive for their awards?",
+          "intention": "How many votes did the players inducted into the Hall of Fame in 1936 receive for their awards?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER"
+              "THEHISTORYOFBASEBALL_HALL_OF_FAME",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT NAME_FIRST, NAME_LAST, WEIGHT FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_STATE = 'AL' AND BIRTH_COUNTRY = 'USA';"
+            "golden_sql": "SELECT V.PLAYER_ID, V.AWARD_ID, V.VOTES_FIRST FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE V JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD PA ON V.PLAYER_ID = PA.PLAYER_ID AND V.AWARD_ID = PA.AWARD_ID JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME HF ON PA.PLAYER_ID = HF.PLAYER_ID WHERE HF.YEARID = 1936 AND HF.INDUCTED = 'Y';"
           }
         }
       ]
@@ -1319,39 +1318,39 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Which players were inducted into the Hall of Fame in 1936?",
-          "intention": "Which players were inducted into the Hall of Fame in 1936?",
+          "utterance": "Who won the Triple Crown award in 1878?",
+          "intention": "Who won the Triple Crown award in 1878?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "thehistoryofbaseball_hall_of_fame"
+              "THEHISTORYOFBASEBALL_PLAYER",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'"
+            "golden_sql": "SELECT NAME_FIRST, NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD ON THEHISTORYOFBASEBALL_PLAYER.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID WHERE THEHISTORYOFBASEBALL_PLAYER_AWARD.AWARD_ID = 'Triple Crown' AND THEHISTORYOFBASEBALL_PLAYER_AWARD.YEAR = 1878"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What awards did these players win?",
-          "intention": "What awards did the players inducted into the Hall of Fame in 1936 win?",
+          "utterance": "What was the league for this award?",
+          "intention": "What was the league for the Triple Crown award in 1878?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "thehistoryofbaseball_player_award",
-              "thehistoryofbaseball_hall_of_fame"
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT DISTINCT P.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD P JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON P.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'"
+            "golden_sql": "SELECT LEAGUE_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown' AND YEAR = 1878"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What were their salaries in 1985?",
-          "intention": "What were the salaries in 1985 of the players inducted into the Hall of Fame in 1936?",
+          "utterance": "How many votes did the winner receive?",
+          "intention": "How many votes did the winner of the Triple Crown award in 1878 receive?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "thehistoryofbaseball_salary",
-              "thehistoryofbaseball_hall_of_fame"
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
             ],
-            "golden_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_SALARY S JOIN THEHISTORYOFBASEBALL_HALL_OF_FAME H ON S.PLAYER_ID = H.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND S.YEAR = 1985"
+            "golden_sql": "SELECT VOTES_FIRST FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE AWARD_ID = 'Triple Crown' AND YEAR = 1878"
           }
         }
       ]
@@ -1363,38 +1362,37 @@
         {
           "interaction_id": "1",
           "speaker": "User",
-          "utterance": "Who won the Triple Crown award in 1878?",
-          "intention": "Who won the Triple Crown award in 1878?",
+          "utterance": "Who won the Pitching Triple Crown award in 1877?",
+          "intention": "Who won the Pitching Triple Crown award in 1877?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown' AND YEAR = 1878"
+            "golden_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Pitching Triple Crown' AND YEAR = 1877"
           }
         },
         {
           "interaction_id": "2",
           "speaker": "User",
-          "utterance": "What was the league of the player who won this award?",
-          "intention": "What was the league of the player who won the Triple Crown award in 1878?",
+          "utterance": "What was their league at that time?",
+          "intention": "What was the league of the player who won the Pitching Triple Crown award in 1877?",
           "ground_truths": {
             "tables_from_schema_linking": [
               "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT LEAGUE_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown' AND YEAR = 1878"
+            "golden_sql": "SELECT LEAGUE_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Pitching Triple Crown' AND YEAR = 1877"
           }
         },
         {
           "interaction_id": "3",
           "speaker": "User",
-          "utterance": "What was the salary of that player in 1985?",
-          "intention": "What was the salary of the player who won the Triple Crown award in 1878 in 1985?",
+          "utterance": "Can you also tell me if there were any notes associated with this award?",
+          "intention": "Were there any notes associated with the Pitching Triple Crown award won in 1877?",
           "ground_truths": {
             "tables_from_schema_linking": [
-              "THEHISTORYOFBASEBALL_PLAYER_AWARD",
-              "THEHISTORYOFBASEBALL_SALARY"
+              "THEHISTORYOFBASEBALL_PLAYER_AWARD"
             ],
-            "golden_sql": "SELECT SALARY FROM THEHISTORYOFBASEBALL_SALARY WHERE PLAYER_ID = (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Triple Crown' AND YEAR = 1878) AND YEAR = 1985"
+            "golden_sql": "SELECT NOTES FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE AWARD_ID = 'Pitching Triple Crown' AND YEAR = 1877"
           }
         }
       ]

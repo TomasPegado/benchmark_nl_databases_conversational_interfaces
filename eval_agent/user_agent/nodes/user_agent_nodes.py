@@ -16,6 +16,10 @@ import paths
 import eval_agent.user_agent.prompts as prompts
 from functions.gptconfig import MODEL_4O
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 # root_path = Path().absolute().parent.parent.parent.parent
 
 class EvaluatorNodes:
@@ -27,7 +31,7 @@ class EvaluatorNodes:
                 dataset_file_path='',
                 dataset_tables_path='',
                 db_connection_file=paths.DB_CONNECTION_FILE,
-                dataset_name='mondial'
+                dataset_name=os.getenv("EXPERIMENT_DATASET_NAME")
             ) 
     
         else:
@@ -470,8 +474,8 @@ class EvaluatorNodes:
             tables_from_schema_linking = []
 
         # normalizing tables names for lowercase
-        tables_ground_truth = [table.replace("MONDIAL_", "").lower() for table in tables_ground_truth]
-        tables_from_schema_linking = [table.replace("MONDIAL_", "").lower() for table in tables_from_schema_linking]
+        tables_ground_truth = [table.replace(f"{os.getenv('EXPERIMENT_NAME').upper()}_", "").lower() for table in tables_ground_truth]
+        tables_from_schema_linking = [table.replace(f"{os.getenv('EXPERIMENT_NAME').upper()}_", "").lower() for table in tables_from_schema_linking]
 
         for table in tables_ground_truth:
             if table in tables_from_schema_linking:

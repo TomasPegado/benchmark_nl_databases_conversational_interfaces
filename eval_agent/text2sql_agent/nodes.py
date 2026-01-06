@@ -2,21 +2,29 @@ from langchain_core.messages import SystemMessage
 from langgraph.graph import MessagesState
 from functions.llm_config import LLMConfig
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+import importlib
+
+experiment = os.getenv("EXPERIMENT_NAME")
+
 class TextToSQLAgentNodes:
     def __init__(self, env: str):
         self.env = env
         self.model = ""
         match self.env:
             case "tec":
-                # Importing the prompt for the mondial environment
-                from eval_agent.text2sql_agent.prompts_mondial import TEXT_TO_SQL_PROMPT as MONDIAL_TEXT_TO_SQL_PROMPT
+                # Importing the prompt for the experiment environment
+                prompt_module_path = f"eval_agent.text2sql_agent.prompts_{experiment}"
+                prompt_module = importlib.import_module(prompt_module_path)
+                self.TEXT_TO_SQL_PROMPT = prompt_module.TEXT_TO_SQL_PROMPT
+                # Setting the model for the experiment environment
                 from functions.gptconfig import MODEL_4O
                 self.model = MODEL_4O
-                self.TEXT_TO_SQL_PROMPT = MONDIAL_TEXT_TO_SQL_PROMPT
-
                 # Importing the tools for the mondial environment
-                from eval_agent.text2sql_agent.tool_mondial import TOOLS as MONDIAL_TOOLS
-                self.TOOLS = MONDIAL_TOOLS
+                from eval_agent.text2sql_agent.tool import TOOLS
+                self.TOOLS = TOOLS
             case _:
                 raise ValueError(f"Invalid environment: {self.env}")
    
