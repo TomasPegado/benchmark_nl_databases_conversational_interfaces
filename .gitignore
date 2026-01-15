@@ -211,3 +211,6 @@ __marimo__/
 /connections/mondial_db_connection.json
 connections/kaggle_db_connection.json
 connections/opensearch_kaggle_db_connection.json
+
+/eval_agent/text2sql_agent/text_to_sql/synthetic_dataset/*.csv
+/eval_agent/text2sql_agent/text_to_sql/synthetic_dataset/*.npy
