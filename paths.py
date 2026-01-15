@@ -28,12 +28,12 @@ EMBEDDINGS = os.getenv("EMBEDDINGS_FILE", "")
 if DATASET_SYNTHETIC == "":
     DATASET_SYNTHETIC_PATH = ""
 else:
-    DATASET_SYNTHETIC_PATH = os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", DATASET_SYNTHETIC)
+    DATASET_SYNTHETIC_PATH = os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "synthetic_dataset", DATASET_SYNTHETIC)
 
 if EMBEDDINGS == "":
     EMBEDDINGS_PATH = ""
 else:
-    EMBEDDINGS_PATH = os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", EMBEDDINGS)
+    EMBEDDINGS_PATH = os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "synthetic_dataset", EMBEDDINGS)
 
 # User Agent
 CHATBOT_PROMPT_PATH= os.path.join(experiment_root_path, "eval_agent", "user_agent", "chat_prompts", "chatbot_prompt_v2_english.txt")

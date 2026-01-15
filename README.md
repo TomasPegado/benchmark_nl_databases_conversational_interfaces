@@ -55,7 +55,7 @@ This tool is composed of two main components:
 - **Query Decomposition**
 - **Dynamic Few-Shot Examples**
 
-The few-shot examples were synthetically generated and are provided in a `.zip` file. After dowloading the files in [Drive-Synthetic Dataset](https://drive.google.com/file/d/1R1rX1pbxL4kxfYknWMYpGQGTfy-fokbG/view?usp=sharing), you should have access to the following CSV `mondial_dataset_GPT35_and_4_20240317-200242-relational_schema.csv` and NPY `mondial_embeddings_GPT35_and_4_20240317-200242-relational_schema.npy`. Both files must be placed in the following folder `eval_agent/text2sql_agent/text_to_sql`.
+The few-shot examples were synthetically generated and are provided in a `.zip` file. After dowloading the files in [Drive-Synthetic Dataset](https://drive.google.com/file/d/1R1rX1pbxL4kxfYknWMYpGQGTfy-fokbG/view?usp=sharing), you should have access to the following CSV `mondial_dataset_GPT35_and_4_20240317-200242-relational_schema.csv` and NPY `mondial_embeddings_GPT35_and_4_20240317-200242-relational_schema.npy`. Both files must be placed in the following folder `eval_agent/text2sql_agent/text_to_sql/synthetic_dataset/`.
 
 You need to add, for your database, in the folder `eval_agent/text2sql_agent/text_to_sql/prompts`, a `rag_prompt_view_sql_queries_{your-database-schema-name}.txt` file.
 Also, in the folder `eval_agent/text2sql_agent`, you will need to add a `prompts_{your-experiment-name}.py` file
