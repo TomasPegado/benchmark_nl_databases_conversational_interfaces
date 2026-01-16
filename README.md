@@ -9,6 +9,7 @@ Before running the project, make sure to configure the following:
 Create a `.env` file in the root directory with the required settings for your LLM API (e.g., API key, model name, endpoint URL).
 
 Example:
+
 ```txt
 AZURE_OPENAI_BASE_URL=""
 AZURE_OPENAI_API_KEY=""
@@ -17,10 +18,26 @@ AZURE_OPENAI_API_VERSION=""
 
 ### 2. Database Configuration
 
-
 Make a copy of the file: [`mondial_db_connection_example.json`](/connections/) and rename it to `mondial_db_connection.json`. Then, fill in the connection details for your Mondial database (host, port, user, password, database name, etc.).
 
 The database schema used (Mondial) is located in : [`/connections/database_schema/mondial_gpt.sql`](`/connections/database_schema/mondial_gpt.sql`)
+
+In addition in the same `.env` as the LLM API configuration you must add the following:
+
+```txt
+EXPERIMENT_NAME = ""
+EXPERIMENT_SCHEMA = ""
+DATASET_SYNTHETIC = ""
+EMBEDDINGS_FILE = ""
+```
+
+If you don´t have the Dataset_Synthetic and Embeddings_File you can leave as ""
+
+On the folder [`eval_agent/datset_generation/experiments_dataset`](`eval_agent/datset_generation/experiments_dataset`) you need to add a `{experiment_name}_dataset.py` file with the following content:
+
+`DATABASE_TABLES = ["table1", "table2", "table3",...]`
+
+This will be the tables of your dataset included in the experiment
 
 ## Dialogue Dataset Generation
 
@@ -35,13 +52,18 @@ This notebook will produce two files:
   The dialogue dataset in JSON format.
 
 ## Text-to-SQL Tool
-You can test the Text-to-SQL tool by running the notebook: [text_to_sql_test](eval_agent\text2sql_agent\text_to_sql\text_to_sql_test.ipynb) 
+
+You can test the Text-to-SQL tool by running the notebook: [text_to_sql_test](eval_agent\text2sql_agent\text_to_sql\text_to_sql_test.ipynb)
 
 This tool is composed of two main components:
+
 - **Query Decomposition**
 - **Dynamic Few-Shot Examples**
 
-The few-shot examples were synthetically generated and are provided in a `.zip` file. After dowloading the files in [Drive-Synthetic Dataset](https://drive.google.com/file/d/1R1rX1pbxL4kxfYknWMYpGQGTfy-fokbG/view?usp=sharing), you should have access to the following CSV `mondial_dataset_GPT35_and_4_20240317-200242-relational_schema.csv` and NPY `mondial_embeddings_GPT35_and_4_20240317-200242-relational_schema.npy`. Both files must be placed in the following folder `eval_agent/text2sql_agent/text_to_sql`.
+The few-shot examples were synthetically generated and are provided in a `.zip` file. After dowloading the files in [Drive-Synthetic Dataset](https://drive.google.com/file/d/1R1rX1pbxL4kxfYknWMYpGQGTfy-fokbG/view?usp=sharing), you should have access to the following CSV `mondial_dataset_GPT35_and_4_20240317-200242-relational_schema.csv` and NPY `mondial_embeddings_GPT35_and_4_20240317-200242-relational_schema.npy`. Both files must be placed in the following folder `eval_agent/text2sql_agent/text_to_sql/synthetic_dataset/`.
+
+You need to add, for your database, in the folder `eval_agent/text2sql_agent/text_to_sql/prompts`, a `rag_prompt_view_sql_queries_{your-database-schema-name}.txt` file.
+Also, in the folder `eval_agent/text2sql_agent`, you will need to add a `prompts_{your-experiment-name}.py` file
 
 ## Evaluator Agent
 

@@ -5,7 +5,7 @@ from langchain_core.messages import HumanMessage
 from eval_agent.text2sql_agent.nodes import TextToSQLAgentNodes
 from langgraph.checkpoint.memory import MemorySaver
 
-from eval_agent.text2sql_agent.tool_mondial import TOOLS as TOOLS_MONDIAL
+from eval_agent.text2sql_agent.tool import TOOLS as EXPERIMENT_TOOLS
 
 memory = MemorySaver()
 
@@ -14,7 +14,7 @@ def build_graph(have_memory: bool = True, env: Literal["tec"] = "tec") -> StateG
 
     match env:
         case "tec":
-            TOOLS = TOOLS_MONDIAL
+            TOOLS = EXPERIMENT_TOOLS
         case _:
             raise ValueError(f"Invalid environment: {env}")
 

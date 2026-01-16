@@ -1,5 +1,8 @@
 import os
 from pathlib import Path
+import dotenv
+
+dotenv.load_dotenv()
 
 
 PROJECT_ROOT = Path(__file__).parent.absolute()
@@ -8,18 +11,29 @@ run_environment = os.getenv("RUN_ENVIRONMENT", "")
 
 
 #Database
-SCHEMA = "mondial"
-PREFIX = "mondial"
+SCHEMA = os.getenv("EXPERIMENT_SCHEMA")
+PREFIX = os.getenv("EXPERIMENT_NAME")
 
 DB_INFO_PATH = os.path.join(experiment_root_path, "connections")
-DB_CONNECTION_FILE = os.path.join(DB_INFO_PATH, f"{run_environment}{SCHEMA}_db_connection.json")
+DB_CONNECTION_FILE = os.path.join(DB_INFO_PATH, f"{run_environment}{PREFIX}_db_connection.json")
 
 #Text-to-sql Tool
 PROMPT_DECOMPOSER_FILE= os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql",  "prompts", "prompt_decomposer.txt")
-MONDIAL_GPT_EXTENDED_SCHEMA_PROMPT= os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "prompts", "rag_prompt_view_sql_queries_mondial_gpt.txt")
+EXTENDED_SCHEMA_PROMPT= os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "prompts", f"rag_prompt_view_sql_queries_{SCHEMA.lower()}.txt")
 NUMBER_OF_SAMPLES = 8
-DATASET_SYNTHETIC_PATH = os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "mondial_dataset_GPT35_and_4_20240317-200242-relational_schema.csv")
-EMBEDDINGS_PATH = os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "mondial_embeddings_GPT35_and_4_20240317-200242-relational_schema.npy")
+
+DATASET_SYNTHETIC = os.getenv("DATASET_SYNTHETIC", "")
+EMBEDDINGS = os.getenv("EMBEDDINGS_FILE", "")
+
+if DATASET_SYNTHETIC == "":
+    DATASET_SYNTHETIC_PATH = ""
+else:
+    DATASET_SYNTHETIC_PATH = os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "synthetic_dataset", DATASET_SYNTHETIC)
+
+if EMBEDDINGS == "":
+    EMBEDDINGS_PATH = ""
+else:
+    EMBEDDINGS_PATH = os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "synthetic_dataset", EMBEDDINGS)
 
 # User Agent
 CHATBOT_PROMPT_PATH= os.path.join(experiment_root_path, "eval_agent", "user_agent", "chat_prompts", "chatbot_prompt_v2_english.txt")
@@ -33,7 +47,7 @@ dataset_eval = DatasetEvaluator(
     dataset_file_path="",
     dataset_tables_path="",
     db_connection_file=DB_CONNECTION_FILE,
-    dataset_name=SCHEMA
+    dataset_name=PREFIX
 )
 
 
