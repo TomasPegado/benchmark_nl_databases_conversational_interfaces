@@ -26,13 +26,18 @@ In addition in the same `.env` as the LLM API configuration you must add the fol
 
 ```txt
 EXPERIMENT_NAME = ""
-DATABASE_TABLES = []
 EXPERIMENT_SCHEMA = ""
 DATASET_SYNTHETIC = ""
 EMBEDDINGS_FILE = ""
 ```
 
 If you don´t have the Dataset_Synthetic and Embeddings_File you can leave as ""
+
+On the folder [`eval_agent/datset_generation/experiments_dataset`](`eval_agent/datset_generation/experiments_dataset`) you need to add a `{experiment_name}_dataset.py` file with the following content:
+
+`DATABASE_TABLES = ["table1", "table2", "table3",...]`
+
+This will be the tables of your dataset included in the experiment
 
 ## Dialogue Dataset Generation
 
