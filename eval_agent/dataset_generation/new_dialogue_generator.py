@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+from typing import Dict, List, Any
 
 root_path = Path().absolute().parent.parent.parent.parent
 sys.path.append(str(root_path))
@@ -47,6 +48,8 @@ class DialogueGenerator:
         self.join_combination_data = join_combination_data
         self.column_combination_data = column_combination_data
         self.table_ddls_hashmap = table_ddls_hashmap
+        self.included_tables = list(table_ddls_hashmap.keys())
+        self.tables_used = []
         self.dialogue_generator = llm.with_structured_output(Experiment)
         self.sql_database_langchain = sql_database_langchain
         self.interactions = interactions
@@ -126,8 +129,70 @@ class DialogueGenerator:
         tables_involved=", ".join(tables_involved),
         tables_context=tables_context,
     )
+        if target_table not in self.tables_used:
+            self.tables_used.append(target_table)
 
         return prompt
+    
+    
+    def create_prompt_from_column_combination_data(self, i: int, column_combination_data: dict) -> str:
+        """
+        Creates a dialogue-generation prompt based ONLY on a column combination.
+        This is used to guarantee table coverage when a table does not appear
+        in any join combination.
+
+        - Uses the same dialogue_generation_prompt
+        - Binary list is ALL 1s (column-only exploration)
+        """
+
+        experiment_id = str(i + 1)
+
+        # ---- Target table ----
+        # column_combination_data["tables"] may be a string or a list
+        combo_tables = column_combination_data["tables"]
+        if isinstance(combo_tables, str):
+            combo_tables = [t.strip() for t in combo_tables.split("|") if t.strip()]
+
+        # Use the first table as target (single-table combo expected here)
+        target_table = combo_tables[0]
+
+        # ---- Tables involved ----
+        tables_involved = combo_tables
+
+        # ---- Tables context (DDL only for involved tables) ----
+        tables_context = ""
+        for table in tables_involved:
+            ddl_text = self.table_ddls_hashmap.get(table, "DDL not found")
+            tables_context += f"Table informations: {table}\nDDL:\n{ddl_text}\n\n"
+
+        # ---- Column combo context (single combo) ----
+        column_combo_str = self.format_column_combo(column_combination_data)
+
+        # ---- No joins in this mode ----
+        join_str = "NO JOINS. THIS DIALOGUE MUST USE COLUMN COMBINATIONS ONLY."
+
+        # ---- Binary list: all 1s ----
+        interaction_binary_list = [1] * self.interactions
+
+        # ---- Track table usage for coverage ----
+        if target_table not in self.tables_used:
+            self.tables_used.append(target_table)
+
+        # ---- Format prompt ----
+        prompt = self.dialogue_generation_prompt.format(
+            experiment_id=experiment_id,
+            total_expected_interactions=self.interactions,
+            interaction_binary_list=interaction_binary_list,
+            target_table=target_table,
+            join_str=join_str,
+            column_combo_str=column_combo_str,
+            tables_involved=", ".join(tables_involved),
+            tables_context=tables_context,
+        )
+
+        return prompt
+
+        
 
     def generate_dialogue(self, prompt: str) -> str:
         return self.dialogue_generator.invoke(prompt)
@@ -165,6 +230,66 @@ class DialogueGenerator:
                 self.save_dialogue_to_file(dialogue, self.output_file)
             
             dialogues.append(dialogue)
+            
+        # 2) Coverage pass: find tables not used in JOIN-based generation
+        # -----------------------------
+        used_tables_set = set(self.tables_used)  # self.tables_used is updated inside create_prompt_from_join_combination_data
+        missing_tables = [t for t in self.included_tables if t not in used_tables_set]
+
+        print(f"\n[Coverage] Included tables: {len(self.included_tables)}")
+        print(f"[Coverage] Tables used so far: {len(used_tables_set)}")
+        print(f"[Coverage] Missing tables: {len(missing_tables)}")
+
+        if not missing_tables:
+            return dialogues
+        
+        # 3) Generate dialogues for missing tables using COLUMN combos only
+        table_to_column_combos = self.build_table_to_column_combos_map()
+        print(table_to_column_combos)
+        
+        # Continue experiment ids after the join-combo loop to keep them unique
+        next_experiment_id = len(self.join_combination_data) + 1
+
+        for missing_table in missing_tables:
+            print(f"[Coverage] Generating dialogue for missing table: {missing_table}")
+            combos_for_table = table_to_column_combos.get(missing_table, [])
+
+            if not combos_for_table:
+                print(f"[Coverage] No column combos found for missing table: {missing_table}. Skipping...")
+                continue
+
+            # Pick one combo to generate a dialogue for this table (simple strategy: first one)
+            column_combination_data = combos_for_table[0]
+
+            exp_id_str = str(next_experiment_id)
+
+            if self.dialogue_exists_in_dataset(exp_id_str, self.output_file):
+                print(f"[Using checkpoint]Dialogue for coverage table {missing_table} (experiment {exp_id_str}) already exists. Skipping...")
+                next_experiment_id += 1
+                continue
+
+            prompt = self.create_prompt_from_column_combination_data(
+                next_experiment_id - 1,  # keep same "i+1" behavior as before
+                column_combination_data,
+            )
+
+            dialogue = self.generate_dialogue(prompt)
+            print(f"[Generated coverage dialogue] {dialogue}")
+
+            retries = 0
+            is_valid, feedback = self.check_dialogue_sintax(dialogue)
+            while not is_valid and retries < 3:
+                print(f"[Retrying] Coverage dialogue for table {missing_table} is not valid. Retrying... ({retries+1}/3)")
+                dialogue = self.generate_dialogue(prompt + feedback)
+                is_valid, feedback = self.check_dialogue_sintax(dialogue)
+                retries += 1
+
+            if is_valid:
+                self.save_dialogue_to_file(dialogue, self.output_file)
+
+            dialogues.append(dialogue)
+            next_experiment_id += 1
+
         return dialogues
 
     def check_dialogue_sintax(self, dialogue: Experiment) -> tuple[bool, str]:
@@ -428,3 +553,25 @@ class DialogueGenerator:
             f"ORDER_BY: {order_str}\n"
             f"RATIONALE: {combo['rationale']}\n"
         )
+    
+    def build_table_to_column_combos_map(self) -> Dict[str, List[dict]]:
+        """
+        Builds a lookup map:
+            { table_name: [column_combo_dict, ...] }
+
+        - Accepts combo["tables"] as either:
+            - a list of table names, or
+            - a '|' separated string of table names
+        """
+        table_to_column_combos: Dict[str, List[dict]] = {}
+
+        for combo in self.column_combination_data:
+            combo_tables = combo.get("tables", [])
+
+            if isinstance(combo_tables, str):
+                combo_tables = [t.strip() for t in combo_tables.split("|") if t.strip()]
+
+            for t in combo_tables:
+                table_to_column_combos.setdefault(t.lower(), []).append(combo)
+
+        return table_to_column_combos
