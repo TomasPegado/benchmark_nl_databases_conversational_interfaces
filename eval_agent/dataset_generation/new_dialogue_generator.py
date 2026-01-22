@@ -250,8 +250,8 @@ class DialogueGenerator:
         # Continue experiment ids after the join-combo loop to keep them unique
         next_experiment_id = len(self.join_combination_data) + 1
 
-        for missing_table in missing_tables:
-            print(f"[Coverage] Generating dialogue for missing table: {missing_table}")
+        for i, missing_table in enumerate(missing_tables):
+            print(f"[Coverage] Generating dialogue for missing table: {missing_table}, {i+1} of {len(missing_tables)}, experiment id {next_experiment_id}")
             combos_for_table = table_to_column_combos.get(missing_table, [])
 
             if not combos_for_table:
