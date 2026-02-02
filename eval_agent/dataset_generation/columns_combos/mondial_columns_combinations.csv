@@ -1,0 +1,231 @@
+db_id,tables,select_columns,aggregations,group_by,filters,order_by,order_dir,rationale
+mondial,mondial_Country,mondial_Country.name|mondial_Country.population,max(mondial_Country.population),,,,,Find the most populated country.
+mondial,mondial_Country,mondial_Country.name|mondial_Country.area,avg(mondial_Country.area),,,,,Calculate the average area of countries.
+mondial,mondial_Country,mondial_Country.name|mondial_Country.population,,,mondial_Country.population > <POPULATION_VALUE>,,,Find countries with a population greater than a given threshold.
+mondial,mondial_Country,mondial_Country.province|mondial_Country.area,sum(mondial_Country.area),mondial_Country.province,,,,Calculate the total area grouped by province.
+mondial,mondial_Country,mondial_Country.name|mondial_Country.capital,,,,,,List all countries along with their capitals.
+mondial,mondial_Economy,mondial_Economy.country|mondial_Economy.GDP,max(mondial_Economy.GDP),,,,,Find the country with the highest GDP.
+mondial,mondial_Economy,mondial_Economy.country|mondial_Economy.agriculture,avg(mondial_Economy.agriculture),mondial_Economy.country,,,,Analyze average percentage of agriculture in GDP per country.
+mondial,mondial_Economy,mondial_Economy.country|mondial_Economy.inflation,,,mondial_Economy.inflation > <VALUE>,,,Find countries with inflation rate above a certain threshold.
+mondial,mondial_Economy,mondial_Economy.country|mondial_Economy.unemployment,min(mondial_Economy.unemployment),,,,,Identify the country with the lowest unemployment rate.
+mondial,mondial_Economy,mondial_Economy.country|mondial_Economy.service,,,,mondial_Economy.service,desc,Rank countries by the percentage of services contributing to GDP.
+mondial,mondial_Politics,mondial_Politics.country|mondial_Politics.government,count(*),mondial_Politics.government,,,,Count the number of countries grouped by their type of government.
+mondial,mondial_Politics,mondial_Politics.country|mondial_Politics.independence,,,mondial_Politics.independence > <YEAR>,,,Find countries that gained independence after a certain year.
+mondial,mondial_Politics,mondial_Politics.country|mondial_Politics.wasdependent,,,mondial_Politics.wasdependent = <COUNTRY>,,,List countries that were dependent on a specific political body.
+mondial,mondial_Politics,mondial_Politics.country|mondial_Politics.dependent,,,mondial_Politics.dependent = <COUNTRY>,,,Find countries that are currently dependent on a specific country.
+mondial,mondial_Politics,mondial_Politics.country|mondial_Politics.independence|mondial_Politics.government,,,mondial_Politics.government like <GOVERNMENT_TYPE>,,,Retrieve countries with a specific type of government and their independence date.
+mondial,mondial_Population,mondial_Population.country|mondial_Population.infant mortality,avg(mondial_Population.infant mortality),mondial_Population.country,,,,Calculate the average infant mortality rate grouped by country to understand disparities in healthcare quality.
+mondial,mondial_Population,mondial_Population.country|mondial_Population.population growth,,,mondial_Population.population growth > <VALUE>,,,Retrieve countries with a population growth rate above a certain threshold to identify rapidly growing regions.
+mondial,mondial_Population,mondial_Population.country|mondial_Population.population growth|mondial_Population.infant mortality,,,mondial_Population.infant mortality < <VALUE>,,,Find countries with low infant mortality and their population growth rate to identify regions with improving child health outcomes.
+mondial,mondial_Population,mondial_Population.country|mondial_Population.infant mortality,,,,mondial_Population.infant mortality,asc,List countries with the lowest infant mortality rates to highlight regions with the best healthcare systems.
+mondial,mondial_Population,mondial_Population.country|mondial_Population.population growth,,,mondial_Population.population growth between <START_VALUE> and <END_VALUE>,,,Identify countries with a moderate population growth rate by applying a range filter on growth rates.
+mondial,mondial_Countrypops,mondial_Countrypops.country|mondial_Countrypops.population,max(mondial_Countrypops.population),,,,,Identify the country with the highest population in a given year.
+mondial,mondial_Countrypops,mondial_Countrypops.year|mondial_Countrypops.population,avg(mondial_Countrypops.population),mondial_Countrypops.year,,,,Analyze the average population across countries for each year.
+mondial,mondial_Countrypops,mondial_Countrypops.country|mondial_Countrypops.population,,,mondial_Countrypops.year = <YEAR>,mondial_Countrypops.population,desc,Rank countries by population for a specific year.
+mondial,mondial_Countrypops,mondial_Countrypops.country|mondial_Countrypops.population,,,mondial_Countrypops.year between <YEAR_RANGE>,,,Retrieve population data for countries over a specific time range.
+mondial,mondial_Countrypops,mondial_Countrypops.year|mondial_Countrypops.population,,,mondial_Countrypops.country = <COUNTRY>,mondial_Countrypops.year,asc,Track population growth of a specific country over the years.
+mondial,mondial_CountryLocalName,mondial_CountryLocalName.localname|mondial_CountryLocalName.country,,,,,,Retrieve local names and their corresponding country codes.
+mondial,mondial_CountryLocalName,mondial_CountryLocalName.localname,,,mondial_CountryLocalName.localname like <PATTERN>,,,Search for specific local names matching a pattern.
+mondial,mondial_CountryLocalName,mondial_CountryLocalName.localname,,,mondial_CountryLocalName.country = <COUNTRY>,,,Find the local name of a specific country.
+mondial,mondial_Language,mondial_Language.name|mondial_Language.percentage,,,,mondial_Language.percentage,desc,Retrieve the most widely spoken languages by percentage in descending order.
+mondial,mondial_Language,mondial_Language.country|mondial_Language.name,,mondial_Language.country,,,,Identify the languages spoken in each country.
+mondial,mondial_Language,mondial_Language.name|mondial_Language.percentage,,,mondial_Language.percentage > <THRESHOLD_PERCENTAGE>,,,Find languages that are spoken by more than a certain percentage of the population.
+mondial,mondial_Language,mondial_Language.country|mondial_Language.percentage,,,mondial_Language.country = <COUNTRY_CODE>,,,Retrieve the percentage of languages spoken in a specific country.
+mondial,mondial_Language,mondial_Language.name|mondial_Language.percentage,,,mondial_Language.name like <LANGUAGE_NAME_PART>,,,Search for languages whose names match a specific pattern or substring.
+mondial,mondial_Religion,mondial_Religion.name|mondial_Religion.percentage,,mondial_Religion.name,,,,"This query identifies the different religions and their respective percentages in various countries, grouped by religion name."
+mondial,mondial_Religion,mondial_Religion.country|mondial_Religion.name|mondial_Religion.percentage,,,mondial_Religion.percentage >= <PERCENTAGE>,,,"This query filters religions based on their percentage in each country, for example, identifying dominant religions where their percentage exceeds a certain threshold."
+mondial,mondial_Religion,mondial_Religion.name|mondial_Religion.percentage,,,,mondial_Religion.percentage,desc,"This query ranks religions by their percentage in descending order, highlighting the most prevalent religions."
+mondial,mondial_Religion,mondial_Religion.name|mondial_Religion.percentage,,,mondial_Religion.name = <RELIGION_NAME>,,,"This query extracts the percentage of a specific religion across countries, filtered by the religion name."
+mondial,mondial_Religion,mondial_Religion.country|mondial_Religion.name|mondial_Religion.percentage,,,mondial_Religion.country = <COUNTRY>,,,This query lists all religions and their percentages in a specific country.
+mondial,mondial_EthnicGroup,mondial_EthnicGroup.name|mondial_EthnicGroup.percentage,,,,,,Retrieve the ethnic groups and their percentage representation in a country.
+mondial,mondial_EthnicGroup,mondial_EthnicGroup.name|mondial_EthnicGroup.percentage,,,mondial_EthnicGroup.percentage >= <PERCENTAGE>,,,Find ethnic groups whose representation exceeds a specific percentage in a country.
+mondial,mondial_EthnicGroup,mondial_EthnicGroup.name|mondial_EthnicGroup.percentage,,,,mondial_EthnicGroup.percentage,desc,List ethnic groups sorted by their representation percentage in descending order to highlight the most prominent ones.
+mondial,mondial_EthnicGroup,mondial_EthnicGroup.name|mondial_EthnicGroup.country,,,mondial_EthnicGroup.country = <COUNTRY_CODE>,,,Retrieve ethnic groups specific to a particular country.
+mondial,mondial_EthnicGroup,mondial_EthnicGroup.name,count(*),mondial_EthnicGroup.country,,,,Count the number of unique ethnic groups per country.
+mondial,mondial_Continent,mondial_Continent.name|mondial_Continent.area,max(mondial_Continent.area),,,,,Find the continent with the maximum area.
+mondial,mondial_Continent,mondial_Continent.name|mondial_Continent.area,,,,mondial_Continent.area,desc,List continents by their area in descending order.
+mondial,mondial_Continent,mondial_Continent.name|mondial_Continent.area,,,mondial_Continent.area > <AREA>,,,Filter continents with an area greater than a specific value.
+mondial,mondial_Continent,mondial_Continent.name,,,mondial_Continent.name like %<NAME>%,,,Search for continents whose names match a specific pattern.
+mondial,mondial_Continent,mondial_Continent.name|mondial_Continent.area,avg(mondial_Continent.area),,,,,Calculate the average area of continents.
+mondial,mondial_encompasses,mondial_encompasses.continent|mondial_encompasses.percentage,max(mondial_encompasses.percentage),mondial_encompasses.continent,,,,Find the continent with the highest percentage of area covered by countries.
+mondial,mondial_encompasses,mondial_encompasses.continent|mondial_encompasses.country|mondial_encompasses.percentage,,,mondial_encompasses.percentage > <THRESHOLD>,,,List countries that occupy more than a certain percentage of a continent.
+mondial,mondial_encompasses,mondial_encompasses.continent|mondial_encompasses.country|mondial_encompasses.percentage,,,mondial_encompasses.continent = <SPECIFIC_CONTINENT>,,,Retrieve all countries in a specific continent along with their area coverage percentage.
+mondial,mondial_encompasses,mondial_encompasses.country|mondial_encompasses.percentage,sum(mondial_encompasses.percentage),mondial_encompasses.country,,,,Calculate the total area percentage covered by each country across all continents.
+mondial,mondial_encompasses,mondial_encompasses.continent|mondial_encompasses.percentage,,,,mondial_encompasses.percentage,desc,Rank continents by the area percentage covered by countries.
+mondial,mondial_City,mondial_City.name|mondial_City.population,max(mondial_City.population),,,,,Find the city with the highest population.
+mondial,mondial_City,mondial_City.province|mondial_City.population,avg(mondial_City.population),mondial_City.province,,,,Get the average population of cities grouped by province.
+mondial,mondial_City,mondial_City.name|mondial_City.elevation,,,mondial_City.elevation >= <ELEVATION>,mondial_City.elevation,desc,"List cities ordered by elevation, filtering for cities above a certain elevation."
+mondial,mondial_City,mondial_City.country|mondial_City.population,sum(mondial_City.population),mondial_City.country,,,,Calculate the total population of cities grouped by country.
+mondial,mondial_City,mondial_City.name|mondial_City.latitude|mondial_City.longitude,,,mondial_City.latitude between <LATITUDE_RANGE>,,,Find cities within a specific latitude range along with their coordinates.
+mondial,mondial_Citypops,mondial_Citypops.city|mondial_Citypops.population,max(mondial_Citypops.population),,,,,Find the city with the maximum population in the dataset.
+mondial,mondial_Citypops,mondial_Citypops.city|mondial_Citypops.population|mondial_Citypops.year,,mondial_Citypops.year,,,,Analyze how the population of cities changes over time by grouping by year.
+mondial,mondial_Citypops,mondial_Citypops.city|mondial_Citypops.population,,,mondial_Citypops.population > <POPULATION_THRESHOLD>,,,Filter cities with population greater than a certain threshold to identify highly populated areas.
+mondial,mondial_Citypops,mondial_Citypops.city|mondial_Citypops.population|mondial_Citypops.year,,,"mondial_Citypops.year between <START_YEAR>, <END_YEAR>",,,Retrieve city populations for a specific time range to analyze trends.
+mondial,mondial_Citypops,mondial_Citypops.city|mondial_Citypops.population,,,,mondial_Citypops.population,desc,Rank cities by their population in descending order to identify the most populated ones.
+mondial,mondial_CityLocalName,mondial_CityLocalName.city|mondial_CityLocalName.localname,,,,,,List all cities and their corresponding local names.
+mondial,mondial_CityLocalName,mondial_CityLocalName.city|mondial_CityLocalName.localname,,,mondial_CityLocalName.province = <PROVINCE>,,,Find the local names of cities in a specific province.
+mondial,mondial_CityLocalName,mondial_CityLocalName.province|mondial_CityLocalName.localname,,mondial_CityLocalName.province,,,,Group the cities by province and list their local names.
+mondial,mondial_CityLocalName,mondial_CityLocalName.localname,,,mondial_CityLocalName.country = <COUNTRY>,,,Get all local names of cities in a specific country.
+mondial,mondial_CityLocalName,mondial_CityLocalName.city|mondial_CityLocalName.localname,,,mondial_CityLocalName.localname like <NAME_PATTERN>,,,Search for cities with local names matching a specific pattern.
+mondial,mondial_Province,mondial_Province.name|mondial_Province.area|mondial_Province.population,avg(mondial_Province.area),,,,,"Retrieve provinces along with their area and population, and calculate the average area of all provinces for comparison."
+mondial,mondial_Province,mondial_Province.name|mondial_Province.capital|mondial_Province.population,,,mondial_Province.population > <POPULATION>,,,"Fetch provinces with their capital and population, filtering out only those with a population exceeding a certain threshold."
+mondial,mondial_Province,mondial_Province.name|mondial_Province.country|mondial_Province.area,,,,mondial_Province.area,desc,List provinces by their area in descending order to identify the largest provinces by area.
+mondial,mondial_Province,mondial_Province.name|mondial_Province.capital|mondial_Province.area,,,"mondial_Province.area between <MIN_AREA>, <MAX_AREA>",,,"Retrieve provinces with their capitals and areas that fall within a specific range, useful for area-based analysis."
+mondial,mondial_Province,mondial_Province.name|mondial_Province.population|mondial_Province.capital,sum(mondial_Province.population),,,,,"Display provinces with their populations and capitals, while calculating the total population across all provinces."
+mondial,mondial_Provpops,mondial_Provpops.province|mondial_Provpops.population,sum(mondial_Provpops.population),mondial_Provpops.province,,,,Calculate the total population for each province to analyze distribution.
+mondial,mondial_Provpops,mondial_Provpops.year|mondial_Provpops.population,,,mondial_Provpops.year between <YEAR_RANGE>,,,Filter population data for a specific range of years to analyze trends.
+mondial,mondial_Provpops,mondial_Provpops.province|mondial_Provpops.population,,,mondial_Provpops.population > <THRESHOLD>,,,Find provinces with a population greater than a certain threshold to identify major population centers.
+mondial,mondial_Provpops,mondial_Provpops.province|mondial_Provpops.population,,,,mondial_Provpops.population,desc,Rank provinces by population to identify the most and least populated ones.
+mondial,mondial_Provpops,mondial_Provpops.population|mondial_Provpops.year,avg(mondial_Provpops.population),mondial_Provpops.year,,,,Compute the average population per year to analyze yearly fluctuations.
+mondial,mondial_ProvinceLocalName,mondial_ProvinceLocalName.province|mondial_ProvinceLocalName.localname,,,,,,Retrieve all provinces and their local names for localization purposes.
+mondial,mondial_ProvinceLocalName,mondial_ProvinceLocalName.province|mondial_ProvinceLocalName.localname,,,mondial_ProvinceLocalName.country = <COUNTRY>,,,Find all provinces and their local names for a specific country.
+mondial,mondial_ProvinceLocalName,mondial_ProvinceLocalName.province|mondial_ProvinceLocalName.localname,,,mondial_ProvinceLocalName.localname like <PARTIAL_NAME>,,,Search for provinces by partial match of their local names.
+mondial,mondial_ProvinceLocalName,mondial_ProvinceLocalName.country|mondial_ProvinceLocalName.province|mondial_ProvinceLocalName.localname,,,,,,List countries and their provinces along with their local names for a comprehensive data view.
+mondial,mondial_ProvinceLocalName,mondial_ProvinceLocalName.province|mondial_ProvinceLocalName.localname,,,mondial_ProvinceLocalName.localname != <NULL>,,,Get all provinces that have a non-null local name.
+mondial,mondial_Organization,mondial_Organization.name|mondial_Organization.abbreviation,,,,,,Retrieve the names and abbreviations of all organizations.
+mondial,mondial_Organization,mondial_Organization.name,count(*),mondial_Organization.country,,,,Count the number of organizations per country to analyze distribution.
+mondial,mondial_Organization,mondial_Organization.name|mondial_Organization.established,,,mondial_Organization.established >= <YEAR>,,,Find organizations established after a specific year.
+mondial,mondial_Organization,mondial_Organization.name|mondial_Organization.country,,,mondial_Organization.province = <PROVINCE>,,,Retrieve organizations located in a specific province.
+mondial,mondial_Organization,mondial_Organization.name|mondial_Organization.city,,,mondial_Organization.gmtOffset = <GMT_OFFSET>,,,Find organizations in cities with a specific GMT offset.
+mondial,mondial_isMember,mondial_isMember.organization|mondial_isMember.type,count(*),mondial_isMember.type,,,,Count the number of countries grouped by membership type for each organization.
+mondial,mondial_isMember,mondial_isMember.organization|mondial_isMember.country,,,mondial_isMember.type = <TYPE>,,,Retrieve all member countries for a specific membership type in an organization.
+mondial,mondial_isMember,mondial_isMember.organization|mondial_isMember.country,count(*),mondial_isMember.organization,,mondial_isMember.organization,asc,Count the number of countries in each organization and sort the organizations alphabetically.
+mondial,mondial_isMember,mondial_isMember.organization|mondial_isMember.country,,,mondial_isMember.country like <COUNTRY>,,,Find memberships of a specific country across various organizations.
+mondial,mondial_isMember,mondial_isMember.organization|mondial_isMember.country|mondial_isMember.type,,,mondial_isMember.organization = <ORGANIZATION>,,,List all countries and their membership types for a specific organization.
+mondial,mondial_Lake,mondial_Lake.name|mondial_Lake.area,,,,mondial_Lake.area,desc,"Retrieve the largest lakes by area, ranked in descending order."
+mondial,mondial_Lake,mondial_Lake.name|mondial_Lake.depth,,,,mondial_Lake.depth,desc,"Identify the deepest lakes, ranked by their depth in descending order."
+mondial,mondial_Lake,mondial_Lake.name|mondial_Lake.type,,,mondial_Lake.type = <TYPE>,,,"Find lakes of a specific type, such as salt or caldera lakes."
+mondial,mondial_Lake,mondial_Lake.name|mondial_Lake.elevation,,,mondial_Lake.elevation > <ELEVATION>,,,List lakes located at elevations above a certain threshold.
+mondial,mondial_Lake,mondial_Lake.name|mondial_Lake.area,,,"mondial_Lake.area between <MIN_AREA>,<MAX_AREA>",,,Retrieve lakes within a specific range of area sizes.
+mondial,mondial_River,mondial_River.name|mondial_River.length,,,,mondial_River.length,desc,Find the longest rivers by ordering them in descending order of their length.
+mondial,mondial_River,mondial_River.name|mondial_River.length,,,mondial_River.length >= <MIN_LENGTH>,,,List rivers longer than a certain length.
+mondial,mondial_River,mondial_River.name|mondial_River.length|mondial_River.area,,,,,,Show rivers along with their length and catchment area for a comprehensive view of their size.
+mondial,mondial_River,mondial_River.name|mondial_River.sea,,,mondial_River.sea = <SEA_NAME>,,,Find rivers that flow into a specific sea.
+mondial,mondial_River,mondial_River.name|mondial_River.sourceElevation|mondial_River.estuaryElevation,,,,,,Compare rivers based on the elevation difference between their source and estuary.
+mondial,mondial_RiverThrough,mondial_RiverThrough.river|mondial_RiverThrough.lake,,,,,,Identify which lakes a specific river flows through.
+mondial,mondial_RiverThrough,mondial_RiverThrough.river,count(mondial_RiverThrough.lake),mondial_RiverThrough.river,,,,Count the number of lakes each river flows through.
+mondial,mondial_RiverThrough,mondial_RiverThrough.lake,,,mondial_RiverThrough.river = <RIVER>,,,List all the lakes that a specific river flows through.
+mondial,mondial_RiverThrough,mondial_RiverThrough.lake,,,mondial_RiverThrough.lake like %<NAME>%,,,Find lakes whose names match a specific pattern.
+mondial,mondial_RiverThrough,mondial_RiverThrough.river|mondial_RiverThrough.lake,,,mondial_RiverThrough.lake != <NULL>,,,Retrieve all non-null river-lake pairs.
+mondial,mondial_Mountain,mondial_Mountain.name|mondial_Mountain.elevation,,,,mondial_Mountain.elevation,desc,"Find the mountains with the highest elevation, ordered in descending order of elevation."
+mondial,mondial_Mountain,mondial_Mountain.type|mondial_Mountain.elevation,avg(mondial_Mountain.elevation),mondial_Mountain.type,,,,Find the average elevation of mountains grouped by their type.
+mondial,mondial_Mountain,mondial_Mountain.name|mondial_Mountain.coordinates,,,mondial_Mountain.type = <MOUNTAIN_TYPE>,,,Find the names and coordinates of mountains of a specific type.
+mondial,mondial_Mountain,mondial_Mountain.name|mondial_Mountain.elevation|mondial_Mountain.mountains,,,mondial_Mountain.elevation > <MIN_ELEVATION>,,,Find the names and associated mountain ranges of mountains with elevations above a certain threshold.
+mondial,mondial_Mountain,mondial_Mountain.name|mondial_Mountain.type|mondial_Mountain.elevation,,,mondial_Mountain.type like <TYPE_PATTERN>,,,Find the names and elevations of mountains with types matching a specific pattern.
+mondial,mondial_Island,mondial_Island.name|mondial_Island.area,max(mondial_Island.area),,,,,Find the largest island by area.
+mondial,mondial_Island,mondial_Island.name|mondial_Island.type,,,mondial_Island.type = <TYPE>,,,List the islands of a specific type.
+mondial,mondial_Island,mondial_Island.name|mondial_Island.elevation,avg(mondial_Island.elevation),,,,,Calculate the average elevation of islands.
+mondial,mondial_Island,mondial_Island.name|mondial_Island.area,,,mondial_Island.area > <AREA>,,,Find islands larger than a certain area.
+mondial,mondial_Island,mondial_Island.name|mondial_Island.area,,,,mondial_Island.area,desc,List islands sorted by area in descending order.
+mondial,mondial_Desert,mondial_Desert.name|mondial_Desert.area,max(mondial_Desert.area),,,,,Find the largest desert by area.
+mondial,mondial_Desert,mondial_Desert.name|mondial_Desert.area,,,mondial_Desert.area > <VALUE>,,,List all deserts with an area greater than a specified value.
+mondial,mondial_Desert,mondial_Desert.name|mondial_Desert.coordinates,,,mondial_Desert.coordinates like %latitude-longitude%,,,Find deserts located near specific coordinates.
+mondial,mondial_Desert,mondial_Desert.name|mondial_Desert.area,,,,mondial_Desert.area,desc,Order deserts by area in descending order.
+mondial,mondial_Desert,mondial_Desert.name|mondial_Desert.coordinates,,,mondial_Desert.coordinates != <NULL>,,,List all deserts with valid geographical coordinates.
+mondial,mondial_geo_Mountain,mondial_geo_Mountain.mountain|mondial_geo_Mountain.country,,,mondial_geo_Mountain.province = <PROVINCE>,,,Retrieve all mountains along with the country they are located in for a specific province.
+mondial,mondial_geo_Mountain,mondial_geo_Mountain.mountain|mondial_geo_Mountain.province,,mondial_geo_Mountain.province,,,,Get a list of mountains grouped by the provinces they are located in.
+mondial,mondial_geo_Mountain,mondial_geo_Mountain.mountain|mondial_geo_Mountain.province,,,mondial_geo_Mountain.country = <COUNTRY>,,,Find all mountains along with their provinces in a specific country.
+mondial,mondial_geo_Mountain,mondial_geo_Mountain.mountain|mondial_geo_Mountain.country|mondial_geo_Mountain.province,,,,,,List mountains along with the country and province they are located in without any filtering.
+mondial,mondial_geo_Mountain,mondial_geo_Mountain.mountain,,,mondial_geo_Mountain.country = <COUNTRY>|mondial_geo_Mountain.province = <PROVINCE>,,,Retrieve mountains located in a specific country and province.
+mondial,mondial_mergesWith,mondial_mergesWith.sea1|mondial_mergesWith.sea2,,,,,,Retrieve all pairs of seas that merge with each other.
+mondial,mondial_mergesWith,mondial_mergesWith.sea1|mondial_mergesWith.sea2,,,mondial_mergesWith.sea1 = <SEA>,,,Find all seas that merge with a specific sea.
+mondial,mondial_mergesWith,mondial_mergesWith.sea1|mondial_mergesWith.sea2,,,mondial_mergesWith.sea1 != <NULL>|mondial_mergesWith.sea2 != <NULL>,,,List all non-null relationships between seas that merge with each other.
+mondial,mondial_located,mondial_located.city|mondial_located.lake,,,mondial_located.lake = <LAKE>,,,Retrieve cities located near a specific lake.
+mondial,mondial_located,mondial_located.city|mondial_located.river,,,mondial_located.river = <RIVER>,,,List the cities situated on a particular river.
+mondial,mondial_located,mondial_located.city|mondial_located.sea,,,mondial_located.sea = <SEA>,,,Identify cities along a specific sea.
+mondial,mondial_located,mondial_located.city|mondial_located.country,,,mondial_located.country = <COUNTRY>,,,Get all cities within a particular country.
+mondial,mondial_located,mondial_located.city|mondial_located.province,,,mondial_located.province = <PROVINCE>,,,Find the cities in a specific province.
+mondial,mondial_locatedOn,mondial_locatedOn.province|mondial_locatedOn.island,,,,,,Find the provinces and the islands they are associated with.
+mondial,mondial_locatedOn,mondial_locatedOn.city|mondial_locatedOn.island,,,,,,Identify cities and the islands they are located on.
+mondial,mondial_locatedOn,mondial_locatedOn.city|mondial_locatedOn.island,count(*),mondial_locatedOn.island,,,,Count the number of cities located on each island.
+mondial,mondial_locatedOn,mondial_locatedOn.city|mondial_locatedOn.island|mondial_locatedOn.province,,,mondial_locatedOn.island = <ISLAND>,,,Retrieve details about cities and provinces for a specific island.
+mondial,mondial_locatedOn,mondial_locatedOn.island,count(*),mondial_locatedOn.island,,mondial_locatedOn.island,desc,Rank islands by the number of occurrences in the table.
+mondial,mondial_islandIn,mondial_islandIn.island|mondial_islandIn.sea,,,,,,Retrieve the names of islands and the seas they are located in.
+mondial,mondial_islandIn,mondial_islandIn.island|mondial_islandIn.sea,,,mondial_islandIn.sea = <SEA>,,,Retrieve islands located in a specific sea.
+mondial,mondial_islandIn,mondial_islandIn.island|mondial_islandIn.lake,,,mondial_islandIn.lake != <NULL>,,,Get all islands that are located in lakes.
+mondial,mondial_islandIn,mondial_islandIn.island|mondial_islandIn.sea,count(mondial_islandIn.island),mondial_islandIn.sea,,,,Count the number of islands grouped by the sea they are located in.
+mondial,mondial_islandIn,mondial_islandIn.island|mondial_islandIn.river,,,mondial_islandIn.river like <RIVER_PATTERN>,,,Find islands located in rivers whose names match a specific pattern.
+mondial,mondial_MountainOnIsland,mondial_MountainOnIsland.mountain|mondial_MountainOnIsland.island,,,,,,Retrieve the names of mountains and the islands they are located on. This is a straightforward projection query.
+mondial,mondial_MountainOnIsland,mondial_MountainOnIsland.mountain|mondial_MountainOnIsland.island,,,mondial_MountainOnIsland.island like <ISLAND_NAME>,,,Retrieve mountains located on a specific island. Useful for filtering by island name.
+mondial,mondial_MountainOnIsland,mondial_MountainOnIsland.island,count(mondial_MountainOnIsland.mountain),mondial_MountainOnIsland.island,,,,Count the number of mountains on each island. This is an aggregation over a dimension.
+mondial,mondial_MountainOnIsland,mondial_MountainOnIsland.island,count(mondial_MountainOnIsland.mountain),mondial_MountainOnIsland.island,,mondial_MountainOnIsland.mountain,desc,Retrieve the number of mountains on each island and order by the count in descending order to find islands with the most mountains.
+mondial,mondial_MountainOnIsland,mondial_MountainOnIsland.mountain|mondial_MountainOnIsland.island,,,mondial_MountainOnIsland.mountain = <MOUNTAIN_NAME>,,,Retrieve the island where a specific mountain is located. Useful for filtering by mountain name.
+mondial,mondial_RiverOnIsland,mondial_RiverOnIsland.river|mondial_RiverOnIsland.island,,,,,,Retrieve the list of rivers and the islands they flow through.
+mondial,mondial_RiverOnIsland,mondial_RiverOnIsland.river|mondial_RiverOnIsland.island,,,mondial_RiverOnIsland.island like <ISLAND_NAME>,,,Filter rivers flowing through a specific island.
+mondial,mondial_RiverOnIsland,mondial_RiverOnIsland.river|mondial_RiverOnIsland.island,,,mondial_RiverOnIsland.river like <RIVER_NAME>,,,Retrieve the island(s) a specific river flows through.
+mondial,mondial_RiverOnIsland,mondial_RiverOnIsland.island,count(mondial_RiverOnIsland.river),mondial_RiverOnIsland.island,,,,Count the number of rivers flowing through each island.
+mondial,mondial_RiverOnIsland,mondial_RiverOnIsland.island,count(mondial_RiverOnIsland.river),mondial_RiverOnIsland.island,,mondial_RiverOnIsland.island,desc,List islands ordered by the number of rivers flowing through them in descending order.
+mondial,mondial_LakeOnIsland,mondial_LakeOnIsland.lake|mondial_LakeOnIsland.island,,,,,,List all lakes and the islands they are located on.
+mondial,mondial_LakeOnIsland,mondial_LakeOnIsland.lake|mondial_LakeOnIsland.island,,,mondial_LakeOnIsland.island like %<TEXT>%,,,Find lakes located on islands with names matching a specific pattern.
+mondial,mondial_LakeOnIsland,mondial_LakeOnIsland.lake,,,mondial_LakeOnIsland.lake like %<TEXT>%,,,Search for lakes whose names match a specific pattern.
+mondial,mondial_LakeOnIsland,mondial_LakeOnIsland.lake,,,"mondial_LakeOnIsland.island in (<ISLAND1>, <ISLAND2>)",,,Retrieve lakes located on specific islands.
+mondial,mondial_LakeOnIsland,mondial_LakeOnIsland.lake|mondial_LakeOnIsland.island,,,,mondial_LakeOnIsland.lake,asc,"List all lakes and their corresponding islands, sorted alphabetically by lake name."
+mondial,mondial_Airport,mondial_Airport.name|mondial_Airport.country,,,mondial_Airport.elevation > <THRESHOLD>,,,Find airports in countries with elevation higher than a threshold.
+mondial,mondial_Airport,mondial_Airport.name|mondial_Airport.province,,,mondial_Airport.gmtOffset = <GMT_OFFSET>,,,List airports in provinces with a specific GMT offset.
+mondial,mondial_Airport,mondial_Airport.country,count(mondial_Airport.name),mondial_Airport.country,,mondial_Airport.country,asc,Count the number of airports by country and order the list alphabetically.
+mondial,mondial_Airport,mondial_Airport.name|mondial_Airport.island,,,mondial_Airport.island != <NULL>,,,Find airports located on islands.
+mondial,mondial_Airport,mondial_Airport.name|mondial_Airport.latitude|mondial_Airport.longitude,,,,mondial_Airport.latitude,desc,"List all airports with their geographic coordinates, ordered by latitude in descending order."
+mondial,mondial_Sublanguage,mondial_Sublanguage.Sublang|mondial_Sublanguage.Suplang,,,,,,Retrieve the relationship between sublanguages and their parent languages.
+mondial,mondial_Sublanguage,mondial_Sublanguage.Suplang,count(*),mondial_Sublanguage.Suplang,,,,Count how many sublanguages exist for each superlanguage.
+mondial,mondial_Sublanguage,mondial_Sublanguage.Sublang|mondial_Sublanguage.Suplang,,,mondial_Sublanguage.Suplang = <SUPLANG>,,,Retrieve all sublanguages for a specific superlanguage.
+mondial,mondial_Sublanguage,mondial_Sublanguage.Sublang,,,mondial_Sublanguage.Sublang like <PATTERN>,,,Search for sublanguages that match a specific naming pattern.
+mondial,mondial_Sublanguage,mondial_Sublanguage.Sublang|mondial_Sublanguage.Suplang,,,,mondial_Sublanguage.Sublang,asc,"Retrieve the list of sublanguages and their superlanguages, ordered alphabetically by sublanguage name."
+mondial,mondial_Countryothername,mondial_Countryothername.country|mondial_Countryothername.othername,,,,,,Retrieve the country codes and their corresponding other names.
+mondial,mondial_Countryothername,mondial_Countryothername.country|mondial_Countryothername.othername,,,mondial_Countryothername.othername like <NAME_PATTERN>,,,Find country codes for other names that match a specific pattern.
+mondial,mondial_Countryothername,mondial_Countryothername.country|mondial_Countryothername.othername,,,mondial_Countryothername.country = <COUNTRY_CODE>,,,Retrieve all other names for a specific country code.
+mondial,mondial_Countryothername,mondial_Countryothername.othername,,,mondial_Countryothername.othername != <NULL>,,,Find all other names that are not null.
+mondial,mondial_Countryothername,mondial_Countryothername.country|mondial_Countryothername.othername,,,,mondial_Countryothername.othername,asc,Retrieve the country codes and their corresponding other names ordered alphabetically by other names.
+mondial,mondial_Provinceothername,mondial_Provinceothername.Province|mondial_Provinceothername.othername,,,,,,Retrieve all province names along with their alternative names for reference or display purposes.
+mondial,mondial_Provinceothername,mondial_Provinceothername.Province|mondial_Provinceothername.Country,,,mondial_Provinceothername.Country = <COUNTRY>,,,Find all provinces and their associated countries for a specific country.
+mondial,mondial_Provinceothername,mondial_Provinceothername.othername,,,mondial_Provinceothername.Province like <PARTIAL_PROVINCE_NAME>,,,Retrieve alternative names of provinces that match a certain pattern or partial name.
+mondial,mondial_Provinceothername,mondial_Provinceothername.Country|mondial_Provinceothername.othername,count(mondial_Provinceothername.othername),mondial_Provinceothername.Country,,mondial_Provinceothername.Country,asc,"Count the number of alternative names for provinces grouped by country, ordered alphabetically by country code."
+mondial,mondial_Provinceothername,mondial_Provinceothername.Province|mondial_Provinceothername.Country,,,mondial_Provinceothername.othername != <NULL>,,,Retrieve all provinces and their countries where alternative names are available.
+mondial,mondial_Cityothername,mondial_Cityothername.City|mondial_Cityothername.othername,,,,,,Retrieve the list of cities and their alternative names for translation or regional reference purposes.
+mondial,mondial_Cityothername,mondial_Cityothername.City|mondial_Cityothername.Country|mondial_Cityothername.othername,,,mondial_Cityothername.Country = <COUNTRY>,,,Find alternative names of cities in a specific country for localization purposes.
+mondial,mondial_Cityothername,mondial_Cityothername.City|mondial_Cityothername.Province|mondial_Cityothername.othername,,,mondial_Cityothername.Province like <PROVINCE>,,,Identify cities and their alternative names in a specific province for detailed regional analysis.
+mondial,mondial_Cityothername,mondial_Cityothername.City|mondial_Cityothername.Country|mondial_Cityothername.othername,,,mondial_Cityothername.othername like <NAME>,,,Search for cities with a specific pattern in their alternative names for targeted linguistic studies.
+mondial,mondial_borders,mondial_borders.Country1|mondial_borders.Country2|mondial_borders.Length,max(mondial_borders.Length),,,,,Find the longest border between two countries.
+mondial,mondial_borders,mondial_borders.Country1|mondial_borders.Country2|mondial_borders.Length,,,mondial_borders.Length > <VALUE>,,,Retrieve borders longer than a specific length.
+mondial,mondial_borders,mondial_borders.Country1|mondial_borders.Country2,count(*),mondial_borders.Country1,,,,Count how many neighboring countries each country has.
+mondial,mondial_borders,mondial_borders.Country1|mondial_borders.Country2|mondial_borders.Length,,,,mondial_borders.Length,desc,"List borders ordered by their length, starting with the longest."
+mondial,mondial_borders,mondial_borders.Country1|mondial_borders.Country2,,,mondial_borders.Country1 = <COUNTRY>,,,Find all neighboring countries for a specific country.
+mondial,mondial_Sea,mondial_Sea.Name|mondial_Sea.Area,max(mondial_Sea.Depth),,,,,Retrieve the name and area of seas while finding the deepest sea.
+mondial,mondial_Sea,mondial_Sea.Name|mondial_Sea.Depth,,,mondial_Sea.Area > <1000>,,,List seas with their depths where the area of the sea is greater than a certain threshold.
+mondial,mondial_Sea,mondial_Sea.Name,avg(mondial_Sea.Area),,,,,Find the average area of all seas and list their names.
+mondial,mondial_Sea,mondial_Sea.Name|mondial_Sea.Depth,,,mondial_Sea.Depth between <MIN_DEPTH> and <MAX_DEPTH>,,,Retrieve seas with depths within a specific range.
+mondial,mondial_Sea,mondial_Sea.Name|mondial_Sea.Area,,,,mondial_Sea.Area,desc,Rank seas by their area in descending order to identify the largest seas.
+mondial,mondial_geo_Desert,mondial_geo_Desert.Desert|mondial_geo_Desert.Country,count(*),mondial_geo_Desert.Country,,,,Count the number of deserts per country to understand desert distribution across countries.
+mondial,mondial_geo_Desert,mondial_geo_Desert.Desert|mondial_geo_Desert.Province,,,mondial_geo_Desert.Province like <PROVINCE>,,,Retrieve deserts located in a specific province to analyze geographic details.
+mondial,mondial_geo_Desert,mondial_geo_Desert.Desert|mondial_geo_Desert.Country,,,mondial_geo_Desert.Country = <COUNTRY>,,,Get the list of deserts within a specified country to study its desert regions.
+mondial,mondial_geo_Desert,mondial_geo_Desert.Desert|mondial_geo_Desert.Country|mondial_geo_Desert.Province,,,,mondial_geo_Desert.Desert,asc,List all deserts sorted alphabetically to explore desert names and their locations.
+mondial,mondial_geo_Desert,mondial_geo_Desert.Desert|mondial_geo_Desert.Country,,,mondial_geo_Desert.Country != <NULL>,,,Find deserts that are assigned to a specific country.
+mondial,mondial_geo_Island,mondial_geo_Island.Island|mondial_geo_Island.Province|mondial_geo_Island.Country,,,mondial_geo_Island.Country = <COUNTRY>,,,"Retrieve islands located in a specific country, along with the province information."
+mondial,mondial_geo_Island,mondial_geo_Island.Island|mondial_geo_Island.Province,,mondial_geo_Island.Province,,,,Group islands by their provinces to understand the distribution of islands per province.
+mondial,mondial_geo_Island,mondial_geo_Island.Island|mondial_geo_Island.Country,,,mondial_geo_Island.Province like <PROVINCE>,,,"Find islands located in provinces matching a specific pattern, along with their countries."
+mondial,mondial_geo_Island,mondial_geo_Island.Island,,,mondial_geo_Island.Country != <NULL>,,,"List all islands that are associated with a specific country, avoiding null values."
+mondial,mondial_geo_Island,mondial_geo_Island.Island,,,mondial_geo_Island.Province != <NULL>,,,"Retrieve all islands that are associated with a specific province, avoiding null values."
+mondial,mondial_geo_River,mondial_geo_River.River|mondial_geo_River.Country,,,mondial_geo_River.Province = <PROVINCE>,,,Retrieve rivers in a specific province along with their respective countries.
+mondial,mondial_geo_River,mondial_geo_River.River|mondial_geo_River.Province,,,mondial_geo_River.Country = <COUNTRY>,,,List rivers in a specific country along with the provinces they flow through.
+mondial,mondial_geo_River,mondial_geo_River.River|mondial_geo_River.Country,,mondial_geo_River.Country,,,,"Group rivers by country, showing rivers in each country."
+mondial,mondial_geo_River,mondial_geo_River.River|mondial_geo_River.Province,,,mondial_geo_River.River like <RIVER_PATTERN>,,,Search for rivers that match a specific naming pattern and list the provinces they flow through.
+mondial,mondial_geo_River,mondial_geo_River.Province|mondial_geo_River.Country,,mondial_geo_River.Province,,,,Group provinces by country to show the relationship between provinces and countries where rivers are located.
+mondial,mondial_geo_Sea,mondial_geo_Sea.Sea|mondial_geo_Sea.Country,count(*),mondial_geo_Sea.Country,,,,Count the number of seas per country to understand the distribution of seas across countries.
+mondial,mondial_geo_Sea,mondial_geo_Sea.Sea|mondial_geo_Sea.Province,,,mondial_geo_Sea.Province = <PROVINCE>,,,"List all seas located in a specific province, filtering by province."
+mondial,mondial_geo_Sea,mondial_geo_Sea.Sea|mondial_geo_Sea.Country,,,mondial_geo_Sea.Country = <COUNTRY>,,,"Retrieve all seas associated with a specific country, filtering by country."
+mondial,mondial_geo_Sea,mondial_geo_Sea.Sea|mondial_geo_Sea.Country|mondial_geo_Sea.Province,,,,,,Display all seas along with their associated country and province for a comprehensive view.
+mondial,mondial_geo_Sea,mondial_geo_Sea.Sea|mondial_geo_Sea.Province,,mondial_geo_Sea.Province,,,,Group seas by province to understand how seas are distributed across provinces.
+mondial,mondial_geo_lake,mondial_geo_lake.Lake|mondial_geo_lake.Country|mondial_geo_lake.Province,,,,,,Retrieve the lakes along with the countries and provinces where they are located for a geographical overview.
+mondial,mondial_geo_lake,mondial_geo_lake.Lake|mondial_geo_lake.Country,,,mondial_geo_lake.Country = <COUNTRY>,,,Find all lakes located in a specific country.
+mondial,mondial_geo_lake,mondial_geo_lake.Lake|mondial_geo_lake.Province,,,mondial_geo_lake.Province = <PROVINCE>,,,Retrieve lakes located in a specific province.
+mondial,mondial_geo_lake,mondial_geo_lake.Lake|mondial_geo_lake.Country|mondial_geo_lake.Province,,,mondial_geo_lake.Lake like <NAME_PATTERN>,,,Search for lakes with names matching a specific pattern and their locations.
+mondial,mondial_geo_lake,mondial_geo_lake.Province,count(mondial_geo_lake.Lake),mondial_geo_lake.Province,,mondial_geo_lake.Province,asc,"Count the number of lakes in each province, ordered alphabetically by province."
+mondial,mondial_geo_Source,mondial_geo_Source.River|mondial_geo_Source.Country,,,,,,Retrieve all rivers and their respective countries from the geo_Source table.
+mondial,mondial_geo_Source,mondial_geo_Source.River|mondial_geo_Source.Province,,,,,,Retrieve all rivers and the provinces they are located in from the geo_Source table.
+mondial,mondial_geo_Source,mondial_geo_Source.River|mondial_geo_Source.Country,,,mondial_geo_Source.Country = <COUNTRY>,,,Find all rivers originating in a specific country from the geo_Source table.
+mondial,mondial_geo_Source,mondial_geo_Source.River|mondial_geo_Source.Province,,,mondial_geo_Source.Province = <PROVINCE>,,,Retrieve rivers originating from a specific province in the geo_Source table.
+mondial,mondial_geo_Source,mondial_geo_Source.Country,count(mondial_geo_Source.River),mondial_geo_Source.Country,,mondial_geo_Source.Country,asc,Count the number of rivers originating from each country and order the result alphabetically by country.
+mondial,mondial_geo_Estuary,mondial_geo_Estuary.River|mondial_geo_Estuary.Country|mondial_geo_Estuary.Province,,,,,,List all rivers along with their associated countries and provinces where their estuaries are located.
+mondial,mondial_geo_Estuary,mondial_geo_Estuary.River|mondial_geo_Estuary.Country,count(*),mondial_geo_Estuary.Country,,,,Count the number of rivers that have estuaries in each country.
+mondial,mondial_geo_Estuary,mondial_geo_Estuary.River|mondial_geo_Estuary.Province,,,mondial_geo_Estuary.Country = <COUNTRY>,,,Find all rivers and their provinces where the estuaries are located for a specific country.
+mondial,mondial_geo_Estuary,mondial_geo_Estuary.Province,count(*),mondial_geo_Estuary.Province,,mondial_geo_Estuary.Province,desc,Determine the provinces with the highest number of river estuaries.
+mondial,mondial_geo_Estuary,mondial_geo_Estuary.River|mondial_geo_Estuary.Country,,,mondial_geo_Estuary.Province like <PROVINCE>,,,List rivers and their countries for estuaries located in a province matching a certain pattern.
