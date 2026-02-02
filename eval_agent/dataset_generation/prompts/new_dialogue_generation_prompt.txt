@@ -1,0 +1,98 @@
+You are an advanced dialog generation agent. Your task is to generate a dialog experiment consisting of exactly {total_expected_interactions} interactions based on the database context provided below.
+
+You are given a list of binary interaction directives. Each position in the list corresponds to one user interaction in the dialog:
+
+- 0 → the interaction MUST explore JOIN combinations involving the target table.
+- 1 → the interaction MUST explore COLUMN combinations of the target table (no new joins).
+
+You MUST strictly follow the binary interaction list in order. Do NOT change its length, order, or meaning.
+
+# Interaction Binary List (length = {total_expected_interactions}):
+{interaction_binary_list}
+
+# Target Table:
+{target_table}
+
+# Join Combination Context (to be used ONLY when binary value = 0):
+{join_str}
+
+# Column Combination Context (to be used ONLY when binary value = 1):
+{column_combo_str}
+
+# Tables Involved (global context, do not invent tables):
+{tables_involved}
+
+# Table Details:
+{tables_context}
+
+---
+
+## Dialogue Generation Rules
+
+- Generate exactly {total_expected_interactions} interactions.
+- Interaction i MUST follow the directive at interaction_binary_list[i].
+- All interactions are user utterances ("speaker": "User").
+- Each interaction must be a natural continuation of the previous one (multi-turn dialogue).
+- Follow-up questions MUST depend on previous answers.
+- Do NOT mix join-based reasoning and column-based reasoning in the same interaction.
+- Use ONLY the provided join or column combinations; do not invent schema elements.
+
+### Binary Rules Recap
+- If interaction_binary_list[i] == 0:
+  - The question must require JOIN reasoning.
+  - Use join conditions from the Join Combination Context.
+- If interaction_binary_list[i] == 1:
+  - The question must focus on filtering, aggregation, grouping, or ordering using columns.
+  - Do NOT introduce new joins.
+
+---
+
+## Required Output Format (STRICT)
+
+You must output a single JSON object with the following structure and NOTHING ELSE:
+
+{{
+  "experiment_id": "{experiment_id}",
+  "total_expected_interactions": {total_expected_interactions},
+  "interactions": [
+    {{
+      "interaction_id": "1",
+      "speaker": "User",
+      "utterance": "...",
+      "intention": "...",
+      "ground_truths": {{
+        "tables_from_schema_linking": [ ... ],
+        "golden_sql": "<VALID SQL QUERY>"
+      }}
+    }}
+  ]
+}}
+
+---
+
+## Field Constraints
+
+- "utterance":
+  - Natural, conversational user question.
+- "intention":
+  - A refined natural language rewrite of the utterance.
+  - Must NOT reference database tables, columns, or schema.
+  - For follow-ups, include context implicitly (e.g., “that team”, “this country”).
+- "tables_from_schema_linking":
+  - Exact table names used in the SQL.
+- "golden_sql":
+  - Valid SQL executable on the given schema.
+  - Use ONLY tables and columns provided.
+  - Use UPPERCASE for table and column names (e.g., MONDIAL_CITY.NAME).
+  - Sample values are allowed ONLY as filters.
+
+---
+
+## Additional Constraints
+
+- Do NOT generate giant table scans.
+- Prefer specific, realistic questions.
+- Maintain semantic coherence across turns.
+- ATTENTION TO EXPERIMENT ID: {experiment_id}
+
+Failure to respect the binary interaction list invalidates the experiment.

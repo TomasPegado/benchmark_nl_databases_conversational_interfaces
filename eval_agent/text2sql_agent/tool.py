@@ -77,8 +77,8 @@ def convert_text_to_sql_and_execute(query, limit=3) -> str:
     if not text_to_sql_result.sql_query.strip().upper().startswith("SELECT"):
         text_to_sql_result.sql_query = "SELECT " + text_to_sql_result.sql_query
 
-    if not "FETCH FIRST" in ["query_string"]:
-        text_to_sql_result.sql_query = text_to_sql_result.sql_query.replace(";", f" FETCH FIRST {limit} ROWS ONLY;")
+    # if not "FETCH FIRST" in ["query_string"]:
+    #     text_to_sql_result.sql_query = text_to_sql_result.sql_query.replace(";", f" FETCH FIRST {limit} ROWS ONLY;")
 
     if "DISTINCT" in text_to_sql_result.sql_query:
         text_to_sql_result.sql_query = text_to_sql_result.sql_query.replace("DISTINCT", "")
