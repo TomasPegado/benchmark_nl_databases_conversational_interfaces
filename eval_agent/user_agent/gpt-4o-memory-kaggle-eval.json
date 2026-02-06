@@ -1,0 +1,2296 @@
+[
+    {
+        "experiment_id": "1",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:06:16.667801",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the names of players inducted into the Hall of Fame who also received awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the names of players who were inducted into the Hall of Fame and also received awards?",
+                        "agent_reply": "There are 2288 players who were inducted into the Hall of Fame and also received awards. Examples include Old Hoss Radbourn, Tim Keefe, John Clarkson, Amos Rusie, Hugh Duffy, and many others.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the names of players who were inducted into the Hall of Fame and also received awards.",
+                            "user_intention": "Find the names of players inducted into the Hall of Fame who also received awards.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H INNER JOIN THEHISTORYOFBASEBALL_PLAYER P ON H.PLAYER_ID = P.PLAYER_ID INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON H.PLAYER_ID = A.PLAYER_ID WHERE H.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  p.name_first, p.name_last FROM thehistoryofbaseball_hall_of_fame h JOIN thehistoryofbaseball_player p ON h.player_id = p.player_id JOIN thehistoryofbaseball_player_award pa ON p.player_id = pa.player_id WHERE LOWER(h.inducted) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.793000221252441,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the total number of ballots cast for the players inducted into the Hall of Fame and mentioned earlier.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many ballots were cast for these players?",
+                        "agent_reply": "A total of 661,482 ballots were cast for players who were inducted into the Hall of Fame and also received awards.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the total number of ballots cast for players who were inducted into the Hall of Fame and also received awards.",
+                            "user_intention": "Find the total number of ballots cast for the players inducted into the Hall of Fame and mentioned earlier.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT SUM(BALLOTS) FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE INDUCTED = 'Y'",
+                            "generated_sql": "SELECT SUM(hf.BALLOTS) AS total_ballots FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME hf JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD pa ON hf.PLAYER_ID = pa.PLAYER_ID WHERE LOWER(hf.INDUCTED) = 'y';",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 10.691118240356445,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the awards received by players inducted into the Hall of Fame.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which awards did these inducted players receive?",
+                        "agent_reply": "I encountered an error while processing your request: ORA-00904: \"PAW\".\"YEAR_\": invalid identifier. Could you please rephrase your question for better clarity?",
+                        "evaluation": {
+                            "text_to_sql_input": "List the awards received by players who were inducted into the Hall of Fame and also received awards.",
+                            "user_intention": "Find the awards received by players inducted into the Hall of Fame.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT A.AWARD_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON H.PLAYER_ID = A.PLAYER_ID WHERE H.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  paw.award_id, paw.year_ FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD paw JOIN KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME hof ON LOWER(paw.player_id) = LOWER(hof.player_id) WHERE LOWER(hof.inducted) = LOWER('Y')",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 11.022858142852783,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 11.022889137268066
+            }
+        ]
+    },
+    {
+        "experiment_id": "2",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:06:53.048041",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the number of players inducted into the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many players were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": "5 players were inducted into the Hall of Fame in 1936.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many players were inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Find the number of players inducted into the Hall of Fame in 1936.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT COUNT(*) FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT COUNT(*) AS inducted_count FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND LOWER(INDUCTED) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.601310968399048,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the highest number of votes received by a player inducted into the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Out of those inducted players, how many votes did the one with the most votes receive?",
+                        "agent_reply": "The player with the most votes among the inducted players in 1936 received 222 votes.",
+                        "evaluation": {
+                            "text_to_sql_input": "Out of the inducted players in the Hall of Fame in 1936, how many votes did the one with the most votes receive?",
+                            "user_intention": "Find the highest number of votes received by a player inducted into the Hall of Fame in 1936.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT MAX(VOTES) FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT MAX(votes) AS most_votes FROM thehistoryofbaseball_hall_of_fame WHERE inducted = 'Y' AND yearid = 1936;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.290764093399048,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve the salaries of Hall of Fame inducted players in 1985 by joining the Hall of Fame data with salary data.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What were the salaries of those inducted players in 1985?",
+                        "agent_reply": "No salary data is available for the players inducted into the Hall of Fame in 1985.",
+                        "evaluation": {
+                            "text_to_sql_input": "What were the salaries of the players inducted into the Hall of Fame in 1985?",
+                            "user_intention": "Retrieve the salaries of Hall of Fame inducted players in 1985 by joining the Hall of Fame data with salary data.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.SALARY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_SALARY S ON H.PLAYER_ID = S.PLAYER_ID WHERE H.INDUCTED = 'Y' AND S.YEAR = 1985",
+                            "generated_sql": "SELECT s.player_id, s.salary FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME h JOIN KAGGLE.THEHISTORYOFBASEBALL_SALARY s ON h.player_id = s.player_id WHERE h.inducted = 'Y' AND h.yearid = 1985;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.219702959060669,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "3",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:07:23.811018",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the names of players inducted into the Hall of Fame who have also won awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the names of players who were inducted into the Hall of Fame and also won awards?",
+                        "agent_reply": "There are 2288 players who were inducted into the Hall of Fame and also won awards. Some examples are:\n1. Old Hoss Radbourn - Pitching Triple Crown\n2. Tim Keefe - Pitching Triple Crown\n3. John Clarkson - Pitching Triple Crown\n4. Amos Rusie - Pitching Triple Crown\n5. Hugh Duffy - Triple Crown\n... and many more. Let me know if you need specific filters or details!",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the names of players who were inducted into the Hall of Fame and also won awards, including the award names.",
+                            "user_intention": "Find the names of players inducted into the Hall of Fame who have also won awards.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER P ON H.PLAYER_ID = P.PLAYER_ID JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON H.PLAYER_ID = A.PLAYER_ID WHERE H.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  p.name_first, p.name_last, a.award_id FROM kaggle.thehistoryofbaseball_player p JOIN kaggle.thehistoryofbaseball_hall_of_fame h   ON p.player_id = h.player_id JOIN kaggle.thehistoryofbaseball_player_award a   ON p.player_id = a.player_id WHERE LOWER(h.inducted) = 'y';",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.14110779762268,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the number of votes received by each inducted player.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For the inducted players, how many votes did each of them receive?",
+                        "agent_reply": "There are 312 players inducted into the Hall of Fame with recorded votes. Some examples include:\n1. Hank Aaron - 406 votes\n2. Roberto Alomar - 523 votes\n3. Walter Alston - No recorded votes\n4. Sparky Anderson - No recorded votes\n5. Pete Alexander - 212 votes\n... and many others. Let me know if you'd like additional details or specific filters!",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the names of players who were inducted into the Hall of Fame and the votes they received.",
+                            "user_intention": "Find the number of votes received by each inducted player.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT PLAYER_ID, VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE INDUCTED = 'Y'",
+                            "generated_sql": "SELECT p.name_first, p.name_last, h.votes FROM kaggle.thehistoryofbaseball_hall_of_fame h JOIN kaggle.thehistoryofbaseball_player p ON h.player_id = p.player_id WHERE LOWER(h.inducted) = 'y';",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.333639860153198,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the inducted players who were born in the USA.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which of these inducted players were also born in the USA?",
+                        "agent_reply": "There are 295 players inducted into the Hall of Fame who were born in the USA. Some examples include:\n1. Hank Aaron - 406 votes\n2. Walter Alston - No recorded votes\n3. Sparky Anderson - No recorded votes\n4. Pete Alexander - 212 votes\n5. Al Barlick - No recorded votes\n... and many others. Let me know if you need further details or filters!",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the names of players who were inducted into the Hall of Fame, the votes they received, and their birth country. Filter only those born in the USA.",
+                            "user_intention": "Find the inducted players who were born in the USA.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER P ON H.PLAYER_ID = P.PLAYER_ID WHERE H.INDUCTED = 'Y' AND P.BIRTH_COUNTRY = 'USA'",
+                            "generated_sql": "SELECT p.name_first, p.name_last, p.birth_country, h.votes  FROM kaggle.thehistoryofbaseball_hall_of_fame h  JOIN kaggle.thehistoryofbaseball_player p  ON h.player_id = p.player_id  WHERE LOWER(h.inducted) = 'y' AND LOWER(p.birth_country) = 'usa'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.750530004501343,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "4",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:08:02.614990",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List all the awards given to players.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the different awards given to players?",
+                        "agent_reply": "There are 6078 entries for awards in the database, including awards like 'Pitching Triple Crown', 'Triple Crown', 'Silver Slugger', 'TSN Major League Player of the Year', and 'World Series MVP'. Would you like a more specific list or details?",
+                        "evaluation": {
+                            "text_to_sql_input": "List all the different awards given to players in the database",
+                            "user_intention": "List all the awards given to players.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD",
+                            "generated_sql": "SELECT  AWARD_ID FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 12.941860914230347,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 12.941872835159302
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "List the years when awards were given in the National League.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me which years had awards in the National League (NL)?",
+                        "agent_reply": "I encountered an error while executing the query: ORA-00904: \"YEAR_\": invalid identifier. Could you please rephrase your question or provide more details?",
+                        "evaluation": {
+                            "text_to_sql_input": "List the years in which awards were given in the National League (NL)",
+                            "user_intention": "List the years when awards were given in the National League.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT YEAR FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE LEAGUE_ID = 'NL'",
+                            "generated_sql": "SELECT  YEAR_ FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE LOWER(LEAGUE_ID) = 'nl'",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 8.72043514251709,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 8.720455169677734
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the salary of the player who won an award in 1877.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What was the salary of the player who won an award in 1877?",
+                        "agent_reply": "I encountered an error while executing the query: ORA-00904: \"PA\".\"YEAR_\": invalid identifier. Could you please rephrase your question or provide more specifics?",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the salary of the player who won an award in 1877",
+                            "user_intention": "Find the salary of the player who won an award in 1877.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.SALARY, S.PLAYER_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD A JOIN THEHISTORYOFBASEBALL_SALARY S ON A.PLAYER_ID = S.PLAYER_ID AND A.YEAR = S.YEAR WHERE A.YEAR = 1877",
+                            "generated_sql": "SELECT s.salary FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD pa JOIN KAGGLE.THEHISTORYOFBASEBALL_SALARY s ON pa.player_id = s.player_id WHERE pa.year_ = 1877",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 10.01743483543396,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 10.01744270324707
+            }
+        ]
+    },
+    {
+        "experiment_id": "5",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:08:34.298578",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the inducted players and the number of votes they received.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who were inducted into the Hall of Fame and how many votes did they receive?",
+                        "agent_reply": "There are 312 players inducted into the Hall of Fame. For example, Ty Cobb ('cobbty01') received 222 votes, Babe Ruth ('ruthba01') received 215 votes, and Honus Wagner ('wagneho01') also received 215 votes. Would you like to know more details or focus on specific players?",
+                        "evaluation": {
+                            "text_to_sql_input": "I want to know the players inducted into the Hall of Fame and how many votes they received.",
+                            "user_intention": "Find the inducted players and the number of votes they received.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT PLAYER_ID, VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE INDUCTED = 'Y'",
+                            "generated_sql": "SELECT h.player_id, h.votes FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME h WHERE LOWER(h.inducted) = LOWER('Y')",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 62.459043979644775,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 62.45905900001526
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the awards won by the inducted players.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me which awards these players have won?",
+                        "agent_reply": "I encountered an error while trying to fetch the awards won by players inducted into the Hall of Fame. The error message says: ORA-00904: \"A\".\"YEAR_\": invalid identifier. Could you please rephrase your question or provide additional clarification?",
+                        "evaluation": {
+                            "text_to_sql_input": "I want to know the awards won by players inducted into the Hall of Fame.",
+                            "user_intention": "Find the awards won by the inducted players.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT HOF.PLAYER_ID, PA.AWARD_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME HOF JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD PA ON HOF.PLAYER_ID = PA.PLAYER_ID WHERE HOF.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  h.player_id, h.inducted, a.award_id, a.year_, a.league_id  FROM thehistoryofbaseball_hall_of_fame h JOIN thehistoryofbaseball_player_award a ON h.player_id = a.player_id WHERE LOWER(h.inducted) = LOWER('Y')",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 10.580733060836792,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 10.580747842788696
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the number of first-place votes received by inducted players for their awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many first-place votes did these players receive for their awards?",
+                        "agent_reply": "There are 186 players inducted into the Hall of Fame who received first-place votes for their awards. For example, Sandy Koufax ('koufasa01') received 90 first-place votes, Catfish Hunter ('hunteca01') received 23, and Rollie Fingers ('fingero01') received 41. Would you like specific details or focus on particular players?",
+                        "evaluation": {
+                            "text_to_sql_input": "I want to know how many first-place votes players inducted into the Hall of Fame received for their awards.",
+                            "user_intention": "Find the number of first-place votes received by inducted players for their awards.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT HOF.PLAYER_ID, PV.VOTES_FIRST FROM THEHISTORYOFBASEBALL_HALL_OF_FAME HOF JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE PV ON HOF.PLAYER_ID = PV.PLAYER_ID WHERE HOF.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT h.player_id, SUM(v.votes_first) AS total_first_place_votes FROM thehistoryofbaseball_hall_of_fame h JOIN thehistoryofbaseball_player_award_vote v ON h.player_id = v.player_id WHERE LOWER(h.inducted) = LOWER('Y') GROUP BY h.player_id",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.225396871566772,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "6",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:10:00.822857",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the names and birth years of players born in the USA.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the names and birth years of all players who were born in the USA?",
+                        "agent_reply": "There are 16,504 players born in the USA. Some examples include: David Aardsma (born 1981), Hank Aaron (born 1934), and Tommie Aaron (born 1939). Let me know if you'd like more specific details or filters applied.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the names and birth years of all players who were born in the USA.",
+                            "user_intention": "Find the names and birth years of players born in the USA.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NAME_FIRST, NAME_LAST, BIRTH_YEAR FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_COUNTRY = 'USA'",
+                            "generated_sql": "SELECT p.name_first, p.name_last, p.birth_year FROM kaggle.thehistoryofbaseball_player p WHERE LOWER(p.birth_country) = LOWER('USA')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.195453882217407,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the names and birth years of players born in Alabama, USA.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Out of those players born in the USA, who were born in Alabama?",
+                        "agent_reply": "There are 322 players born in Alabama, USA. Some examples include: Hank Aaron (born 1934), Tommie Aaron (born 1939), and Bill Adair (born 1913). Let me know if you'd like further details or specific filters applied.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the names and birth years of all players who were born in Alabama, USA.",
+                            "user_intention": "Find the names and birth years of players born in Alabama, USA.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NAME_FIRST, NAME_LAST, BIRTH_YEAR FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_COUNTRY = 'USA' AND BIRTH_STATE = 'AL'",
+                            "generated_sql": "SELECT p.NAME_FIRST, p.NAME_LAST, p.BIRTH_YEAR  FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER p WHERE LOWER(p.BIRTH_STATE) = LOWER('AL') AND LOWER(p.BIRTH_COUNTRY) = LOWER('USA')",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 12.692231893539429,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 12.692248106002808
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Check if players born in Alabama won any awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Did any of the players born in Alabama win an award?",
+                        "agent_reply": "168 players born in Alabama have won awards. Examples include Gabby Street (born 1882), who won the Baseball Magazine All-Star award, Joe Sewell (born 1898), who won multiple Baseball Magazine All-Star awards, and Corey Kluber (born 1986), who won the Cy Young Award. Let me know if you'd like a detailed list or specific filters applied.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find players born in Alabama who won an award, including their names, birth years, and the awards they won.",
+                            "user_intention": "Check if players born in Alabama won any awards.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.BIRTH_COUNTRY = 'USA' AND P.BIRTH_STATE = 'AL'",
+                            "generated_sql": "SELECT  p.NAME_FIRST, p.NAME_LAST, p.BIRTH_YEAR, a.AWARD_ID FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER p JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD a ON p.PLAYER_ID = a.PLAYER_ID WHERE LOWER(p.BIRTH_STATE) = LOWER('AL')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.220211029052734,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "7",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:10:40.415744",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the number of players inducted into the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many players were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": "In 1936, 5 players were inducted into the Hall of Fame.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many players were inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Find the number of players inducted into the Hall of Fame in 1936.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT COUNT(*) FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT COUNT(*) AS num_players_inducted FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND LOWER(INDUCTED) = LOWER('Y')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.175249814987183,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the highest number of votes received by an inducted player in the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Out of those inducted players, how many votes did the top player receive?",
+                        "agent_reply": "The top player inducted into the Hall of Fame in 1936 received 222 votes.",
+                        "evaluation": {
+                            "text_to_sql_input": "Out of the players inducted into the Hall of Fame in 1936, how many votes did the top player receive?",
+                            "user_intention": "Find the highest number of votes received by an inducted player in the Hall of Fame in 1936.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT MAX(VOTES) FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT MAX(hof.votes) AS top_votes FROM thehistoryofbaseball_hall_of_fame hof WHERE hof.yearid = 1936 AND LOWER(hof.inducted) = 'y';",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.38939380645752,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the name of the player who received the most votes in the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the name of the player who received the most votes in 1936?",
+                        "agent_reply": "The player who received the most votes in 1936 was Ty Cobb, with 222 votes.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the name of the player who received the most votes in 1936?",
+                            "user_intention": "Find the name of the player who received the most votes in the Hall of Fame in 1936.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER P ON H.PLAYER_ID = P.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' ORDER BY H.VOTES DESC FETCH FIRST 1 ROWS ONLY",
+                            "generated_sql": "SELECT p.name_first, p.name_last, h.votes  FROM thehistoryofbaseball_hall_of_fame h JOIN thehistoryofbaseball_player p ON h.player_id = p.player_id WHERE h.yearid = 1936 ORDER BY h.votes DESC FETCH FIRST 1 ROWS ONLY;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.666967153549194,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "8",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:11:11.716961",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the players and their corresponding awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players have received awards, and what were the awards?",
+                        "agent_reply": "There are 6078 entries of players who have received awards. Some examples are:\n1. Player bondto01 received the Pitching Triple Crown.\n2. Player hinespa01 received the Triple Crown.\n3. Player heckegu01 received the Pitching Triple Crown.\n4. Player radboch01 received the Pitching Triple Crown.\n5. Player oneilti01 received the Triple Crown.\nWould you like to see more detailed information or focus on specific awards?",
+                        "evaluation": {
+                            "text_to_sql_input": "Which players have received awards, and what were the awards?",
+                            "user_intention": "Find the players and their corresponding awards.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON P.PLAYER_ID = A.PLAYER_ID",
+                            "generated_sql": "SELECT  paw.player_id, paw.award_id FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD paw",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 14.03020691871643,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 14.030224800109863
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the players, their awards, and the points they won.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you also provide the points they won for those awards?",
+                        "agent_reply": "An error occurred while executing the query: ORA-00904: \"PAWV\".\"YEAR_\": invalid identifier. Please rephrase your question or clarify your request for better accuracy.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which players have received awards, what were the awards, and the points they won for those awards?",
+                            "user_intention": "Find the players, their awards, and the points they won.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID, A.POINTS_WON FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON P.PLAYER_ID = A.PLAYER_ID",
+                            "generated_sql": "SELECT paw.player_id, paw.award_id, pawv.points_won, pawv.year_ FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD paw JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE pawv ON paw.player_id = pawv.player_id AND paw.award_id = pawv.award_id",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 10.213969945907593,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 10.213989019393921
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the players, their awards, the points they won, and their salaries for the years they won the awards.",
+                "total_retries_needed": 2,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "What about their salaries for the same years they won the awards?",
+                        "agent_reply": "An error occurred while executing the query: ORA-00904: \"SAL\".\"YEAR_\": invalid identifier. Please rephrase your question or clarify your request for better accuracy.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which players have received awards, what were the awards, and their salaries for the same years they won the awards?",
+                            "user_intention": "Find the players, their awards, the points they won, and their salaries for the years they won the awards.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID, A.POINTS_WON, S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON P.PLAYER_ID = A.PLAYER_ID JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID AND A.YEAR = S.YEAR",
+                            "generated_sql": "SELECT paw.player_id, paw.award_id, paw.year_, sal.salary FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD paw JOIN KAGGLE.THEHISTORYOFBASEBALL_SALARY sal ON paw.player_id = sal.player_id AND paw.year_ = sal.year_",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 11.77458906173706,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "It seems the error is related to an invalid identifier for the \"year_\" column. To avoid this issue, I suggest formulating the query differently. Please provide the players, their awards, the points they won, and their salaries for the years they received the awards. Ensure the correct column names are used for \"year\" in the relevant tables.",
+                        "agent_reply": "An error occurred while executing the query: ORA-00904: \"PAV\".\"YEAR_\": invalid identifier. It seems the column 'YEAR_' may not be correctly referenced in one of the tables. Please verify the column names or clarify your request for better accuracy.",
+                        "evaluation": {
+                            "text_to_sql_input": "Provide the players, their awards, the points they won, and their salaries for the years they received the awards, ensuring correct column names for 'year' in the relevant tables.",
+                            "user_intention": "Find the players, their awards, the points they won, and their salaries for the years they won the awards.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID, A.POINTS_WON, S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON P.PLAYER_ID = A.PLAYER_ID JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID AND A.YEAR = S.YEAR",
+                            "generated_sql": "SELECT  paw.PLAYER_ID, paw.AWARD_ID, paw.YEAR_ AS AWARD_YEAR, pav.POINTS_WON, s.SALARY FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD paw JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE pav ON paw.PLAYER_ID = pav.PLAYER_ID AND paw.YEAR_ = pav.YEAR_ JOIN KAGGLE.THEHISTORYOFBASEBALL_SALARY s ON paw.PLAYER_ID = s.PLAYER_ID AND paw.YEAR_ = s.YEAR_",
+                            "needs_feedback": true,
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 25.803714990615845,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 2
+                    }
+                ],
+                "execution_time": 25.80372714996338
+            }
+        ]
+    },
+    {
+        "experiment_id": "9",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:12:01.770979",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find awards won by players inducted into the hall of fame.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the awards won by players who are inducted into the hall of fame?",
+                        "agent_reply": "I encountered an error while trying to fetch the data. The error message is: ORA-00904: \"PAW\".\"YEAR_\": invalid identifier. Could you rephrase your question for better clarity?",
+                        "evaluation": {
+                            "text_to_sql_input": "Can you tell me the awards won by players who are inducted into the hall of fame?",
+                            "user_intention": "Find awards won by players inducted into the hall of fame.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT A.PLAYER_ID, B.AWARD_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME A JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD B ON A.PLAYER_ID = B.PLAYER_ID WHERE A.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  paw.award_id, paw.year_, paw.league_id, paw.notes, p.name_first, p.name_last  FROM kaggle.thehistoryofbaseball_hall_of_fame h JOIN kaggle.thehistoryofbaseball_player_award paw ON h.player_id = paw.player_id JOIN kaggle.thehistoryofbaseball_player p ON h.player_id = p.player_id WHERE LOWER(h.inducted) = 'y'",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 11.43659234046936,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 11.436626195907593
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the number of votes needed for players to be inducted into the hall of fame.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many votes were needed for players to be inducted into the hall of fame?",
+                        "agent_reply": "The votes needed for players to be inducted into the Hall of Fame varied, with examples such as 170 votes and 353 votes. If you'd like a more specific breakdown or further details, let me know!",
+                        "evaluation": {
+                            "text_to_sql_input": "How many votes were needed for players to be inducted into the hall of fame?",
+                            "user_intention": "Find the number of votes needed for players to be inducted into the hall of fame.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NEEDED FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  NEEDED FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE LOWER(INDUCTED) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.478755235671997,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the highest number of votes received by any player.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the highest number of votes received by any player?",
+                        "agent_reply": "The highest number of votes received by any player in the Hall of Fame is 555 votes.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the highest number of votes received by any player in the Hall of Fame?",
+                            "user_intention": "Find the highest number of votes received by any player.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT MAX(VOTES) AS HIGHEST_VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME",
+                            "generated_sql": "SELECT MAX(votes) AS highest_votes FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.993001937866211,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "10",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:12:32.746524",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Get details of players who won awards and their corresponding votes.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you provide me the details of players who won awards and their corresponding votes?",
+                        "agent_reply": "I apologize, the query execution failed due to an error: ORA-00904: \"PAV\".\"YEAR_\": invalid identifier. Please rephrase or clarify your question so I can attempt again.",
+                        "evaluation": {
+                            "text_to_sql_input": "Provide the details of players who won awards and their corresponding votes, including their names, award details, and vote points.",
+                            "user_intention": "Get details of players who won awards and their corresponding votes.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID, THEHISTORYOFBASEBALL_PLAYER_AWARD.AWARD_ID, THEHISTORYOFBASEBALL_PLAYER_AWARD.YEAR, THEHISTORYOFBASEBALL_PLAYER_AWARD.LEAGUE_ID, THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE.POINTS_WON, THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE.POINTS_MAX, THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE.VOTES_FIRST FROM THEHISTORYOFBASEBALL_PLAYER_AWARD INNER JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE ON THEHISTORYOFBASEBALL_PLAYER_AWARD.AWARD_ID = THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE.AWARD_ID AND THEHISTORYOFBASEBALL_PLAYER_AWARD.YEAR = THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE.YEAR AND THEHISTORYOFBASEBALL_PLAYER_AWARD.LEAGUE_ID = THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE.LEAGUE_ID AND THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID = THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE.PLAYER_ID",
+                            "generated_sql": "SELECT p.NAME_FIRST, p.NAME_LAST, p.NAME_GIVEN, paw.AWARD_ID, paw.YEAR_, paw.LEAGUE_ID, pav.POINTS_WON, pav.POINTS_MAX, pav.VOTES_FIRST FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER p JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD paw ON p.PLAYER_ID = paw.PLAYER_ID JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE pav ON p.PLAYER_ID = pav.PLAYER_ID AND paw.AWARD_ID = pav.AWARD_ID AND paw.YEAR_ = pav.YEAR_;",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 13.162518978118896,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 13.162547826766968
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Filter the results to show players who won awards in the NL league.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Out of those results, can you show me only the players who won awards in the NL league?",
+                        "agent_reply": "I apologize, the query execution failed again due to an error: ORA-00904: \"PAWV\".\"YEAR_\": invalid identifier. Please rephrase or clarify your question so I can attempt again.",
+                        "evaluation": {
+                            "text_to_sql_input": "Provide the details of players who won awards and their corresponding votes in the NL league, including their names, award details, and vote points.",
+                            "user_intention": "Filter the results to show players who won awards in the NL league.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID, AWARD_ID, YEAR, LEAGUE_ID, TIE, NOTES FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE LEAGUE_ID = 'NL'",
+                            "generated_sql": "SELECT p.NAME_FIRST, p.NAME_LAST, paw.AWARD_ID, pawv.POINTS_WON, pawv.POINTS_MAX, pawv.VOTES_FIRST FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER p JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD paw ON p.PLAYER_ID = paw.PLAYER_ID JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE pawv ON paw.AWARD_ID = pawv.AWARD_ID AND paw.YEAR_ = pawv.YEAR_ WHERE LOWER(paw.LEAGUE_ID) = 'nl';",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 11.774345874786377,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 11.774373769760132
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Get salary details of NL league award winners.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those NL league award winners, can you also include their salary details if available?",
+                        "agent_reply": "I apologize for the inconvenience earlier. Since the previous queries faced issues, I recommend refining your question further to ensure clarity. You could specify the desired attributes or how the salary data should be filtered. This will help me provide accurate results.",
+                        "evaluation": {
+                            "text_to_sql_input": "For those NL league award winners, can you also include their salary details if available?",
+                            "user_intention": "Get salary details of NL league award winners.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID, THEHISTORYOFBASEBALL_PLAYER_AWARD.AWARD_ID, THEHISTORYOFBASEBALL_PLAYER_AWARD.YEAR, THEHISTORYOFBASEBALL_PLAYER_AWARD.LEAGUE_ID, THEHISTORYOFBASEBALL_SALARY.SALARY FROM THEHISTORYOFBASEBALL_PLAYER_AWARD INNER JOIN THEHISTORYOFBASEBALL_SALARY ON THEHISTORYOFBASEBALL_PLAYER_AWARD.YEAR = THEHISTORYOFBASEBALL_SALARY.YEAR AND THEHISTORYOFBASEBALL_PLAYER_AWARD.LEAGUE_ID = THEHISTORYOFBASEBALL_SALARY.LEAGUE_ID AND THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID = THEHISTORYOFBASEBALL_SALARY.PLAYER_ID WHERE THEHISTORYOFBASEBALL_PLAYER_AWARD.LEAGUE_ID = 'NL'",
+                            "generated_sql": "",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 4.997203826904297,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 4.997229814529419
+            }
+        ]
+    },
+    {
+        "experiment_id": "11",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:13:02.688341",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find players and the awards they have won.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players have won an award and what were their awards?",
+                        "agent_reply": "I encountered an error: ORA-00904: \"A\".\"YEAR_\": invalid identifier. Could you rephrase or clarify your question to help me refine the query?",
+                        "evaluation": {
+                            "text_to_sql_input": "Which players have won an award and what were their awards?",
+                            "user_intention": "Find players and the awards they have won.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID",
+                            "generated_sql": "SELECT p.name_first, p.name_last, a.award_id FROM kaggle.thehistoryofbaseball_player p JOIN kaggle.thehistoryofbaseball_player_award a ON p.player_id = a.player_id",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 10.399058818817139,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 10.399066925048828
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the birth years of the players who have won awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the birth years of those players?",
+                        "agent_reply": "Here is a summary of players who have won awards along with their birth years and award types. For example: \n- Birth Year: 1934, Award: Gold Glove\n- Birth Year: 1934, Award: TSN All-Star\n- Birth Year: 1934, Award: TSN Player of the Year\n\nThere are 6078 records in total. If you want specific details or further filtering, please let me know!",
+                        "evaluation": {
+                            "text_to_sql_input": "Can you tell me the birth years of players who have won an award and what their awards are?",
+                            "user_intention": "Find the birth years of the players who have won awards.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT NAME_FIRST, NAME_LAST, BIRTH_YEAR FROM THEHISTORYOFBASEBALL_PLAYER",
+                            "generated_sql": "SELECT  p.birth_year, pa.award_id FROM kaggle.thehistoryofbaseball_player p JOIN kaggle.thehistoryofbaseball_player_award pa ON p.player_id = pa.player_id",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.751143217086792,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Calculate the average weight of players.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the average weight of these players?",
+                        "agent_reply": "The average weight of players who have won an award is approximately 189.77 pounds.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the average weight of players who have won an award?",
+                            "user_intention": "Calculate the average weight of players.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT AVG(WEIGHT) AS AVERAGE_WEIGHT FROM THEHISTORYOFBASEBALL_PLAYER",
+                            "generated_sql": "SELECT AVG(TO_NUMBER(p.weight)) AS average_weight FROM thehistoryofbaseball_player p JOIN thehistoryofbaseball_player_award pa ON p.player_id = pa.player_id WHERE p.weight IS NOT NULL",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 10.587754964828491,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "12",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:13:36.966399",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the number of players inducted into the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many players were inducted into the Hall of Fame in 1936?",
+                        "agent_reply": "In 1936, 5 players were inducted into the Hall of Fame.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many players were inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Find the number of players inducted into the Hall of Fame in 1936.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT COUNT(*) FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT COUNT(*) AS inducted_players_count FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND LOWER(INDUCTED) = 'y';",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.626223802566528,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the voting method used for the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What was the voting method used in that year?",
+                        "agent_reply": "The voting method used for the Hall of Fame induction in 1936 was 'BBWAA' (Baseball Writers' Association of America).",
+                        "evaluation": {
+                            "text_to_sql_input": "What was the voting method used for the Hall of Fame induction in 1936?",
+                            "user_intention": "Find the voting method used for the Hall of Fame in 1936.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT VOTEDBY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y' FETCH FIRST ROW ONLY",
+                            "generated_sql": "SELECT  votedby FROM kaggle.thehistoryofbaseball_hall_of_fame WHERE yearid = 1936",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.042895078659058,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Get the names and birth details of players inducted into the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who were the players inducted into the Hall of Fame in 1936, along with their birth details?",
+                        "agent_reply": "The players inducted into the Hall of Fame in 1936 along with their birth details are:\n\n1. Ty Cobb:\n   - Birth Year: 1886\n   - Birth Month: December\n   - Birth Day: 18\n   - Birth State: Georgia (GA)\n   - Birth Country: USA\n   - Birth City: Narrows\n\n2. Walter Johnson:\n   - Birth Year: 1887\n   - Birth Month: November\n   - Birth Day: 6\n   - Birth State: Kansas (KS)\n   - Birth Country: USA\n   - Birth City: Humboldt\n\n3. Babe Ruth:\n   - Birth Year: 1895\n   - Birth Month: February\n   - Birth Day: 6\n   - Birth State: Maryland (MD)\n   - Birth Country: USA\n   - Birth City: Baltimore\n\n4. Honus Wagner:\n   - Birth Year: 1874\n   - Birth Month: February\n   - Birth Day: 24\n   - Birth State: Pennsylvania (PA)\n   - Birth Country: USA\n   - Birth City: Chartiers\n\n5. Christy Mathewson:\n   - Birth Year: 1880\n   - Birth Month: August\n   - Birth Day: 12\n   - Birth State: Pennsylvania (PA)\n   - Birth Country: USA\n   - Birth City: Factoryville.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the players inducted into the Hall of Fame in 1936 along with their birth year, birth month, birth day, birth state, birth country, and birth city.",
+                            "user_intention": "Get the names and birth details of players inducted into the Hall of Fame in 1936.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, P.BIRTH_YEAR, P.BIRTH_MONTH, P.BIRTH_DAY, P.BIRTH_CITY, P.BIRTH_STATE, P.BIRTH_COUNTRY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER P ON H.PLAYER_ID = P.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT h.player_id, p.birth_year, p.birth_month, p.birth_day, p.birth_state, p.birth_country, p.birth_city  FROM thehistoryofbaseball_hall_of_fame h  JOIN thehistoryofbaseball_player p ON h.player_id = p.player_id  WHERE h.yearid = 1936 AND LOWER(h.inducted) = LOWER('Y')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.109642028808594,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "13",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:14:06.831796",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the names and birth years of players born in the USA.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the names and birth years of all players born in the USA?",
+                        "agent_reply": "There are 16,504 players born in the USA. For example, David Aardsma (1981), Hank Aaron (1934), Tommie Aaron (1939), Don Aase (1954), and Andy Abad (1972). If you'd like to explore specific players or details, let me know!",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the names and birth years of all players born in the USA?",
+                            "user_intention": "Find the names and birth years of players born in the USA.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NAME_FIRST, NAME_LAST, BIRTH_YEAR FROM THEHISTORYOFBASEBALL_PLAYER WHERE BIRTH_COUNTRY = 'USA'",
+                            "generated_sql": "SELECT NAME_FIRST, NAME_LAST, BIRTH_YEAR FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER WHERE LOWER(BIRTH_COUNTRY) = LOWER('USA')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.113385915756226,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find out if players born in the USA have won any awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Did any of these players win an award?",
+                        "agent_reply": "I'm sorry, there was an issue executing the query: ORA-00904: \"A\".\"YEAR_\": invalid identifier. Could you please rephrase your question for better clarity?",
+                        "evaluation": {
+                            "text_to_sql_input": "Find all players born in the USA who have won an award.",
+                            "user_intention": "Find out if players born in the USA have won any awards.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.BIRTH_COUNTRY = 'USA'",
+                            "generated_sql": "SELECT  p.name_first, p.name_last, p.birth_country, a.award_id, a.year_ FROM kaggle.thehistoryofbaseball_player p JOIN kaggle.thehistoryofbaseball_player_award a ON p.player_id = a.player_id WHERE LOWER(p.birth_country) = LOWER('USA')",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 9.519704103469849,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 9.519727230072021
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the salary of players born in the USA in the years they won awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What was their salary in the years they won awards?",
+                        "agent_reply": "I'm sorry, there was an issue executing the query: ORA-00904: \"A\".\"YEAR_\": invalid identifier. Could you please rephrase your question for better clarity?",
+                        "evaluation": {
+                            "text_to_sql_input": "Find salaries of all players born in the USA in the years they won awards.",
+                            "user_intention": "Find the salary of players born in the USA in the years they won awards.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT P.NAME_FIRST, P.NAME_LAST, S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID JOIN THEHISTORYOFBASEBALL_SALARY S ON A.PLAYER_ID = S.PLAYER_ID AND A.YEAR = S.YEAR WHERE P.BIRTH_COUNTRY = 'USA'",
+                            "generated_sql": "SELECT s.salary, s.year_, p.name_first, p.name_last, p.birth_country, a.award_id  FROM kaggle.thehistoryofbaseball_salary s JOIN kaggle.thehistoryofbaseball_player p ON s.player_id = p.player_id JOIN kaggle.thehistoryofbaseball_player_award a ON s.player_id = a.player_id AND s.year_ = a.year_ WHERE LOWER(p.birth_country) = LOWER('USA')",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 12.294204950332642,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 12.294226884841919
+            }
+        ]
+    },
+    {
+        "experiment_id": "14",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:14:40.191979",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find players inducted into the Hall of Fame who were born in the USA.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players inducted into the Hall of Fame were born in the USA?",
+                        "agent_reply": "There are 295 players inducted into the Hall of Fame who were born in the USA. Some notable examples include Hank Aaron, Walter Alston, Sparky Anderson, Pete Alexander, and Al Barlick. If you need the full list, let me know.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find players inducted into the Hall of Fame who were born in the USA",
+                            "user_intention": "Find players inducted into the Hall of Fame who were born in the USA.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT H.NAME_FIRST, H.NAME_LAST FROM THEHISTORYOFBASEBALL_HALL_OF_FAME F JOIN THEHISTORYOFBASEBALL_PLAYER H ON F.PLAYER_ID = H.PLAYER_ID WHERE H.BIRTH_COUNTRY = 'USA' AND F.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT h.player_id, p.name_first, p.name_last, p.birth_country FROM kaggle.thehistoryofbaseball_hall_of_fame h JOIN kaggle.thehistoryofbaseball_player p ON h.player_id = p.player_id WHERE LOWER(h.inducted) = 'y' AND LOWER(p.birth_country) = 'usa'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.419725179672241,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find Hall of Fame players born in the USA with salary records.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "From those players, who had a salary record in the database?",
+                        "agent_reply": "There are 428 players inducted into the Hall of Fame, born in the USA, who have salary records in the database. Some examples include Bruce Sutter ($1,354,167 in 2006), Eddie Murray ($1,472,819 in 2003), Cal Ripken ($800,000 in 2007), Wade Boggs ($1,000,000 in 2005), and Jim Rice ($779,227 in 2009). If you'd like to explore the full list or a subset, let me know.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find players inducted into the Hall of Fame, born in the USA, who had a salary record in the database",
+                            "user_intention": "Find Hall of Fame players born in the USA with salary records.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT H.NAME_FIRST, H.NAME_LAST FROM THEHISTORYOFBASEBALL_HALL_OF_FAME F JOIN THEHISTORYOFBASEBALL_PLAYER H ON F.PLAYER_ID = H.PLAYER_ID JOIN THEHISTORYOFBASEBALL_SALARY S ON H.PLAYER_ID = S.PLAYER_ID WHERE H.BIRTH_COUNTRY = 'USA' AND F.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  p.name_first, p.name_last, p.birth_year, p.birth_country, h.yearid, s.salary  FROM kaggle.thehistoryofbaseball_hall_of_fame h  JOIN kaggle.thehistoryofbaseball_player p ON LOWER(h.player_id) = LOWER(p.player_id)  JOIN kaggle.thehistoryofbaseball_salary s ON LOWER(h.player_id) = LOWER(s.player_id) WHERE LOWER(h.inducted) = 'y' AND LOWER(p.birth_country) = 'usa'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.30565595626831,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Calculate the total ballots received by Hall of Fame players born in the USA with salary records.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the total number of ballots received by all these players?",
+                        "agent_reply": "The total number of ballots received by these players is 223,376.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the total number of ballots received by players inducted into the Hall of Fame, born in the USA, who had a salary record in the database",
+                            "user_intention": "Calculate the total ballots received by Hall of Fame players born in the USA with salary records.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT SUM(F.BALLOTS) FROM THEHISTORYOFBASEBALL_HALL_OF_FAME F WHERE F.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT SUM(h.ballots) AS total_ballots FROM kaggle.thehistoryofbaseball_hall_of_fame h JOIN kaggle.thehistoryofbaseball_player p ON h.player_id = p.player_id JOIN kaggle.thehistoryofbaseball_salary s ON h.player_id = s.player_id WHERE LOWER(h.inducted) = 'y' AND LOWER(p.birth_country) = 'usa'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 11.264616966247559,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "15",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:15:17.528797",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find players who have won awards and the details of those awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me which players have won awards and what those awards were?",
+                        "agent_reply": "I apologize for the error. The query failed due to an issue with the column name 'YEAR_' in the database. Please rephrase your question or let me know if you'd like me to attempt a corrected query.",
+                        "evaluation": {
+                            "text_to_sql_input": "List all players and the awards they have won, including the year of the award and any league information.",
+                            "user_intention": "Find players who have won awards and the details of those awards.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, A.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON P.PLAYER_ID = A.PLAYER_ID",
+                            "generated_sql": "SELECT p.name_first, p.name_last, a.award_id, a.year_, a.league_id FROM kaggle.thehistoryofbaseball_player p JOIN kaggle.thehistoryofbaseball_player_award a ON p.player_id = a.player_id",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 10.063204765319824,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 10.063227891921997
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the salaries of the players for the years they won awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What were the salaries of those players for the years they won awards?",
+                        "agent_reply": "I apologize for the error. The query failed due to an issue with the column name 'YEAR_' in the database. Please rephrase your question or let me know if you'd like me to attempt a corrected query.",
+                        "evaluation": {
+                            "text_to_sql_input": "List all players, their awards, the years they won the awards, and their salaries in those years.",
+                            "user_intention": "Find the salaries of the players for the years they won awards.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, S.SALARY, A.YEAR FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON P.PLAYER_ID = A.PLAYER_ID JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID AND A.YEAR = S.YEAR",
+                            "generated_sql": "SELECT p.name_first, p.name_last, a.award_id, a.year_, s.salary FROM thehistoryofbaseball_player p JOIN thehistoryofbaseball_player_award a ON p.player_id = a.player_id JOIN thehistoryofbaseball_salary s ON p.player_id = s.player_id AND a.year_ = s.year_",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 9.168975830078125,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 9.168990850448608
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the players who received the highest salary in the same year they won an award.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players received the highest salary in the same year they won an award?",
+                        "agent_reply": "I apologize for the error. The query failed due to an issue with the column name 'YEAR_' in the database. Please rephrase your question or let me know if you'd like me to attempt a corrected query.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the players who received the highest salary in the same year they won an award, including the player's name, award details, year, and salary.",
+                            "user_intention": "Find the players who received the highest salary in the same year they won an award.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT P.NAME_FIRST, P.NAME_LAST, MAX(S.SALARY) AS HIGHEST_SALARY FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE A ON P.PLAYER_ID = A.PLAYER_ID JOIN THEHISTORYOFBASEBALL_SALARY S ON P.PLAYER_ID = S.PLAYER_ID AND A.YEAR = S.YEAR GROUP BY P.NAME_FIRST, P.NAME_LAST",
+                            "generated_sql": "SELECT p.name_first, p.name_last, a.award_id, a.year_, s.salary FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER p JOIN KAGGLE.THEHISTORYOFBASEBALL_SALARY s ON p.player_id = s.player_id JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD a ON p.player_id = a.player_id AND s.year_ = a.year_ WHERE s.salary = (SELECT MAX(salary) FROM KAGGLE.THEHISTORYOFBASEBALL_SALARY WHERE year_ = a.year_);",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 10.844792127609253,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 10.844827890396118
+            }
+        ]
+    },
+    {
+        "experiment_id": "16",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:15:47.614985",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find players inducted into the Hall of Fame who also received votes for player awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players inducted into the Hall of Fame also received votes for player awards?",
+                        "agent_reply": "I apologize, the query execution failed due to an error: ORA-00904: \"A\".\"YEAR_\": invalid identifier. Could you please rephrase your question or clarify any specific details?",
+                        "evaluation": {
+                            "text_to_sql_input": "Find players inducted into the Hall of Fame who also received votes for player awards, including their names and the award details.",
+                            "user_intention": "Find players inducted into the Hall of Fame who also received votes for player awards.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT HOF.PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME HOF JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE VOTE ON HOF.PLAYER_ID = VOTE.PLAYER_ID WHERE HOF.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  p.name_first, p.name_last, a.award_id, a.year_, a.league_id  FROM kaggle.thehistoryofbaseball_hall_of_fame hf JOIN kaggle.thehistoryofbaseball_player p ON hf.player_id = p.player_id JOIN kaggle.thehistoryofbaseball_player_award_vote av ON hf.player_id = av.player_id JOIN kaggle.thehistoryofbaseball_player_award a ON av.award_id = a.award_id AND av.year_ = a.year_ WHERE LOWER(hf.inducted) = 'y';",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 10.985577821731567,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 10.985604047775269
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the salaries of players inducted into the Hall of Fame and received votes for player awards who also had their salary recorded.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Out of those players, who had their salary recorded and what were their salaries?",
+                        "agent_reply": "There are 4871 records of players inducted into the Hall of Fame, who received votes for player awards and had their salary recorded. For example, Bruce Sutter had a recorded salary of $1,354,167 multiple times, and John Smoltz had a recorded salary of $5,500,000 multiple times. If you want more specific details or a summarized list, please specify.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find players inducted into the Hall of Fame, who received votes for player awards and had their salary recorded, including their names and salaries.",
+                            "user_intention": "Find the salaries of players inducted into the Hall of Fame and received votes for player awards who also had their salary recorded.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT SAL.PLAYER_ID, SAL.SALARY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME HOF JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE VOTE ON HOF.PLAYER_ID = VOTE.PLAYER_ID JOIN THEHISTORYOFBASEBALL_SALARY SAL ON SAL.PLAYER_ID = HOF.PLAYER_ID WHERE HOF.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT  p.name_first, p.name_last, s.salary FROM kaggle.thehistoryofbaseball_hall_of_fame h JOIN kaggle.thehistoryofbaseball_player p ON h.player_id = p.player_id JOIN kaggle.thehistoryofbaseball_player_award_vote av ON h.player_id = av.player_id JOIN kaggle.thehistoryofbaseball_salary s ON h.player_id = s.player_id WHERE LOWER(h.inducted) = 'y';",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.75237774848938,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the player with the highest salary among those inducted into the Hall of Fame, received votes for player awards, and had their salary recorded.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those players with recorded salaries, which ones earned the highest salary?",
+                        "agent_reply": "The player inducted into the Hall of Fame, who received votes for player awards and earned the highest recorded salary, is Pedro Martinez with a salary of $17,500,000.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find players inducted into the Hall of Fame, who received votes for player awards and had their salary recorded, and determine the player(s) with the highest salary.",
+                            "user_intention": "Find the player with the highest salary among those inducted into the Hall of Fame, received votes for player awards, and had their salary recorded.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT SAL.PLAYER_ID, MAX(SAL.SALARY) AS MAX_SALARY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME HOF JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE VOTE ON HOF.PLAYER_ID = VOTE.PLAYER_ID JOIN THEHISTORYOFBASEBALL_SALARY SAL ON SAL.PLAYER_ID = HOF.PLAYER_ID WHERE HOF.INDUCTED = 'Y' GROUP BY SAL.PLAYER_ID ORDER BY MAX_SALARY DESC FETCH FIRST 1 ROWS ONLY",
+                            "generated_sql": "SELECT h.player_id, p.name_first, p.name_last, s.salary FROM thehistoryofbaseball_hall_of_fame h JOIN thehistoryofbaseball_player_award_vote v ON h.player_id = v.player_id JOIN thehistoryofbaseball_salary s ON h.player_id = s.player_id JOIN thehistoryofbaseball_player p ON h.player_id = p.player_id WHERE h.inducted = 'Y' ORDER BY s.salary DESC FETCH FIRST 1 ROWS ONLY",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.752907991409302,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "17",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:16:22.929055",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the players inducted into the Hall of Fame in 1936.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who were the players inducted into the Hall of Fame in 1936?",
+                        "agent_reply": "The players inducted into the Hall of Fame in 1936 were Ty Cobb, Walter Johnson, Babe Ruth, Honus Wagner, and Christy Mathewson.",
+                        "evaluation": {
+                            "text_to_sql_input": "Who were the players inducted into the Hall of Fame in 1936?",
+                            "user_intention": "Find the players inducted into the Hall of Fame in 1936.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE YEARID = 1936 AND INDUCTED = 'Y'",
+                            "generated_sql": "SELECT p.name_first, p.name_last FROM thehistoryofbaseball_hall_of_fame h JOIN thehistoryofbaseball_player p ON h.player_id = p.player_id WHERE h.yearid = 1936 AND LOWER(h.inducted) = 'y';",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.298159837722778,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Check if the players inducted into the Hall of Fame in 1936 won any awards in the same year.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Did any of these players win any awards in the same year?",
+                        "agent_reply": "I encountered an error while executing the query to find whether Ty Cobb, Walter Johnson, Babe Ruth, Honus Wagner, or Christy Mathewson won any awards in 1936. The error message is: ORA-00904: \"A\".\"YEAR_\": invalid identifier. Could you please rephrase your question for better clarity?",
+                        "evaluation": {
+                            "text_to_sql_input": "Did any of Ty Cobb, Walter Johnson, Babe Ruth, Honus Wagner, or Christy Mathewson win any awards in 1936?",
+                            "user_intention": "Check if the players inducted into the Hall of Fame in 1936 won any awards in the same year.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT H.PLAYER_ID, A.AWARD_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON H.PLAYER_ID = A.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND H.YEARID = A.YEAR",
+                            "generated_sql": "SELECT  p.name_first, p.name_last, a.award_id FROM thehistoryofbaseball_player p JOIN thehistoryofbaseball_player_award a ON p.player_id = a.player_id WHERE (LOWER(p.name_first) = LOWER('Ty') AND LOWER(p.name_last) = LOWER('Cobb'))    OR (LOWER(p.name_first) = LOWER('Walter') AND LOWER(p.name_last) = LOWER('Johnson'))    OR (LOWER(p.name_first) = LOWER('Babe') AND LOWER(p.name_last) = LOWER('Ruth'))    OR (LOWER(p.name_first) = LOWER('Honus') AND LOWER(p.name_last) = LOWER('Wagner'))    OR (LOWER(p.name_first) = LOWER('Christy') AND LOWER(p.name_last) = LOWER('Mathewson'))    AND a.year_ = 1936",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 12.929373979568481,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 12.929395914077759
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the salaries of the players inducted into the Hall of Fame in the year they were inducted.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What were their salaries during the year they were inducted?",
+                        "agent_reply": "I encountered an error while trying to retrieve the salaries of Ty Cobb, Walter Johnson, Babe Ruth, Honus Wagner, and Christy Mathewson in 1936. The error message is: ORA-00904: \"S\".\"YEAR_\": invalid identifier. Could you please rephrase or clarify your question?",
+                        "evaluation": {
+                            "text_to_sql_input": "What were the salaries of Ty Cobb, Walter Johnson, Babe Ruth, Honus Wagner, and Christy Mathewson in 1936?",
+                            "user_intention": "Find the salaries of the players inducted into the Hall of Fame in the year they were inducted.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT H.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_HALL_OF_FAME H JOIN THEHISTORYOFBASEBALL_SALARY S ON H.PLAYER_ID = S.PLAYER_ID WHERE H.YEARID = 1936 AND H.INDUCTED = 'Y' AND H.YEARID = S.YEAR",
+                            "generated_sql": "SELECT s.salary, p.name_first, p.name_last FROM kaggle.thehistoryofbaseball_salary s JOIN kaggle.thehistoryofbaseball_player p ON LOWER(s.player_id) = LOWER(p.player_id) WHERE (LOWER(p.name_first) = 'ty' AND LOWER(p.name_last) = 'cobb')    OR (LOWER(p.name_first) = 'walter' AND LOWER(p.name_last) = 'johnson')    OR (LOWER(p.name_first) = 'babe' AND LOWER(p.name_last) = 'ruth')    OR (LOWER(p.name_first) = 'honus' AND LOWER(p.name_last) = 'wagner')    OR (LOWER(p.name_first) = 'christy' AND LOWER(p.name_last) = 'mathewson')    AND s.year_ = 1936",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 12.592910766601562,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 12.592947006225586
+            }
+        ]
+    },
+    {
+        "experiment_id": "18",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:17:00.188479",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find out which players received awards and the points they scored.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players received awards and how many points did they score?",
+                        "agent_reply": "A total of 138 players received awards and their points scored in the awards. Some examples include:\n- Jose Abreu: Rookie of the Year, 150 points.\n- Tommie Agee: Rookie of the Year, 16 points.\n- Bob Allison: Rookie of the Year, 18 points.\n- Sandy Alomar: Rookie of the Year, 140 points.\n- Dick Allen: Rookie of the Year, 18 points.\nLet me know if you'd like to see the full list or filter further.",
+                        "evaluation": {
+                            "text_to_sql_input": "List players who received awards and their points scored in the awards.",
+                            "user_intention": "Find out which players received awards and the points they scored.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT PA.PLAYER_ID, PA.AWARD_ID, PAV.POINTS_WON FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE PAV ON PA.AWARD_ID = PAV.AWARD_ID AND PA.YEAR = PAV.YEAR AND PA.LEAGUE_ID = PAV.LEAGUE_ID AND PA.PLAYER_ID = PAV.PLAYER_ID",
+                            "generated_sql": "SELECT p.NAME_FIRST, p.NAME_LAST, paw.AWARD_ID, pav.POINTS_WON FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER p JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD paw ON p.PLAYER_ID = paw.PLAYER_ID JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE pav ON paw.PLAYER_ID = pav.PLAYER_ID AND paw.AWARD_ID = pav.AWARD_ID WHERE pav.POINTS_WON IS NOT NULL",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 12.72146725654602,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 12.721481084823608
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Filter the awards to show only those given in 1985.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show only the awards given in 1985?",
+                        "agent_reply": "I encountered an error while processing the request: ORA-00904: \"PAV\".\"YEAR_\": invalid identifier. It seems there was an issue with the year filtering in the query. Could you please rephrase or clarify your question?",
+                        "evaluation": {
+                            "text_to_sql_input": "List players who received awards in 1985 and their points scored in the awards.",
+                            "user_intention": "Filter the awards to show only those given in 1985.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT PLAYER_ID, AWARD_ID, YEAR, LEAGUE_ID FROM THEHISTORYOFBASEBALL_PLAYER_AWARD WHERE YEAR = 1985",
+                            "generated_sql": "SELECT pa.player_id, pa.award_id, pav.points_won FROM KAGGLE.thehistoryofbaseball_player_award pa JOIN KAGGLE.thehistoryofbaseball_player_award_vote pav ON pa.player_id = pav.player_id AND pa.award_id = pav.award_id AND pa.year_ = pav.year_ WHERE pa.year_ = 1985",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 11.265727996826172,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 11.265752792358398
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find out the salaries of players who received awards in 1985.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What were the salaries of players who received awards in 1985?",
+                        "agent_reply": "I encountered an error while processing the request: ORA-00904: \"A\".\"YEAR_\": invalid identifier. It seems there is an issue with the year filtering in the query. Could you please rephrase or clarify your question?",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the salaries of players who received awards in 1985.",
+                            "user_intention": "Find out the salaries of players who received awards in 1985.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.PLAYER_ID, S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER_AWARD PA JOIN THEHISTORYOFBASEBALL_SALARY S ON PA.PLAYER_ID = S.PLAYER_ID AND PA.YEAR = S.YEAR AND PA.LEAGUE_ID = S.LEAGUE_ID WHERE PA.YEAR = 1985",
+                            "generated_sql": "SELECT s.salary, s.player_id, s.year_  FROM kaggle.thehistoryofbaseball_salary s  JOIN kaggle.thehistoryofbaseball_player_award a  ON LOWER(s.player_id) = LOWER(a.player_id) AND s.year_ = a.year_  WHERE s.year_ = 1985",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 10.390036821365356,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 10.390069961547852
+            }
+        ]
+    },
+    {
+        "experiment_id": "19",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:17:34.577101",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the year with the highest number of players inducted into the Hall of Fame.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which year had the most players inducted into the Hall of Fame?",
+                        "agent_reply": "The year with the most players inducted into the Hall of Fame was 2006, with 18 players.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which year had the most players inducted into the Hall of Fame?",
+                            "user_intention": "Find the year with the highest number of players inducted into the Hall of Fame.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT YEARID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE INDUCTED = 'Y' GROUP BY YEARID ORDER BY COUNT(PLAYER_ID) DESC FETCH FIRST 1 ROWS ONLY",
+                            "generated_sql": "SELECT YEARID, COUNT(PLAYER_ID) AS PLAYER_COUNT FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE LOWER(INDUCTED) = 'y' GROUP BY YEARID ORDER BY PLAYER_COUNT DESC FETCH FIRST 1 ROWS ONLY",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.616876125335693,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the player with the highest number of votes inducted into the Hall of Fame in the previously mentioned year.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "In that year, who was inducted with the highest number of votes?",
+                        "agent_reply": "Ray Brown was inducted into the Hall of Fame in 2006, but the number of votes is unavailable.",
+                        "evaluation": {
+                            "text_to_sql_input": "In 2006, who was inducted with the highest number of votes into the Hall of Fame?",
+                            "user_intention": "Find the player with the highest number of votes inducted into the Hall of Fame in the previously mentioned year.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE INDUCTED = 'Y' AND YEARID = (SELECT YEARID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE INDUCTED = 'Y' GROUP BY YEARID ORDER BY COUNT(PLAYER_ID) DESC FETCH FIRST 1 ROWS ONLY) ORDER BY VOTES DESC FETCH FIRST 1 ROWS ONLY",
+                            "generated_sql": "SELECT p.name_first, p.name_last, p.player_id, h.votes  FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME h JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER p ON h.player_id = p.player_id WHERE h.yearid = 2006 AND h.inducted = 'Y' ORDER BY h.votes DESC FETCH FIRST 1 ROWS ONLY",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.450873851776123,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve the full name and birth country of the player mentioned earlier.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the full name and birth country of that player?",
+                        "agent_reply": "Ray Brown's full name is Ray Brown, and he was born in the USA.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the full name and birth country of Ray Brown, who was inducted into the Hall of Fame in 2006?",
+                            "user_intention": "Retrieve the full name and birth country of the player mentioned earlier.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NAME_FIRST, NAME_LAST, BIRTH_COUNTRY FROM THEHISTORYOFBASEBALL_PLAYER WHERE PLAYER_ID = (SELECT PLAYER_ID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE INDUCTED = 'Y' AND YEARID = (SELECT YEARID FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE INDUCTED = 'Y' GROUP BY YEARID ORDER BY COUNT(PLAYER_ID) DESC FETCH FIRST 1 ROWS ONLY) ORDER BY VOTES DESC FETCH FIRST 1 ROWS ONLY)",
+                            "generated_sql": "SELECT p.NAME_FIRST, p.NAME_LAST, p.BIRTH_COUNTRY  FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER p JOIN KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME h ON p.PLAYER_ID = h.PLAYER_ID WHERE LOWER(p.NAME_FIRST) = LOWER('Ray') AND LOWER(p.NAME_LAST) = LOWER('Brown') AND h.YEARID = 2006 AND LOWER(h.INDUCTED) = 'y'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.69533896446228,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "20",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:18:04.427867",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the total points won by players who received awards in the same year.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the total points won by players who received awards in the same year?",
+                        "agent_reply": "I encountered an error while executing the query: ORA-00904: \"PA\".\"YEAR_\": invalid identifier. Please rephrase your question for better clarity.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the total points won by players who received awards in the same year.",
+                            "user_intention": "Find the total points won by players who received awards in the same year.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT SUM(POINTS_WON) FROM THEHISTORYOFBASEBALL_PLAYER_AWARD JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE ON THEHISTORYOFBASEBALL_PLAYER_AWARD.AWARD_ID = THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE.AWARD_ID AND THEHISTORYOFBASEBALL_PLAYER_AWARD.YEAR = THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE.YEAR",
+                            "generated_sql": "SELECT SUM(pav.POINTS_WON) AS total_points FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE pav JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD pa ON pav.PLAYER_ID = pa.PLAYER_ID AND pav.YEAR_ = pa.YEAR_;",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 11.051813125610352,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 11.051838874816895
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the average salary of players who received awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What about the average salary of players who received awards?",
+                        "agent_reply": "The average salary of players who received awards is approximately $5,342,849.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the average salary of players who received awards.",
+                            "user_intention": "Find the average salary of players who received awards.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT AVG(SALARY) FROM THEHISTORYOFBASEBALL_PLAYER_AWARD JOIN THEHISTORYOFBASEBALL_SALARY ON THEHISTORYOFBASEBALL_PLAYER_AWARD.PLAYER_ID = THEHISTORYOFBASEBALL_SALARY.PLAYER_ID",
+                            "generated_sql": "SELECT AVG(s.salary) AS average_salary FROM KAGGLE.THEHISTORYOFBASEBALL_SALARY s JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD pa ON s.player_id = pa.player_id;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.96433424949646,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the highest salary among players who received awards.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the highest salary from those?",
+                        "agent_reply": "The highest salary of players who received awards is $33,000,000.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the highest salary of players who received awards.",
+                            "user_intention": "Find the highest salary among players who received awards.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT MAX(SALARY) FROM THEHISTORYOFBASEBALL_SALARY",
+                            "generated_sql": "SELECT MAX(s.salary) AS highest_salary FROM KAGGLE.THEHISTORYOFBASEBALL_SALARY s JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD a ON s.player_id = a.player_id",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.309800148010254,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "21",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:18:35.832491",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the number of votes players received for Hall of Fame induction.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the number of votes players received to be inducted into the Hall of Fame?",
+                        "agent_reply": "There are 4120 entries showing the number of votes players received for Hall of Fame induction. For example: Ty Cobb received 222 votes, Babe Ruth received 215 votes, Honus Wagner received 215 votes, Christy Mathewson received 205 votes, and Walter Johnson received 189 votes. Let me know if you'd like a detailed list or specific players.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the number of votes received by players for induction into the Hall of Fame.",
+                            "user_intention": "Find the number of votes players received for Hall of Fame induction.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT PLAYER_ID, VOTES FROM THEHISTORYOFBASEBALL_HALL_OF_FAME",
+                            "generated_sql": "SELECT PLAYER_ID, VOTES FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.777170181274414,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the awards won by players inducted into the Hall of Fame and the years they won.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which awards did the players who were inducted into the Hall of Fame win, and in what years?",
+                        "agent_reply": "I encountered an issue while trying to retrieve the awards won by players inducted into the Hall of Fame. The error was: ORA-00904: \"P_AWARD\".\"YEAR_\": invalid identifier. Could you please rephrase or clarify your query?",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the awards won by players who were inducted into the Hall of Fame and the years they won.",
+                            "user_intention": "Find the awards won by players inducted into the Hall of Fame and the years they won.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT HOF.PLAYER_ID, PA.AWARD_ID, PA.YEAR FROM THEHISTORYOFBASEBALL_HALL_OF_FAME HOF JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD PA ON HOF.PLAYER_ID = PA.PLAYER_ID WHERE HOF.INDUCTED = 'Y'",
+                            "generated_sql": "SELECT p_award.player_id, p_award.award_id, p_award.year_ FROM KAGGLE.THEHISTORYOFBASEBALL_HALL_OF_FAME hof JOIN KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD p_award ON LOWER(hof.player_id) = LOWER(p_award.player_id) WHERE LOWER(hof.inducted) = 'y'",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 12.066534757614136,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 12.06655478477478
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the highest number of ballots cast for any player inducted into the Hall of Fame.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What was the highest number of ballots cast for any player inducted into the Hall of Fame?",
+                        "agent_reply": "The highest number of ballots cast for any player inducted into the Hall of Fame was 581.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the highest number of ballots cast for any player inducted into the Hall of Fame.",
+                            "user_intention": "Find the highest number of ballots cast for any player inducted into the Hall of Fame.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT MAX(BALLOTS) FROM THEHISTORYOFBASEBALL_HALL_OF_FAME WHERE INDUCTED = 'Y'",
+                            "generated_sql": "SELECT MAX(ballots) AS highest_ballots FROM thehistoryofbaseball_hall_of_fame WHERE LOWER(inducted) = LOWER('Y');",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.982316732406616,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "22",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:19:08.051589",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find players who have won awards and their salaries in the same year.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which players have won awards and what were their salaries in the same year?",
+                        "agent_reply": "I encountered an error while processing the query: ORA-00904: \"S\".\"YEAR_\": invalid identifier. Could you clarify or rephrase the question?",
+                        "evaluation": {
+                            "text_to_sql_input": "Find players who have won awards and their salaries in the same year.",
+                            "user_intention": "Find players who have won awards and their salaries in the same year.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT A.PLAYER_ID, A.AWARD_ID, A.YEAR, A.LEAGUE_ID, S.SALARY FROM THEHISTORYOFBASEBALL_PLAYER_AWARD A JOIN THEHISTORYOFBASEBALL_SALARY S ON A.PLAYER_ID = S.PLAYER_ID AND A.YEAR = S.YEAR AND A.LEAGUE_ID = S.LEAGUE_ID",
+                            "generated_sql": "SELECT  pa.player_id, pa.award_id, pa.year_, s.salary FROM kaggle.thehistoryofbaseball_player_award pa JOIN kaggle.thehistoryofbaseball_salary s ON pa.player_id = s.player_id AND pa.year_ = s.year_",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 10.330949783325195,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 10.33096981048584
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the heaviest weight recorded among players.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the heaviest weight recorded among the players?",
+                        "agent_reply": "The heaviest weight recorded among the players is 320 pounds.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the heaviest weight recorded among the players.",
+                            "user_intention": "Find the heaviest weight recorded among players.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT MAX(WEIGHT) AS HEAVIEST_WEIGHT FROM THEHISTORYOFBASEBALL_PLAYER",
+                            "generated_sql": "SELECT MAX(TO_NUMBER(weight)) AS heaviest_weight FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 9.187457084655762,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Identify the players with the heaviest weight and the awards they have received.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Who are the players with the heaviest weight and what awards have they received?",
+                        "agent_reply": "I encountered an error while processing the query: ORA-00904: \"PA\".\"YEAR_\": invalid identifier. Could you clarify or rephrase the question?",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the players with the heaviest weight and the awards they have received.",
+                            "user_intention": "Identify the players with the heaviest weight and the awards they have received.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT P.PLAYER_ID, P.NAME_FIRST, P.NAME_LAST, P.WEIGHT, A.AWARD_ID FROM THEHISTORYOFBASEBALL_PLAYER P JOIN THEHISTORYOFBASEBALL_PLAYER_AWARD A ON P.PLAYER_ID = A.PLAYER_ID WHERE P.WEIGHT = (SELECT MAX(WEIGHT) FROM THEHISTORYOFBASEBALL_PLAYER)",
+                            "generated_sql": "SELECT p.player_id, p.name_first, p.name_last, p.weight, pa.award_id, pa.year_ FROM thehistoryofbaseball_player p JOIN thehistoryofbaseball_player_award pa ON p.player_id = pa.player_id WHERE p.weight = (SELECT MAX(TO_NUMBER(weight)) FROM thehistoryofbaseball_player)",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 11.068344116210938,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "23",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:19:38.684537",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Summarize the total points won for each award by year.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the total points won for each award by year?",
+                        "agent_reply": "An error occurred while executing the query: \"ORA-00904: 'YEAR_': invalid identifier\". Please rephrase your question or clarify your requirements.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the total points won for each award by year from THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE table.",
+                            "user_intention": "Summarize the total points won for each award by year.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT AWARD_ID, YEAR, SUM(POINTS_WON) FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE GROUP BY AWARD_ID, YEAR;",
+                            "generated_sql": "SELECT award_id, year_, SUM(points_won) AS total_points_won FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE GROUP BY award_id, year_ ORDER BY year_, award_id",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 9.52189588546753,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 9.521915197372437
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Provide the total points won for awards in the year 2020.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What were the total points won for awards in a specific year, say 2020?",
+                        "agent_reply": "An error occurred while executing the query: \"ORA-00904: 'YEAR_': invalid identifier\". Please verify the column name or rephrase your question.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the total points won for each award in the year 2020 from THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE table.",
+                            "user_intention": "Provide the total points won for awards in the year 2020.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT AWARD_ID, YEAR, SUM(POINTS_WON) FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE YEAR = 2020 GROUP BY AWARD_ID, YEAR;",
+                            "generated_sql": "SELECT AWARD_ID, SUM(POINTS_WON) AS TOTAL_POINTS FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE WHERE YEAR_ = 2020 GROUP BY AWARD_ID",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 9.926931858062744,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 9.926952838897705
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Show the total points won for each award by year, sorted in ascending order of the year.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you provide the data sorted by the year in ascending order?",
+                        "agent_reply": "An error occurred while executing the query: \"ORA-00904: 'YEAR_': invalid identifier\". It seems there is an issue with the column name 'YEAR_'. Please verify the column name or clarify your question.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the total points won for each award by year sorted in ascending order of year from THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE table.",
+                            "user_intention": "Show the total points won for each award by year, sorted in ascending order of the year.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT AWARD_ID, YEAR, SUM(POINTS_WON) FROM THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE GROUP BY AWARD_ID, YEAR ORDER BY YEAR ASC;",
+                            "generated_sql": "SELECT award_id, year_, SUM(points_won) AS total_points_won FROM KAGGLE.THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE GROUP BY award_id, year_ ORDER BY year_ ASC",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 9.932165145874023,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 9.932184934616089
+            }
+        ]
+    },
+    {
+        "experiment_id": "24",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-06T19:20:08.074236",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the average salary grouped by each team.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the average salary for each team?",
+                        "agent_reply": "Here are the average salaries for some teams:\n- NYN: $2,387,047\n- PHI: $2,278,617\n- SDN: $1,456,114\n- BAL: $1,915,746\n- CIN: $1,717,922\n- DET: $2,246,801\n- HOU: $1,735,462\n...\nLet me know if you want details for specific teams or a full list.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the average salary for each team in the database.",
+                            "user_intention": "Find the average salary grouped by each team.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT TheHistoryofBaseball_salary.team_id, AVG(TheHistoryofBaseball_salary.salary) AS avg_salary FROM TheHistoryofBaseball_salary GROUP BY TheHistoryofBaseball_salary.team_id",
+                            "generated_sql": "SELECT TEAM_ID, AVG(SALARY) AS AVG_SALARY FROM KAGGLE.THEHISTORYOFBASEBALL_SALARY GROUP BY TEAM_ID",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 9.956622838973999,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 9.956636905670166
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Identify the team with the highest average salary.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which team has the highest average salary?",
+                        "agent_reply": "The team with the highest average salary is LAA, with an average salary of $4,208,636.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the team with the highest average salary.",
+                            "user_intention": "Identify the team with the highest average salary.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT TheHistoryofBaseball_salary.team_id, AVG(TheHistoryofBaseball_salary.salary) AS avg_salary FROM TheHistoryofBaseball_salary GROUP BY TheHistoryofBaseball_salary.team_id ORDER BY avg_salary DESC FETCH FIRST 1 ROW ONLY",
+                            "generated_sql": "SELECT TEAM_ID, AVG(SALARY) AS AVG_SALARY FROM KAGGLE.THEHISTORYOFBASEBALL_SALARY GROUP BY TEAM_ID ORDER BY AVG_SALARY DESC FETCH FIRST 1 ROWS ONLY",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.756871938705444,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the team with the lowest average salary.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "And which team has the lowest average salary?",
+                        "agent_reply": "The team with the lowest average salary is ML4, with an average salary of $613,243.58.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the team with the lowest average salary.",
+                            "user_intention": "Find the team with the lowest average salary.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT TheHistoryofBaseball_salary.team_id, AVG(TheHistoryofBaseball_salary.salary) AS avg_salary FROM TheHistoryofBaseball_salary GROUP BY TheHistoryofBaseball_salary.team_id ORDER BY avg_salary ASC FETCH FIRST 1 ROW ONLY",
+                            "generated_sql": "SELECT team_id, AVG(salary) AS avg_salary FROM kaggle.thehistoryofbaseball_salary GROUP BY team_id ORDER BY avg_salary ASC FETCH FIRST 1 ROWS ONLY;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.904142141342163,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    }
+]

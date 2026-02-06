@@ -15,169 +15,6 @@ SELECT
 ## Only use the following tables:
 
 
-CREATE TABLE "KAGGLE"."GEONUCLEARDATA_NUCLEAR_POWER_PLANTS" 
-   (	"ID" NUMBER, 
-	"NAME" VARCHAR2(200 CHAR), 
-	"LATITUDE" NUMBER(9,6), 
-	"LONGITUDE" NUMBER(9,6), 
-	"COUNTRY" VARCHAR2(100 CHAR), 
-	"STATUS" VARCHAR2(50 CHAR), 
-	"REACTORTYPE" VARCHAR2(50 CHAR), 
-	"REACTORMODEL" VARCHAR2(200 CHAR), 
-	"CONSTRUCTIONSTARTAT" DATE, 
-	"OPERATIONALFROM" DATE, 
-	"OPERATIONALTO" DATE, 
-	"CAPACITY" NUMBER, 
-	"LASTUPDATEDAT" TIMESTAMP (6) WITH TIME ZONE, 
-	"SOURCE" VARCHAR2(100 CHAR), 
-	 PRIMARY KEY ("ID")
-  USING INDEX  ENABLE
-   ) ;
-
-/*
-3 rows from geonucleardata_nuclear_power_plants table:
-id	name	latitude	longitude	country	status	reactortype	reactormodel	constructionstartat	operationalfrom	operationalto	capacity	lastupdatedat	source
-450	Maanshan-2	25.038	121.924	Taiwan, Province of China	Operational	PWR	WH 3LP (WE 312)	1979-02-21 00:00:00	1985-05-18 00:00:00	None	890	2017-02-10 23:57:34	WNA/IAEA
-451	Maine Yankee	43.951	-69.695	United States	Shutdown	PWR	None	1968-10-01 00:00:00	1972-12-28 00:00:00	1997-08-01 00:00:00	825	2015-05-24 04:51:44	WNA/IAEA
-452	McGuire-1	35.433	-80.946	United States	Operational	PWR	WH 4LP (ICECND)	1971-04-01 00:00:00	1981-12-01 00:00:00	None	1180	2017-02-10 23:58:55	WNA/IAEA
-*/
-
-
-CREATE TABLE "KAGGLE"."GREATERMANCHESTERCRIME_GREATERMANCHESTERCRIME" 
-   (	"CRIME_ID" VARCHAR2(17), 
-	"CRIME_TS" TIMESTAMP (6), 
-	"LOCATION" VARCHAR2(200 CHAR), 
-	"LSOA" VARCHAR2(50 CHAR), 
-	"CRIME_TYPE" VARCHAR2(60 CHAR), 
-	"OUTCOME" VARCHAR2(100 CHAR), 
-	 PRIMARY KEY ("CRIME_ID")
-  USING INDEX  ENABLE
-   ) ;
-
-/*
-3 rows from greatermanchestercrime_greatermanchestercrime table:
-crime_id	crime_ts	location	lsoa	crime_type	outcome
-0F:67:BA:85:59:6E	2018-08-24 22:22:01	On or near Holland Street	Tameside 025A	Violence and sexual offences	Under investigation
-E1:68:4D:92:FB:10	2018-08-23 15:57:24	On or near Back Burnaby Street	Bolton 021E	Violence and sexual offences	Unable to prosecute suspect
-F3:AF:79:03:F9:55	2018-08-29 07:47:27	On or near Aldworth Grove	Trafford 019D	Burglary	Investigation complete; no suspect identified
-*/
-
-
-
-CREATE TABLE "KAGGLE"."PESTICIDE_RESULTSDATA15" 
-   (	"SAMPLE_PK" NUMBER, 
-	"COMMOD" VARCHAR2(2 CHAR), 
-	"COMMTYPE" VARCHAR2(2 CHAR), 
-	"LAB" VARCHAR2(3 CHAR), 
-	"PESTCODE" VARCHAR2(3 CHAR), 
-	"TESTCLASS" VARCHAR2(1 CHAR), 
-	"CONCEN" NUMBER, 
-	"LOD" NUMBER, 
-	"CONUNIT" VARCHAR2(1 CHAR), 
-	"CONFMETHOD" VARCHAR2(2 CHAR), 
-	"CONFMETHOD2" VARCHAR2(2 CHAR), 
-	"ANNOTATE" VARCHAR2(2 CHAR), 
-	"QUANTITATE" VARCHAR2(2 CHAR), 
-	"MEAN" VARCHAR2(2 CHAR), 
-	"EXTRACT" VARCHAR2(3 CHAR), 
-	"DETERMIN" VARCHAR2(4 CHAR)
-   ) ;
-
-/*
-3 rows from pesticide_resultsdata15 table:
-sample_pk	commod	commtype	lab	pestcode	testclass	concen	lod	conunit	confmethod	confmethod2	annotate	quantitate	mean	extract	determin
-2	AP	FR	WA1	B68	A	0.006	0.001	M	LU	None	None	None	O	805	52
-
-2	AP	FR	WA1	B72	L	None	0.01	M	None	None	None	None	ND	805	52
-
-2	AP	FR	WA1	B73	I	None	0.005	M	None	None	None	None	ND	805	52
-
-*/
-
-
-CREATE TABLE "KAGGLE"."PESTICIDE_SAMPLEDATA15" 
-   (	"SAMPLE_PK" NUMBER, 
-	"STATE" VARCHAR2(2 CHAR), 
-	"YEAR" VARCHAR2(2 CHAR), 
-	"MONTH" VARCHAR2(2 CHAR), 
-	"DAY" VARCHAR2(2 CHAR), 
-	"SITE" VARCHAR2(4 CHAR), 
-	"COMMOD" VARCHAR2(2 CHAR), 
-	"SOURCE_ID" VARCHAR2(1 CHAR), 
-	"VARIETY" VARCHAR2(20 CHAR), 
-	"ORIGIN" VARCHAR2(2 CHAR), 
-	"COUNTRY" VARCHAR2(3 CHAR), 
-	"DISTTYPE" VARCHAR2(1 CHAR), 
-	"COMMTYPE" VARCHAR2(2 CHAR), 
-	"CLAIM" VARCHAR2(2 CHAR), 
-	"QUANTITY" NUMBER, 
-	"GROWST" VARCHAR2(2 CHAR), 
-	"PACKST" VARCHAR2(2 CHAR), 
-	"DISTST" VARCHAR2(4 CHAR)
-   ) ;
-
-/*
-3 rows from pesticide_sampledata15 table:
-sample_pk	state	year	month	day	site	commod	source_id	variety	origin	country	disttype	commtype	claim	quantity	growst	packst	distst
-4570	MD	15	09	02	0028	NE	None	Yellow	1	None	T	FR	NC	13	None	CA	
-
-4571	MD	15	09	02	0036	NE	None	Yellow	1	None	T	FR	NC	13	None	CA	
-
-4572	MD	15	09	02	0049	NE	None	Yellow	1	None	T	FR	NC	19	NJ	NJ	
-
-*/
-
-
-CREATE TABLE "KAGGLE"."STUDENTMATHSCORE_FINREV_FED_17" 
-   (	"STATE_CODE" NUMBER, 
-	"IDCENSUS" NUMBER, 
-	"SCHOOL_DISTRICT" VARCHAR2(120 CHAR), 
-	"NCES_ID" VARCHAR2(20 CHAR), 
-	"YR_DATA" NUMBER, 
-	"T_FED_REV" NUMBER, 
-	"C14" NUMBER, 
-	"C25" NUMBER
-   ) ;
-
-/*
-3 rows from studentmathscore_finrev_fed_17 table:
-state_code	idcensus	school_district	nces_id	yr_data	t_fed_rev	c14	c25
-5	5501904100000	GLENDALE UNIFIED SCH DIST	615240	17	26959	5690	6015
-31	31501680100000	PASSAIC CITY SCH DIST	3412540	17	26779	8150	10425
-42	42505009500000	SIOUX FALLS SCHOOL DISTRICT 49-5	4666270	17	26753	6278	6268
-*/
-
-
-CREATE TABLE "KAGGLE"."STUDENTMATHSCORE_FINREV_FED_KEY_17" 
-   (	"STATE_CODE" NUMBER, 
-	"STATE" VARCHAR2(60 CHAR), 
-	"RECORDS_CNT" NUMBER
-   ) ;
-
-/*
-3 rows from studentmathscore_finrev_fed_key_17 table:
-state_code	state	records_cnt
-1	Alabama	137
-2	Alaska	54
-3	Arizona	235
-*/
-
-
-CREATE TABLE "KAGGLE"."STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8" 
-   (	"YEAR_" NUMBER, 
-	"STATE" VARCHAR2(60 CHAR), 
-	"ALL_STUDENTS" VARCHAR2(40 CHAR), 
-	"AVERAGE_SCALE_SCORE" NUMBER
-   ) ;
-
-/*
-3 rows from studentmathscore_ndecoreexcel_math_grade8 table:
-year_	state	all_students	average_scale_score
-2017	National	All students	283
-2017	Alabama	All students	268
-2017	Alaska	All students	277
-*/
-
 
 CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_HALL_OF_FAME" 
    (	"PLAYER_ID" VARCHAR2(20 CHAR), 
@@ -199,6 +36,33 @@ ruthba01	1936	BBWAA	226	170	215	Y	Player	None
 wagneho01	1936	BBWAA	226	170	215	Y	Player	None
 */
 
+CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER" 
+   (	"PLAYER_ID" VARCHAR2(100 CHAR), 
+	"BIRTH_YEAR" VARCHAR2(100 CHAR), 
+	"BIRTH_MONTH" VARCHAR2(100 CHAR), 
+	"BIRTH_DAY" VARCHAR2(100 CHAR), 
+	"BIRTH_COUNTRY" VARCHAR2(100 CHAR), 
+	"BIRTH_STATE" VARCHAR2(100 CHAR), 
+	"BIRTH_CITY" VARCHAR2(100 CHAR), 
+	"DEATH_YEAR" VARCHAR2(100 CHAR), 
+	"DEATH_MONTH" VARCHAR2(100 CHAR), 
+	"DEATH_DAY" VARCHAR2(100 CHAR), 
+	"DEATH_COUNTRY" VARCHAR2(100 CHAR), 
+	"DEATH_STATE" VARCHAR2(100 CHAR), 
+	"DEATH_CITY" VARCHAR2(100 CHAR), 
+	"NAME_FIRST" VARCHAR2(100 CHAR), 
+	"NAME_LAST" VARCHAR2(100 CHAR), 
+	"NAME_GIVEN" VARCHAR2(100 CHAR), 
+	"WEIGHT" VARCHAR2(100 CHAR)
+   );
+
+/*
+3 rows from thehistoryofbaseball_player table:
+"PLAYER_ID"	"BIRTH_YEAR"	"BIRTH_MONTH"	"BIRTH_DAY"	"BIRTH_COUNTRY"	"BIRTH_STATE"	"BIRTH_CITY"	"DEATH_YEAR"	"DEATH_MONTH"	"DEATH_DAY"	"DEATH_COUNTRY"	"DEATH_STATE"	"DEATH_CITY"	"NAME_FIRST"	"NAME_LAST"	"NAME_GIVEN"	"WEIGHT"
+"aardsda01"	"1981.0"	"12.0"	"27.0"	"USA"	"CO"	"Denver"	""	""	""	""	""	""	"David"	"Aardsma"	"David Allan"	"220.0"
+"aaronha01"	"1934.0"	"2.0"	"5.0"	"USA"	"AL"	"Mobile"	""	""	""	""	""	""	"Hank"	"Aaron"	"Henry Louis"	"180.0"
+"aaronto01"	"1939.0"	"8.0"	"5.0"	"USA"	"AL"	"Mobile"	"1984.0"	"8.0"	"16.0"	"USA"	"GA"	"Atlanta"	"Tommie"	"Aaron"	"Tommie Lee"	"190.0"
+/*
 
 CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD" 
    (	"PLAYER_ID" VARCHAR2(20 CHAR), 
@@ -254,130 +118,6 @@ year_	team_id	league_id	player_id	salary
 */
 
 
-CREATE TABLE "KAGGLE"."USWILDFIRES_FIRES" 
-   (	"FIRE_YEAR" NUMBER, 
-	"DISCOVERY_DATE" NUMBER, 
-	"DISCOVERY_DOY" NUMBER, 
-	"DISCOVERY_TIME" VARCHAR2(4 CHAR), 
-	"STAT_CAUSE_CODE" NUMBER, 
-	"STAT_CAUSE_DESCR" VARCHAR2(40 CHAR), 
-	"CONT_DATE" NUMBER, 
-	"CONT_DOY" NUMBER, 
-	"CONT_TIME" VARCHAR2(4 CHAR), 
-	"FIRE_SIZE" NUMBER, 
-	"FIRE_SIZE_CLASS" VARCHAR2(1 CHAR), 
-	"LATITUDE" NUMBER, 
-	"LONGITUDE" NUMBER, 
-	"OWNER_CODE" NUMBER, 
-	"OWNER_DESCR" VARCHAR2(40 CHAR), 
-	"STATE" VARCHAR2(2 CHAR), 
-	"COUNTY" VARCHAR2(60 CHAR), 
-	"FIPS_CODE" VARCHAR2(5 CHAR), 
-	"FIPS_NAME" VARCHAR2(60 CHAR)
-   ) ;
-
-/*
-3 rows from uswildfires_fires table:
-fire_year	discovery_date	discovery_doy	discovery_time	stat_cause_code	stat_cause_descr	cont_date	cont_doy	cont_time	fire_size	fire_size_class	latitude	longitude	owner_code	owner_descr	state	county	fips_code	fips_name
-1999	2451195.5	17	1634	9	Miscellaneous	2451195.5	17	1707	0.1	A	33.255	-112.179	2	BIA	AZ	None	None	None
-1999	2451199.5	21	1653	9	Miscellaneous	2451199.5	21	1716	0.1	A	33.0234	-111.5723	2	BIA	AZ	None	None	None
-1999	2451199.5	21	1741	7	Arson	2451199.5	21	1756	1	B	33.3717	-112.2474	2	BIA	AZ	None	None	None
-*/
-
-
-CREATE TABLE "KAGGLE"."WHATCDHIPHOP_TAGS" 
-   (	"INDEX_" NUMBER, 
-	"ID" NUMBER, 
-	"TAG" VARCHAR2(50 CHAR)
-   ) ;
-
-/*
-3 rows from whatcdhiphop_tags table:
-index_	id	tag
-1390	632	1980s
-1391	632	electro
-1392	633	1980s
-*/
-
-
-CREATE TABLE "KAGGLE"."WHATCDHIPHOP_TORRENTS" 
-   (	"GROUP_NAME" VARCHAR2(700 CHAR), 
-	"TOTAL_SNATCHED" NUMBER, 
-	"ARTIST" VARCHAR2(100 CHAR), 
-	"GROUP_YEAR" NUMBER, 
-	"RELEASE_TYPE" VARCHAR2(20 CHAR), 
-	"GROUP_ID" NUMBER, 
-	"ID" NUMBER
-   ) ;
-
-/*
-3 rows from whatcdhiphop_torrents table:
-group_name	total_snatched	artist	group_year	release_type	group_id	id
-naughty boy / whats your sign	32	uncle jamm's army	1985	ep	72098533	222
-city life	33	the boogie boys	1985	album	72181945	223
-rapp will never die	23	mc shy d	1985	single	72412699	224
-*/
-
-
-CREATE TABLE "KAGGLE"."WORLDSOCCERDATABASE_BETFRONT" 
-   (	"YEAR_" NUMBER, 
-	"DATETIME_" TIMESTAMP (6), 
-	"COUNTRY" VARCHAR2(40 CHAR), 
-	"COMPETITION" VARCHAR2(60 CHAR), 
-	"MATCH_" VARCHAR2(80 CHAR), 
-	"HOME_OPENING" NUMBER, 
-	"DRAW_OPENING" NUMBER, 
-	"AWAY_OPENING" NUMBER, 
-	"HOME_CLOSING" NUMBER, 
-	"DRAW_CLOSING" NUMBER, 
-	"AWAY_CLOSING" NUMBER
-   ) ;
-
-/*
-3 rows from worldsoccerdatabase_betfront table:
-year_	datetime_	country	competition	match_	home_opening	draw_opening	away_opening	home_closing	draw_closing	away_closing
-2009	2009-03-22 23:00:00	norway	tippeligaen-2009	Brann - Stabaek	2.83	3.46	2.63	2.83	3.46	2.63
-2009	2009-03-23 22:00:00	norway	tippeligaen-2009	Tromso - Rosenborg	2.84	3.34	2.63	2.9	3.38	2.58
-2009	2009-03-27 23:35:00	ireland	premier-league-2009	Galway - Sligo	2.21	3.18	3.6	2.27	3.29	3.65
-*/
-
-
-CREATE TABLE "KAGGLE"."WORLDSOCCERDATABASE_FOOTBALL_DATA" 
-   (	"SEASON" VARCHAR2(12 CHAR), 
-	"DATETIME_" TIMESTAMP (6), 
-	"DIV_" VARCHAR2(10 CHAR), 
-	"COUNTRY" VARCHAR2(40 CHAR), 
-	"LEAGUE" VARCHAR2(60 CHAR), 
-	"REFEREE" VARCHAR2(60 CHAR), 
-	"HOMETEAM" VARCHAR2(60 CHAR), 
-	"AWAYTEAM" VARCHAR2(60 CHAR), 
-	"FTHG" NUMBER, 
-	"FTAG" NUMBER, 
-	"FTR" VARCHAR2(1 CHAR), 
-	"HTHG" NUMBER, 
-	"HTAG" NUMBER, 
-	"HTR" VARCHAR2(1 CHAR), 
-	"PSH" NUMBER, 
-	"PSD" NUMBER, 
-	"PSA" NUMBER, 
-	"B365H" NUMBER, 
-	"B365D" NUMBER, 
-	"B365A" NUMBER, 
-	"LBH" NUMBER, 
-	"LBD" NUMBER, 
-	"LBA" NUMBER, 
-	"BWH" NUMBER, 
-	"BWD" NUMBER, 
-	"BWA" NUMBER
-   ) ;
-
-/*
-3 rows from worldsoccerdatabase_football_data table:
-season	datetime_	div_	country	league	referee	hometeam	awayteam	fthg	ftag	ftr	hthg	htag	htr	psh	psd	psa	b365h	b365d	b365a	lbh	lbd	lba	bwh	bwd	bwa
-2019/2020	2020-07-31 20:00:00	I2	Italy	Serie B	None	Ascoli	Benevento	2	4	A	0	3	A	1.78	3.48	5.09	1.72	3.5	5	None	None	None	1.8	3.3	4.75
-2019/2020	2020-07-31 20:00:00	I2	Italy	Serie B	None	Frosinone	Pisa	1	1	D	0	0	D	2.08	3.36	3.84	2	3.3	3.8	None	None	None	2.05	3.2	3.75
-2019/2020	2020-07-31 20:00:00	I2	Italy	Serie B	None	Salernitana	Spezia	1	2	A	1	1	D	1.87	3.62	4.4	1.85	3.6	4	None	None	None	1.8	3.6	4.25
-*/
 
 
 {samples}

@@ -69,7 +69,7 @@ You will receive a chat_history with some messages, if the last message is the s
 - If llm returns a result that don't looks relevante to last question user did, you may argue that it is not a good answer and ask for a better one.
 - If the llm message is a error on SQL execution, try to understand the error and formulate you query in a way that it will not happen again.
 
-Just follow like example above:
+Just follow like example below:
 
 ### Example:
 ---
