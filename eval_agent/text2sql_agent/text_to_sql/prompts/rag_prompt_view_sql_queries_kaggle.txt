@@ -67,7 +67,7 @@ CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER"
 CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD" 
    (	"PLAYER_ID" VARCHAR2(20 CHAR), 
 	"AWARD_ID" VARCHAR2(60 CHAR), 
-	"YEAR_" NUMBER, 
+	"YEAR" NUMBER, 
 	"LEAGUE_ID" VARCHAR2(5 CHAR), 
 	"TIE" VARCHAR2(5 CHAR), 
 	"NOTES" VARCHAR2(200 CHAR)
@@ -75,7 +75,7 @@ CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD"
 
 /*
 3 rows from thehistoryofbaseball_player_award table:
-player_id	award_id	year_	league_id	tie	notes
+player_id	award_id	year	league_id	tie	notes
 bondto01	Pitching Triple Crown	1877	NL	None	None
 hinespa01	Triple Crown	1878	NL	None	None
 heckegu01	Pitching Triple Crown	1884	AA	None	None
@@ -84,7 +84,7 @@ heckegu01	Pitching Triple Crown	1884	AA	None	None
 
 CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE" 
    (	"AWARD_ID" VARCHAR2(60 CHAR), 
-	"YEAR_" NUMBER, 
+	"YEAR" NUMBER, 
 	"LEAGUE_ID" VARCHAR2(5 CHAR), 
 	"PLAYER_ID" VARCHAR2(20 CHAR), 
 	"POINTS_WON" NUMBER, 
@@ -94,7 +94,7 @@ CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
 
 /*
 3 rows from thehistoryofbaseball_player_award_vote table:
-award_id	year_	league_id	player_id	points_won	points_max	votes_first
+award_id	year	league_id	player_id	points_won	points_max	votes_first
 Cy Young	1956	ML	fordwh01	1	16	1
 Cy Young	1956	ML	maglisa01	4	16	4
 Cy Young	1956	ML	newcodo01	10	16	10
@@ -102,7 +102,7 @@ Cy Young	1956	ML	newcodo01	10	16	10
 
 
 CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_SALARY" 
-   (	"YEAR_" NUMBER, 
+   (	"YEAR" NUMBER, 
 	"TEAM_ID" VARCHAR2(10 CHAR), 
 	"LEAGUE_ID" VARCHAR2(5 CHAR), 
 	"PLAYER_ID" VARCHAR2(20 CHAR), 
@@ -111,7 +111,7 @@ CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_SALARY"
 
 /*
 3 rows from thehistoryofbaseball_salary table:
-year_	team_id	league_id	player_id	salary
+year	team_id	league_id	player_id	salary
 1985	ATL	NL	barkele01	870000
 1985	ATL	NL	bedrost01	550000
 1985	ATL	NL	benedbr01	545000

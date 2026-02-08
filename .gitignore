@@ -217,3 +217,4 @@ connections/opensearch_kaggle_db_connection.json
 /eval_agent/dataset_generation/experiments_datasets/*.py
 .python-version
 .env.mondial
+.env.kaggle
