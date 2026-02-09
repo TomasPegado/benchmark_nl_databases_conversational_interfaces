@@ -129,8 +129,9 @@ class DialogueGenerator:
         tables_involved=", ".join(tables_involved),
         tables_context=tables_context,
     )
-        if target_table not in self.tables_used:
-            self.tables_used.append(target_table)
+        for table in tables_involved:
+            if table not in self.tables_used:
+                self.tables_used.append(table)
 
         return prompt
     
