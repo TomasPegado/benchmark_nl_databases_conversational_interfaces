@@ -164,7 +164,7 @@ state_code	state	records_cnt
 
 
 CREATE TABLE "KAGGLE"."STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8" 
-   (	"YEAR_" NUMBER, 
+   (	"YEAR" NUMBER, 
 	"STATE" VARCHAR2(60 CHAR), 
 	"ALL_STUDENTS" VARCHAR2(40 CHAR), 
 	"AVERAGE_SCALE_SCORE" NUMBER
@@ -172,7 +172,7 @@ CREATE TABLE "KAGGLE"."STUDENTMATHSCORE_NDECOREEXCEL_MATH_GRADE8"
 
 /*
 3 rows from studentmathscore_ndecoreexcel_math_grade8 table:
-year_	state	all_students	average_scale_score
+year	state	all_students	average_scale_score
 2017	National	All students	283
 2017	Alabama	All students	268
 2017	Alaska	All students	277
@@ -199,11 +199,38 @@ ruthba01	1936	BBWAA	226	170	215	Y	Player	None
 wagneho01	1936	BBWAA	226	170	215	Y	Player	None
 */
 
+CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER" 
+   (	"PLAYER_ID" VARCHAR2(100 CHAR), 
+	"BIRTH_YEAR" VARCHAR2(100 CHAR), 
+	"BIRTH_MONTH" VARCHAR2(100 CHAR), 
+	"BIRTH_DAY" VARCHAR2(100 CHAR), 
+	"BIRTH_COUNTRY" VARCHAR2(100 CHAR), 
+	"BIRTH_STATE" VARCHAR2(100 CHAR), 
+	"BIRTH_CITY" VARCHAR2(100 CHAR), 
+	"DEATH_YEAR" VARCHAR2(100 CHAR), 
+	"DEATH_MONTH" VARCHAR2(100 CHAR), 
+	"DEATH_DAY" VARCHAR2(100 CHAR), 
+	"DEATH_COUNTRY" VARCHAR2(100 CHAR), 
+	"DEATH_STATE" VARCHAR2(100 CHAR), 
+	"DEATH_CITY" VARCHAR2(100 CHAR), 
+	"NAME_FIRST" VARCHAR2(100 CHAR), 
+	"NAME_LAST" VARCHAR2(100 CHAR), 
+	"NAME_GIVEN" VARCHAR2(100 CHAR), 
+	"WEIGHT" VARCHAR2(100 CHAR)
+   );
+
+/*
+3 rows from thehistoryofbaseball_player table:
+"PLAYER_ID"	"BIRTH_YEAR"	"BIRTH_MONTH"	"BIRTH_DAY"	"BIRTH_COUNTRY"	"BIRTH_STATE"	"BIRTH_CITY"	"DEATH_YEAR"	"DEATH_MONTH"	"DEATH_DAY"	"DEATH_COUNTRY"	"DEATH_STATE"	"DEATH_CITY"	"NAME_FIRST"	"NAME_LAST"	"NAME_GIVEN"	"WEIGHT"
+"aardsda01"	"1981.0"	"12.0"	"27.0"	"USA"	"CO"	"Denver"	""	""	""	""	""	""	"David"	"Aardsma"	"David Allan"	"220.0"
+"aaronha01"	"1934.0"	"2.0"	"5.0"	"USA"	"AL"	"Mobile"	""	""	""	""	""	""	"Hank"	"Aaron"	"Henry Louis"	"180.0"
+"aaronto01"	"1939.0"	"8.0"	"5.0"	"USA"	"AL"	"Mobile"	"1984.0"	"8.0"	"16.0"	"USA"	"GA"	"Atlanta"	"Tommie"	"Aaron"	"Tommie Lee"	"190.0"
+/*
 
 CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD" 
    (	"PLAYER_ID" VARCHAR2(20 CHAR), 
 	"AWARD_ID" VARCHAR2(60 CHAR), 
-	"YEAR_" NUMBER, 
+	"YEAR" NUMBER, 
 	"LEAGUE_ID" VARCHAR2(5 CHAR), 
 	"TIE" VARCHAR2(5 CHAR), 
 	"NOTES" VARCHAR2(200 CHAR)
@@ -211,7 +238,7 @@ CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD"
 
 /*
 3 rows from thehistoryofbaseball_player_award table:
-player_id	award_id	year_	league_id	tie	notes
+player_id	award_id	year	league_id	tie	notes
 bondto01	Pitching Triple Crown	1877	NL	None	None
 hinespa01	Triple Crown	1878	NL	None	None
 heckegu01	Pitching Triple Crown	1884	AA	None	None
@@ -220,7 +247,7 @@ heckegu01	Pitching Triple Crown	1884	AA	None	None
 
 CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE" 
    (	"AWARD_ID" VARCHAR2(60 CHAR), 
-	"YEAR_" NUMBER, 
+	"YEAR" NUMBER, 
 	"LEAGUE_ID" VARCHAR2(5 CHAR), 
 	"PLAYER_ID" VARCHAR2(20 CHAR), 
 	"POINTS_WON" NUMBER, 
@@ -230,7 +257,7 @@ CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE"
 
 /*
 3 rows from thehistoryofbaseball_player_award_vote table:
-award_id	year_	league_id	player_id	points_won	points_max	votes_first
+award_id	year	league_id	player_id	points_won	points_max	votes_first
 Cy Young	1956	ML	fordwh01	1	16	1
 Cy Young	1956	ML	maglisa01	4	16	4
 Cy Young	1956	ML	newcodo01	10	16	10
@@ -238,7 +265,7 @@ Cy Young	1956	ML	newcodo01	10	16	10
 
 
 CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_SALARY" 
-   (	"YEAR_" NUMBER, 
+   (	"YEAR" NUMBER, 
 	"TEAM_ID" VARCHAR2(10 CHAR), 
 	"LEAGUE_ID" VARCHAR2(5 CHAR), 
 	"PLAYER_ID" VARCHAR2(20 CHAR), 
@@ -247,7 +274,7 @@ CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_SALARY"
 
 /*
 3 rows from thehistoryofbaseball_salary table:
-year_	team_id	league_id	player_id	salary
+year	team_id	league_id	player_id	salary
 1985	ATL	NL	barkele01	870000
 1985	ATL	NL	bedrost01	550000
 1985	ATL	NL	benedbr01	545000
@@ -320,7 +347,7 @@ rapp will never die	23	mc shy d	1985	single	72412699	224
 
 
 CREATE TABLE "KAGGLE"."WORLDSOCCERDATABASE_BETFRONT" 
-   (	"YEAR_" NUMBER, 
+   (	"YEAR" NUMBER, 
 	"DATETIME_" TIMESTAMP (6), 
 	"COUNTRY" VARCHAR2(40 CHAR), 
 	"COMPETITION" VARCHAR2(60 CHAR), 
@@ -335,7 +362,7 @@ CREATE TABLE "KAGGLE"."WORLDSOCCERDATABASE_BETFRONT"
 
 /*
 3 rows from worldsoccerdatabase_betfront table:
-year_	datetime_	country	competition	match_	home_opening	draw_opening	away_opening	home_closing	draw_closing	away_closing
+year	datetime_	country	competition	match_	home_opening	draw_opening	away_opening	home_closing	draw_closing	away_closing
 2009	2009-03-22 23:00:00	norway	tippeligaen-2009	Brann - Stabaek	2.83	3.46	2.63	2.83	3.46	2.63
 2009	2009-03-23 22:00:00	norway	tippeligaen-2009	Tromso - Rosenborg	2.84	3.34	2.63	2.9	3.38	2.58
 2009	2009-03-27 23:35:00	ireland	premier-league-2009	Galway - Sligo	2.21	3.18	3.6	2.27	3.29	3.65

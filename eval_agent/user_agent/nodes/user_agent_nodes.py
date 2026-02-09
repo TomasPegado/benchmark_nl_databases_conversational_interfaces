@@ -1,3 +1,4 @@
+from numpy import empty_like
 from eval_agent.text2sql_agent.agent_graph import build_graph
 from functions.llm_config import LLMConfig
 from eval_agent.user_agent.states.user_agent_state import UserState
@@ -12,6 +13,7 @@ from pathlib import Path
 import time
 from datetime import datetime
 import paths  
+import pandas as pd
 # from functions.sqldatabase_langchain_utils import SQLDatabaseLangchainUtils
 import eval_agent.user_agent.prompts as prompts
 from functions.gptconfig import MODEL_4O
@@ -245,6 +247,11 @@ class EvaluatorNodes:
 
         print("----" * 10)
         return state
+    
+    def _empty_like(df: pd.DataFrame | None) -> pd.DataFrame:
+        # When we can't produce a table, fall back to an empty DF (LLM judge can handle it)
+        return df if isinstance(df, pd.DataFrame) else pd.DataFrame()
+
 
     def check_response(self, state: UserState) -> UserState:
         """
@@ -349,22 +356,54 @@ class EvaluatorNodes:
         
         if evaluator and ground_truth_golden_sql and golden_sql != "":
             try:
-                result_table = evaluator.run_sql_query(golden_sql)
-                true_table = evaluator.run_sql_query(ground_truth_golden_sql)
-                correctness, sim, col_match = evaluator.compare_sql_query_similarity_and_semantic(
-                    user_query=function_input,
-                    generated_query=golden_sql,
-                    result_table=result_table,
-                    true_query=ground_truth_golden_sql,
-                    true_table=true_table,
-                    similarity_threshold=0.8,
-                    column_matching_threshold=0.5,
-                    debug_mode=True
-                )
-            except Exception as e:
-                print(f"[ERROR] Erro ao executar a query: {e}")
-                correctness = False
-                state["retry_reason"] = "query_execution_error"
+                # 1) Only execution here. If this fails, it's truly an execution error.
+                try:
+                    result_table = evaluator.run_sql_query(golden_sql)
+                    true_table   = evaluator.run_sql_query(ground_truth_golden_sql)
+                except Exception as e:
+                    print(f"[ERROR] Query execution error: {e}")
+                    correctness = False
+                    state["retry_reason"] = "query_execution_error"
+                    # Important: re-raise or short-circuit so we DON'T treat execution errors as LLM-judge cases
+                    raise
+                # 2) Comparison logic here. If this fails (bugs, edge cases, pandas issues, etc),
+                #    fall back to AI-as-judge instead of silently marking execution error.
+                try:
+                    correctness, sim, col_match = evaluator.compare_sql_query_similarity_and_semantic(
+                        user_query=function_input,
+                        generated_query=golden_sql,
+                        result_table=result_table,
+                        true_query=ground_truth_golden_sql,
+                        true_table=true_table,
+                        similarity_threshold=0.8,
+                        column_matching_threshold=0.5,
+                        debug_mode=True
+                    )
+                except Exception as e:
+                    print(f"[WARN] Non-execution error during comparison; falling back to AI judge: {e}")
+                    
+                    # Ensure we pass valid DataFrames
+                    result_table_safe = empty_like(result_table)
+                    true_table_safe   = empty_like(true_table)
+
+                    # LLM fallback
+                    correctness = evaluator.ai_as_judge_comparation(
+                        user_query=function_input,
+                        generated_query=golden_sql,
+                        true_query=ground_truth_golden_sql,
+                        result_table=result_table_safe,
+                        true_table=true_table_safe,
+                        debug_mode=True,
+                        sample_size=5,
+                        random_state=42
+                    )
+                    state["retry_reason"] = "ai_judge_fallback"
+
+            except Exception:
+                # If we re-raised an execution error above, we land here; correctness already set to False.
+                # If something else unexpected happened before correctness assignment, fail closed.
+                correctness = locals().get("correctness", False)
+                state.setdefault("retry_reason", "unknown_error")
         else:
             correctness = False
         

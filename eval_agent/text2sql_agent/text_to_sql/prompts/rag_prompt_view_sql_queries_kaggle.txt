@@ -118,10 +118,7 @@ year	team_id	league_id	player_id	salary
 */
 
 
-
-
 {samples}
-
 
 Question: {input}
 SELECT
