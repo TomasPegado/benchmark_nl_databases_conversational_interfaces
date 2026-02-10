@@ -34,40 +34,41 @@ user: and its area
 your tool call: I want to know the capital of Brazil and its area
 
 # The database tables are provided below:
-- Mountain (Identifier, Type, Elevation, Name, Coordinates, Mountains);
-- Mountain on island (Identifier, Island);
-- Organization (Identifier, Established, Abbreviation, Name);
-- Politics (Identifier, Dependet, Independence, Government, Was dependent);
-- Population (Identifier, Infant Mortality, Population growth);
-- Province (Identifier, Province Capital, Name, Capital, Population, Area);
-- Province other name (Identifier, Other name);
-- Province population (Identifier, Population, Year);
-- Religion (Identifier, Percentage, Name);
-- River (Estuary, Source, Source elevation, Length, Name, Area, River, Mountains, Estuary elevation, Identifier);
-- Geo desert (Country, Identifier);
-- River through (Lake, Identifier);
-- Geo estuary (Country, Identifier);
-- Sea (Name, Depth, Area, Identifier);
-- Geo island (Country, Identifier);
-- Ethnic Group (Identifier, Name, Percentage);
-- Geo lake (Identifier, Country);
-- Geo mountain (Identifier, Country);
-- Geo river (Identifier, Country);
-- Geo sea (Identifier, Country);
-- Geo source (Identifier, Country);
-- Island (Identifier, Islands, Area, Elevation, Name, Type, Coordinates);
-- Is member (Identifier, Type, Country, Organization);
-- Airport (Identifier, Name, GMT offset, IATA code, Longitude, Latitude, Elevation);
-- Borders (Identifier, Length);
-- City (Population, Longitude, Elevation, Name, Latitude, Identifier);
-- City other name (Other name, Identifier);
-- Continent (Area, Name, Identifier);
-- Country (Area, Name, Code, Province, Population, Capital, Identifier);
-- Desert (Area, Name, Coordinates, Identifier);
-- Economy (Inflation, Industry, Gdp, Unemployment, Service, Agriculture, Identifier);
-- Encompasses (Percentage, Identifier);
-- Lake (Identifier, Elevation, Height, Coordinates, Type, Name, Depth, Area);
-- Language (Identifier, Name, Percentage);
+- Mountain (Name, Mountains, Elevation, Type, Coordinates);
+- Mountainonisland (Mountain, Island);
+- Organization (Abbreviation, Name, City, Country, Province, Established);
+- Politics (Country, Independence, Was dependent, Dependent, Government);
+- Population (Country, Population growth, Infant mortality);
+- Province (Name, Country, Population, Area, Capital, Province Capital);
+- Province other name (Province, Country, Other name);
+- Province population (Province, Country, Year, Population);
+- Religion (Country, Name, Percentage);
+- River (Name, River, Lake, Sea, Length, Area, Mountains, Source elevation, Estuary elevation, Source, Estuary);
+- Geo desert (Desert, Country, Province);
+- Riverthrough (River, Lake);
+- Geo estuary (River, Country, Province);
+- Sea (Name, Area, Depth);
+- Geo island (Island, Country, Province);
+- Ethnic Group (Country, Name, Percentage);
+- Geo lake (Lake, Country, Province);
+- Geo mountain (Mountain, Country, Province);
+- Geo river (River, Country, Province);
+- Geo sea (Sea, Country, Province);
+- Geo source (River, Country, Province);
+- Island (Name, Islands, Area, Elevation, Type, Coordinates);
+- Is member (Country, Organization, Type);
+- Airport (IATA code, Name, Country, City, Province, Island, Latitude, Longitude, Elevation, GMT offset);
+- Borders (Country1, Country2, Length);
+- City (Name, Country, Province, Population, Latitude, Longitude, Elevation);
+- City other name (City, Country, Province, Other name);
+- Continent (Name, Area);
+- Country (Name, Code, Capital, Province, Area, Population);
+- Desert (Name, Area, Coordinates);
+- Economy (Country, GDP, Agriculture, Service, Industry, Inflation, Unemployment);
+- Encompasses (Country, Continent, Percentage);
+- Geo lake (Lake, Country, Province);
+- Lake (Name, River, Area, Elevation, Depth, Height, Type, Coordinates);
+- Language (Country, Name, Percentage);
 
 
 The tool answer will be like:

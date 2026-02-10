@@ -1243,6 +1243,27 @@ Mediterranean Sea	2500000.0	5267.0
 Black Sea	436000.0	2211.0
 */
 
+CREATE TABLE "mondial_gpt"."mondial_located" 
+   (	"CITY" VARCHAR2(50 BYTE), 
+	"PROVINCE" VARCHAR2(50 BYTE), 
+	"COUNTRY" VARCHAR2(4 BYTE), 
+	"RIVER" VARCHAR2(50 BYTE), 
+	"LAKE" VARCHAR2(50 BYTE), 
+	"SEA" VARCHAR2(50 BYTE), 
+	"META_REPCOL" VARCHAR2(4000 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "MONDIAL_GPT" ;
+
+"CITY"	"PROVINCE"	"COUNTRY"	"RIVER"	"LAKE"	"SEA"
+"Salerno"	"Campania"	"I"	""	""	"Mediterranean Sea"
+"Nápoli"	"Campania"	"I"	""	""	"Mediterranean Sea"
+"Torre del Greco"	"Campania"	"I"	""	""	"Mediterranean Sea"
+
 {samples}
 
 Observation: !!!The "country" column of all tables refers to a "country code" that references the "code" column of the mondial_gpt.country table. !!!

@@ -13,7 +13,7 @@ You MUST strictly follow the binary interaction list in order. Do NOT change its
 # Target Table:
 {target_table}
 
-# Join Combination Context (to be used ONLY when binary value = 0):
+# Join Combination Context:
 {join_str}
 
 # Column Combination Context (to be used ONLY when binary value = 1):
@@ -36,6 +36,9 @@ You MUST strictly follow the binary interaction list in order. Do NOT change its
 - Follow-up questions MUST depend on previous answers.
 - Do NOT mix join-based reasoning and column-based reasoning in the same interaction.
 - Use ONLY the provided join or column combinations; do not invent schema elements.
+- Do NOT write a dialogue interaction referencing "target_table", use it's real name instead when the case.
+- Ensure semantic diversity across interactions.
+- Avoid repeating query intent patterns.
 
 ### Binary Rules Recap
 - If interaction_binary_list[i] == 0:
@@ -44,7 +47,7 @@ You MUST strictly follow the binary interaction list in order. Do NOT change its
 - If interaction_binary_list[i] == 1:
   - The question must focus on filtering, aggregation, grouping, or ordering using columns.
   - Do NOT introduce new joins.
-
+  - golden_sql must be context-correct: include any JOINs required by entities/constraints introduced in previous interaction, even if the current interaction was generated under a column-based directive.
 ---
 
 ## Required Output Format (STRICT)

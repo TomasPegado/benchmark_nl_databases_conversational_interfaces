@@ -135,40 +135,41 @@ DATABASE SCHEMA
 
 Tables and Columns:
 
-Mountain (Identifier, Type, Elevation, Name, Coordinates, Mountains)
-Mountain on island (Identifier, Island)
-Organization (Identifier, Established, Abbreviation, Name)
-Politics (Identifier, Dependet, Independence, Government, Was dependent)
-Population (Identifier, Infant Mortality, Population growth)
-Province (Identifier, Province Capital, Name, Capital, Population, Area)
-Province other name (Identifier, Other name)
-Province population (Identifier, Population, Year)
-Religion (Identifier, Percentage, Name)
-River (Estuary, Source, Source elevation, Length, Name, Area, River, Mountains, Estuary elevation, Identifier)
-Geo desert (Country, Identifier)
-River through (Lake, Identifier)
-Geo estuary (Country, Identifier)
-Sea (Name, Depth, Area, Identifier)
-Geo island (Country, Identifier)
-Ethnic Group (Identifier, Name, Percentage)
-Geo lake (Identifier, Country)
-Geo mountain (Identifier, Country)
-Geo river (Identifier, Country)
-Geo sea (Identifier, Country)
-Geo source (Identifier, Country)
-Island (Identifier, Islands, Area, Elevation, Name, Type, Coordinates)
-Is member (Identifier, Type, Country, Organization)
-Airport (Identifier, Name, GMT offset, IATA code, Longitude, Latitude, Elevation)
-Borders (Identifier, Length)
-City (Population, Longitude, Elevation, Name, Latitude, Identifier)
-City other name (Other name, Identifier)
-Continent (Area, Name, Identifier)
-Country (Area, Name, Code, Province, Population, Capital, Identifier)
-Desert (Area, Name, Coordinates, Identifier)
-Economy (Inflation, Industry, Gdp, Unemployment, Service, Agriculture, Identifier)
-Encompasses (Percentage, Identifier)
-Lake (Identifier, Elevation, Height, Coordinates, Type, Name, Depth, Area)
-Language (Identifier, Name, Percentage)
+- mondial_mountain (Name, Mountains, Elevation, Type, Coordinates);
+- mondial_mountainonisland (Mountain, Island);
+- mondial_organization (Abbreviation, Name, City, Country, Province, Established);
+- mondial_politics (Country, Independence, Was dependent, Dependent, Government);
+- mondial_population (Country, Population growth, Infant mortality);
+- mondial_province (Name, Country, Population, Area, Capital, Province Capital);
+- mondial_province other name (Province, Country, Other name);
+- mondial_province population (Province, Country, Year, Population);
+- mondial_religion (Country, Name, Percentage);
+- mondial_river (Name, River, Lake, Sea, Length, Area, Mountains, Source elevation, Estuary elevation, Source, Estuary);
+- mondial_geo_desert (Desert, Country, Province);
+- mondial_riverthrough (River, Lake);
+- mondial_geo_estuary (River, Country, Province);
+- mondial_sea (Name, Area, Depth);
+- mondial_geo_island (Island, Country, Province);
+- mondial_ethnicgroup (Country, Name, Percentage);
+- mondial_geo_lake (Lake, Country, Province);
+- mondial_geo_mountain (Mountain, Country, Province);
+- mondial_geo_river (River, Country, Province);
+- mondial_geo_sea (Sea, Country, Province);
+- mondial_geo_source (River, Country, Province);
+- mondial_island (Name, Islands, Area, Elevation, Type, Coordinates);
+- mondial_ismember (Country, Organization, Type);
+- mondial_airport (IATA code, Name, Country, City, Province, Island, Latitude, Longitude, Elevation, GMT offset);
+- mondial_borders (Country1, Country2, Length);
+- mondial_city (Name, Country, Province, Population, Latitude, Longitude, Elevation);
+- mondial_cityothername (City, Country, Province, Other name);
+- mondial_continent (Name, Area);
+- mondial_country (Name, Code, Capital, Province, Area, Population);
+- mondial_desert (Name, Area, Coordinates);
+- mondial_economy (Country, GDP, Agriculture, Service, Industry, Inflation, Unemployment);
+- mondial_encompasses (Country, Continent, Percentage);
+- mondial_lake (Name, River, Area, Elevation, Depth, Height, Type, Coordinates);
+- mondial_language (Country, Name, Percentage);
+- mondial_located (City, Province, Country, River, Lake, Sea);
 
 ------------------------------------------------------------
 TOOL RESPONSE STRUCTURE
