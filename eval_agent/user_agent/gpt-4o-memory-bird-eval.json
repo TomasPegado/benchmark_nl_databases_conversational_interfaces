@@ -1,0 +1,2130 @@
+[
+    {
+        "experiment_id": "1",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:01:12.401037",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find circuits and the years they were used in races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me which circuits were used in races along with the years they were hosted?",
+                        "agent_reply": "Here is a list of circuits along with the years they hosted races: For example, Autodromo Nazionale di Monza hosted a race in 1950, Circuit Bremgarten in 1950, Circuit de Monaco in 1950, Circuit de Spa-Francorchamps in 1950, Indianapolis Motor Speedway in 1950, and many others up to 2017, including Shanghai International Circuit, Silverstone Circuit, Sochi Autodrom, Suzuka Circuit, and Yas Marina Circuit.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve a list of circuits along with the years they hosted races.",
+                            "user_intention": "Find circuits and the years they were used in races.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_RACES.YEAR FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID",
+                            "generated_sql": "SELECT  c.name AS circuit_name, r.year AS hosted_year FROM formula_1_circuits c JOIN formula_1_races r ON c.circuitid = r.circuitid ORDER BY r.year, c.name",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 16.443336009979248,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Count the number of circuits in each country and location.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many circuits are there in each country and location?",
+                        "agent_reply": "Here is the number of circuits grouped by country and location: For example, Spain has 1 circuit in Montmel\u00f3, Canada has 1 in Montreal, France has 1 in Magny Cours, the UK has 1 in Silverstone and another in Liverpool, and there are similar counts for other locations. In total, there are 70 unique country-location combinations.",
+                        "evaluation": {
+                            "text_to_sql_input": "Count the number of circuits grouped by country and location.",
+                            "user_intention": "Count the number of circuits in each country and location.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LOCATION, COUNT(*) FROM FORMULA_1_CIRCUITS GROUP BY FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LOCATION",
+                            "generated_sql": "SELECT country, location, COUNT(*) AS circuit_count FROM formula_1_circuits GROUP BY country, location",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.051052808761597,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Get the names and coordinates of circuits in Spain.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you list the names and coordinates of circuits in Spain?",
+                        "agent_reply": "Here are the circuits in Spain along with their coordinates: Circuit de Barcelona-Catalunya (41.5700, 2.261110), Valencia Street Circuit (39.4589, -0.331667), Circuito de Jerez (36.7083, -6.034170), Jarama (40.6171, -3.585580), Montju\u00efc (41.3664, 2.151670), and Circuit de Pedralbes (41.3903, 2.116670).",
+                        "evaluation": {
+                            "text_to_sql_input": "List the names and coordinates (latitude and longitude) of circuits located in Spain.",
+                            "user_intention": "Get the names and coordinates of circuits in Spain.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.LAT, FORMULA_1_CIRCUITS.LNG FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.COUNTRY='Spain'",
+                            "generated_sql": "SELECT name, lat, lng FROM formula_1_circuits WHERE LOWER(country) = LOWER('Spain')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 16.56940221786499,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "2",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:02:00.046843",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Retrieve the points scored by each constructor in the constructor results.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the points scored by each constructor in the constructor results?",
+                        "agent_reply": "The points scored by constructors include examples such as McLaren with 14.0 points, BMW Sauber with 8.0 points, Williams with 9.0 points, Renault with 5.0 points, and Toro Rosso with 2.0 points. There are a total of 11082 rows in the results.",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the points scored by each constructor in the constructor results?",
+                            "user_intention": "Retrieve the points scored by each constructor in the constructor results.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT CONSTRUCTORID, POINTS FROM FORMULA_1_CONSTRUCTORRESULTS",
+                            "generated_sql": "SELECT c.name, cr.points FROM formula_1_constructorresults cr JOIN formula_1_constructors c ON cr.constructorid = c.constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.65428614616394,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Display the status of the constructors along with their points.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the status of the constructors along with their points?",
+                        "agent_reply": "The constructors' statuses along with their points include examples such as McLaren with 14.0 points, BMW Sauber with 8.0 points, Williams with 9.0 points, and Renault with 5.0 points. However, the status field appears to be `None` for all entries. The output contains a total of 11082 rows.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show the status of the constructors along with their points from the constructor results.",
+                            "user_intention": "Display the status of the constructors along with their points.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT CONSTRUCTORID, POINTS, STATUS FROM FORMULA_1_CONSTRUCTORRESULTS",
+                            "generated_sql": "SELECT cr.status, cr.points, c.name AS constructor_name FROM formula_1_constructorresults cr JOIN formula_1_constructors c ON cr.constructorid = c.constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.483007907867432,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find constructors with standings matching their results based on points.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which constructors have standings that match their results in terms of points?",
+                        "agent_reply": "The constructors whose standings match their results in terms of points include examples such as BMW Sauber, Renault, Toro Rosso, Ferrari, and Toyota. There are a total of 5749 such entries in the dataset.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the constructors where their standings match their results in terms of points.",
+                            "user_intention": "Find constructors with standings matching their results based on points.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT F1C.CONSTRUCTORID, F1CR.POINTS FROM FORMULA_1_CONSTRUCTORRESULTS F1CR JOIN FORMULA_1_CONSTRUCTORS F1C ON F1CR.CONSTRUCTORID = F1C.CONSTRUCTORID JOIN FORMULA_1_CONSTRUCTORSTANDINGS F1CS ON F1C.CONSTRUCTORID = F1CS.CONSTRUCTORID WHERE F1CR.POINTS = F1CS.POINTS",
+                            "generated_sql": "SELECT cs.constructorid, c.name FROM formula_1_constructorstandings cs JOIN formula_1_results r ON cs.raceid = r.raceid AND cs.constructorid = r.constructorid JOIN formula_1_constructors c ON cs.constructorid = c.constructorid WHERE cs.points = r.points",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 16.053179264068604,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "3",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:03:28.862870",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Count the number of Formula 1 drivers grouped by their nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many Formula 1 drivers are there for each nationality?",
+                        "agent_reply": "The count of Formula 1 drivers for each nationality is as follows: British - 162, American - 157, Italian - 99, French - 72, German - 49, Brazilian - 31, Argentine - 24, Swiss - 23, South African - 23, Belgian - 23, Japanese - 19, Australian - 17, Dutch - 17, Austrian - 15, Spanish - 15, Canadian - 13, Swedish - 10, Finnish - 9, New Zealander - 8, Mexican - 6, Danish - 5, Irish - 5, Rhodesian - 4, Uruguayan - 4, Portuguese - 4, Venezuelan - 3, East German - 3, Colombian - 3, Monegasque - 3, Russian - 2, Indian - 2, Chilean - 1, Argentine-Italian - 1, Polish - 1, Indonesian - 1, American-Italian - 1, Liechtensteiner - 1, Malaysian - 1, Thai - 1, Czech - 1, and Hungarian - 1.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many Formula 1 drivers are there for each nationality?",
+                            "user_intention": "Count the number of Formula 1 drivers grouped by their nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NATIONALITY, COUNT(*) FROM FORMULA_1_DRIVERS GROUP BY NATIONALITY;",
+                            "generated_sql": "SELECT nationality, COUNT(*) AS driver_count FROM formula_1_drivers GROUP BY nationality ORDER BY driver_count DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.539592027664185,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "List the names of drivers who have German nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you list the names of drivers from Germany?",
+                        "agent_reply": "The names of drivers from Germany include Nick Heidfeld, Nico Rosberg, Timo Glock, Adrian Sutil, Sebastian Vettel, Ralf Schumacher, Markus Winkelhock, Michael Schumacher, Heinz-Harald Frentzen, Michael Bartels, Bernd Schneider, Hans-Joachim Stuck, Rolf Stommelen, Hans Heyer, Hubert Hahne, Christian Danner, Volker Weidler, Joachim Winkelhock, Manfred Winkelhock, Stefan Bellof, Jochen Mass, Wolfgang Seidel, Wolfgang von Trips, Hans Herrmann, Karl Kling, Hermann Lang, Theo Helfrich, Oswald Karch, Willi Heeks, Kurt Adolff, G\u00fcnther Bechem, Erwin Bauer, Hans von Stuck, Ernst Loof, Toni Ulmen, Adolf Brudes, Fritz Riess, Helmut Niedermayr, Hans Klenk, Paul Pietsch, Josef Peters, Nico H\u00fclkenberg, Andr\u00e9 Lotterer, Pascal Wehrlein, Kurt Ahrens, Gerhard Mitter, Edgar Barth, Kurt Kuhnke, and G\u00fcnther Seiffert.",
+                        "evaluation": {
+                            "text_to_sql_input": "List the names of drivers from Germany.",
+                            "user_intention": "List the names of drivers who have German nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORENAME, SURNAME FROM FORMULA_1_DRIVERS WHERE NATIONALITY = 'German';",
+                            "generated_sql": "SELECT d.forename, d.surname FROM formula_1_drivers d WHERE LOWER(d.nationality) = LOWER('German')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.326092004776001,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve the lap times recorded by German drivers.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the lap times for German drivers?",
+                        "agent_reply": "There are several lap times recorded for German drivers across different races. For example, Nick Heidfeld recorded lap times such as 2:37.754, 1:37.640, 1:31.697, and so on in Race 1. Nico Rosberg recorded lap times like 1:27.577 and 1:26.993 in Race 967. Similarly, Nico H\u00fclkenberg has lap times such as 2:23.182 in Race 965. The full dataset includes 78,657 entries of lap times for German drivers.",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the lap times for German drivers?",
+                            "user_intention": "Retrieve the lap times recorded by German drivers.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT L.RACEID, L.LAP, L.TIME FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_LAPTIMES L ON D.DRIVERID = L.DRIVERID WHERE D.NATIONALITY = 'German';",
+                            "generated_sql": "SELECT lt.raceid, lt.lap, lt.time, lt.milliseconds, d.forename, d.surname FROM formula_1_laptimes lt JOIN formula_1_drivers d ON lt.driverid = d.driverid WHERE LOWER(d.nationality) = LOWER('German')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 22.49358606338501,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "4",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:04:32.864614",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Retrieve the status description associated with each race result.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you give me the status description for each race result?",
+                        "agent_reply": "The query returned a large dataset containing the status description for each race result. Here are a few examples:\n\n- RACEID 18.0: Status 'Finished'\n- RACEID 749.0: Status '+1 Lap'\n- RACEID 749.0: Status 'Transmission'\n\nThe dataset includes 23,657 entries in total.",
+                        "evaluation": {
+                            "text_to_sql_input": "Provide the status description for each race result.",
+                            "user_intention": "Retrieve the status description associated with each race result.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT F1R.RESULTID, F1R.RACEID, F1R.DRIVERID, F1R.CONSTRUCTORID, F1S.STATUS FROM FORMULA_1_RESULTS F1R JOIN FORMULA_1_STATUS F1S ON F1R.STATUSID = F1S.STATUSID",
+                            "generated_sql": "SELECT FORMULA_1_RESULTS.RACEID, FORMULA_1_STATUS.STATUS FROM FORMULA_1_RESULTS JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 21.84816575050354,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Calculate the total points scored by each driver across all races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the total number of points scored by each driver?",
+                        "agent_reply": "The total number of points scored by each driver has been calculated. Here are a few examples:\n\n- Lewis Hamilton: 2510.0 points\n- Fernando Alonso: 1842.0 points\n- Nico Rosberg: 1594.5 points\n\nThe dataset includes 840 drivers in total.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the total number of points scored by each driver?",
+                            "user_intention": "Calculate the total points scored by each driver across all races.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DRIVERID, SUM(POINTS) AS TOTAL_POINTS FROM FORMULA_1_RESULTS GROUP BY DRIVERID",
+                            "generated_sql": "SELECT FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, SUM(FORMULA_1_RESULTS.POINTS) AS TOTAL_POINTS FROM FORMULA_1_RESULTS JOIN FORMULA_1_DRIVERS ON FORMULA_1_RESULTS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID GROUP BY FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 16.510626077651978,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve the total points scored by each driver along with the status description of their races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you also include the description for the status of each driver\u2019s race?",
+                        "agent_reply": "The query returned the total points scored by each driver along with the description for the status of their races. Here are a few examples:\n\n- Giancarlo Fisichella: 0.0 points, Status 'Collision'\n- Jarno Trulli: 220.5 points, Status 'Finished'\n- Sebastian Vettel: 2343.0 points, Status 'Finished'\n\nThe dataset includes 6,848 entries in total.",
+                        "evaluation": {
+                            "text_to_sql_input": "Provide the total points scored by each driver along with the description for the status of each driver's race.",
+                            "user_intention": "Retrieve the total points scored by each driver along with the status description of their races.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT F1R.DRIVERID, SUM(F1R.POINTS) AS TOTAL_POINTS, F1S.STATUS FROM FORMULA_1_RESULTS F1R JOIN FORMULA_1_STATUS F1S ON F1R.STATUSID = F1S.STATUSID GROUP BY F1R.DRIVERID, F1S.STATUS",
+                            "generated_sql": "SELECT FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, SUM(FORMULA_1_RESULTS.POINTS) AS TOTAL_POINTS, FORMULA_1_STATUS.STATUS FROM FORMULA_1_RESULTS JOIN FORMULA_1_DRIVERS ON FORMULA_1_RESULTS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID GROUP BY FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_STATUS.STATUS",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 15.010191917419434,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "5",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:05:34.343389",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Retrieve details about the columns present in the seasons table.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you provide details about the columns in the seasons data?",
+                        "agent_reply": "The FORMULA_1_SEASONS table has the following columns: \n1. YEAR (Season Year): The unique identification number identifying the season.\n2. URL (url): Website link of the season race introduction.",
+                        "evaluation": {
+                            "text_to_sql_input": "Provide details about the columns in the FORMULA_1_SEASONS table.",
+                            "user_intention": "Retrieve details about the columns present in the seasons table.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_TMDP.COLUMN_LABEL, FORMULA_1_TMDP.COLUMN_DESCRIPTION FROM FORMULA_1_TMDP WHERE FORMULA_1_TMDP.TABLE_ID = 'seasons'",
+                            "generated_sql": "SELECT column_name, column_label, column_description, data_type, column_tye, value_description FROM formula_1_tmdp WHERE table_id = 'seasons'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 16.55170726776123,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Count the total number of seasons recorded in the data.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many seasons are recorded in total?",
+                        "agent_reply": "There are a total of 68 seasons recorded in the database.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many seasons are recorded in the FORMULA_1_SEASONS table?",
+                            "user_intention": "Count the total number of seasons recorded in the data.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT COUNT(FORMULA_1_SEASONS.YEAR) FROM FORMULA_1_SEASONS",
+                            "generated_sql": "SELECT COUNT(*) AS season_count FROM formula_1_seasons",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.835834980010986,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "List all the recorded seasons sorted by the year in descending order.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you list all the seasons in descending order of their year?",
+                        "agent_reply": "The seasons are listed in descending order of their year, starting from 2017 and going back to 1950. Let me know if you'd like a specific subset of years.",
+                        "evaluation": {
+                            "text_to_sql_input": "List all the seasons in the FORMULA_1_SEASONS table in descending order of their year.",
+                            "user_intention": "List all the recorded seasons sorted by the year in descending order.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_SEASONS.YEAR, FORMULA_1_SEASONS.URL FROM FORMULA_1_SEASONS ORDER BY FORMULA_1_SEASONS.YEAR DESC",
+                            "generated_sql": "SELECT year FROM formula_1_seasons ORDER BY year DESC",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 13.442761898040771,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 13.44277286529541
+            }
+        ]
+    },
+    {
+        "experiment_id": "7",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:06:15.243321",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Count the number of Formula 1 drivers grouped by their nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many Formula 1 drivers are there grouped by their nationality?",
+                        "agent_reply": "Here is a summary of the number of Formula 1 drivers grouped by their nationality: British - 162, German - 49, Australian - 17, Indian - 2, New Zealander - 8, Liechtensteiner - 1, Rhodesian - 4, American-Italian - 1, Polish - 1, Danish - 5, Monegasque - 3, South African - 23, Chilean - 1, Thai - 1, American - 157, Canadian - 13, Argentine - 24, Czech - 1, Spanish - 15, Japanese - 19, Malaysian - 1, Venezuelan - 3, Argentine-Italian - 1, East German - 3, French - 72, Brazilian - 31, Colombian - 3, Portuguese - 4, Dutch - 17, Irish - 5, Belgian - 23, Swedish - 10, Finnish - 9, Italian - 99, Hungarian - 1, Swiss - 23, Russian - 2, Austrian - 15, Mexican - 6, Uruguayan - 4, Indonesian - 1. If you need more details on a particular nationality, let me know!",
+                        "evaluation": {
+                            "text_to_sql_input": "How many Formula 1 drivers are there grouped by their nationality?",
+                            "user_intention": "Count the number of Formula 1 drivers grouped by their nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NATIONALITY, COUNT(*) FROM FORMULA_1_DRIVERS GROUP BY NATIONALITY",
+                            "generated_sql": "SELECT nationality, COUNT(driverid) AS driver_count FROM formula_1_drivers GROUP BY nationality",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.004854202270508,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "List the names of all Formula 1 drivers with German nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you list the names of all drivers who are German?",
+                        "agent_reply": "Here are the names of some Formula 1 drivers who are German: Nick Heidfeld, Nico Rosberg, Timo Glock, Adrian Sutil, Sebastian Vettel, Ralf Schumacher, Markus Winkelhock, Michael Schumacher, Heinz-Harald Frentzen, and many others. If you want the full list or details on a specific driver, let me know!",
+                        "evaluation": {
+                            "text_to_sql_input": "List the names of all Formula 1 drivers who are German.",
+                            "user_intention": "List the names of all Formula 1 drivers with German nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORENAME, SURNAME FROM FORMULA_1_DRIVERS WHERE NATIONALITY = 'German'",
+                            "generated_sql": "SELECT d.forename, d.surname FROM formula_1_drivers d WHERE LOWER(d.nationality) = LOWER('German')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.952913761138916,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve the standings and points for drivers with German nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the standings and points for the German drivers?",
+                        "agent_reply": "The standings and points for German Formula 1 drivers vary across different races and seasons. For example, Nick Heidfeld had a position of 2 with 8 points in one instance and 3 with 11 points in another. Similarly, Nico Rosberg had standings like position 3 with 6 points, and Sebastian Vettel achieved position 2 with 235 points in a race. If you'd like detailed standings for a specific driver or season, let me know!",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the standings and points for German Formula 1 drivers?",
+                            "user_intention": "Retrieve the standings and points for drivers with German nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT D.FORENAME, D.SURNAME, DS.POSITION, DS.POINTS FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS DS ON D.DRIVERID = DS.DRIVERID WHERE D.NATIONALITY = 'German'",
+                            "generated_sql": "SELECT ds.position, ds.points, d.forename, d.surname FROM formula_1_driverstandings ds JOIN formula_1_drivers d ON ds.driverid = d.driverid WHERE LOWER(d.nationality) = 'german'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 16.669437885284424,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "8",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:06:58.148298",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Count the number of constructors grouped by their nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many constructors are there for each nationality?",
+                        "agent_reply": "Here are the counts of constructors for each nationality:\n- British: 85\n- German: 10\n- Indian: 1\n- Australian: 1\n- Rhodesian: 1\n- South African: 3\n- Canadian: 2\n- American: 39\n- Japanese: 5\n- Hong Kong: 1\n- East German: 1\n- Spanish: 1\n- Malaysian: 2\n- French: 12\n- Brazilian: 1\n- Dutch: 3\n- Irish: 1\n- New Zealand: 1\n- Italian: 29\n- Russian: 2\n- Swiss: 4\n- Belgium: 1\n- Austrian: 1\n- Mexican: 1",
+                        "evaluation": {
+                            "text_to_sql_input": "How many constructors are there for each nationality?",
+                            "user_intention": "Count the number of constructors grouped by their nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.NATIONALITY, COUNT(*) FROM FORMULA_1_CONSTRUCTORS GROUP BY FORMULA_1_CONSTRUCTORS.NATIONALITY",
+                            "generated_sql": "SELECT nationality, COUNT(*) AS constructor_count FROM formula_1_constructors GROUP BY nationality",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.868041038513184,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Retrieve all constructors belonging to the British nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you list all constructors from British nationality?",
+                        "agent_reply": "Here are some of the constructors from British nationality: McLaren, Williams, BAR, Jaguar, Arrows, and many more. There are a total of 85 constructors.",
+                        "evaluation": {
+                            "text_to_sql_input": "List all constructors from British nationality",
+                            "user_intention": "Retrieve all constructors belonging to the British nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.NATIONALITY = 'British'",
+                            "generated_sql": "SELECT c.name FROM formula_1_constructors c WHERE LOWER(c.nationality) = 'british'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.047235012054443,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the status of constructors who participated in races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the status of constructors who participated in races?",
+                        "agent_reply": "The database lists constructors who participated in races, but the 'status' column for these constructors appears to contain mostly 'None' values. If you need specific details about constructor statuses, let me know, and I can help refine the query.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the status of constructors who participated in races?",
+                            "user_intention": "Find the status of constructors who participated in races.",
+                            "recall": 0.3333333333333333,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_STATUS.STATUS FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID",
+                            "generated_sql": "SELECT cr.constructorid, c.name, cr.status FROM formula_1_constructorresults cr JOIN formula_1_constructors c ON cr.constructorid = c.constructorid",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 18.102755069732666,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 18.10277223587036
+            }
+        ]
+    },
+    {
+        "experiment_id": "9",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:07:38.273121",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the total points scored by constructors.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the total points scored by constructors in the results?",
+                        "agent_reply": "The total points scored by constructors in the results is 34,966.5.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the total points scored by constructors in the results?",
+                            "user_intention": "Find the total points scored by constructors.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT SUM(POINTS) AS TOTAL_POINTS FROM FORMULA_1_CONSTRUCTORRESULTS",
+                            "generated_sql": "SELECT SUM(points) AS total_points FROM formula_1_constructorresults;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.171329021453857,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the constructor with the highest total points by joining the constructor details.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which constructor has the highest total points in the results?",
+                        "agent_reply": "The constructor with the highest total points in the results is Ferrari, with 7,934.6 points.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which constructor has the highest total points in the results?",
+                            "user_intention": "Find the constructor with the highest total points by joining the constructor details.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT C.NAME, SUM(R.POINTS) AS TOTAL_POINTS FROM FORMULA_1_CONSTRUCTORRESULTS R JOIN FORMULA_1_CONSTRUCTORS C ON R.CONSTRUCTORID = C.CONSTRUCTORID GROUP BY C.NAME ORDER BY TOTAL_POINTS DESC FETCH FIRST 1 ROW ONLY",
+                            "generated_sql": "SELECT c.name, SUM(r.points) AS total_points FROM formula_1_constructors c JOIN formula_1_results r ON c.constructorid = r.constructorid GROUP BY c.name ORDER BY total_points DESC FETCH FIRST 1 ROWS ONLY",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.186433792114258,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the nationality of the constructor with the highest total points.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What is the nationality of that constructor?",
+                        "agent_reply": "The nationality of the constructor with the highest total points is British.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the nationality of the constructor with the highest total points?",
+                            "user_intention": "Find the nationality of the constructor with the highest total points.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NATIONALITY FROM FORMULA_1_CONSTRUCTORS WHERE NAME = 'McLaren'",
+                            "generated_sql": "SELECT c.nationality, SUM(cs.points) AS total_points FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid GROUP BY c.nationality ORDER BY total_points DESC FETCH FIRST 1 ROWS ONLY",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 15.469106197357178,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "10",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:08:15.206470",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Count the constructors grouped by nationality to understand their diversity.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many constructors are there for each nationality?",
+                        "agent_reply": "Here is the count of constructors for each nationality:\n\n- British: 85\n- German: 10\n- Indian: 1\n- Australian: 1\n- Rhodesian: 1\n- South African: 3\n- Canadian: 2\n- American: 39\n- Japanese: 5\n- Hong Kong: 1\n- East German: 1\n- Spanish: 1\n- Malaysian: 2\n- French: 12\n- Brazilian: 1\n- Dutch: 3\n- Irish: 1\n- New Zealand: 1\n- Italian: 29\n- Russian: 2\n- Swiss: 4\n- Belgium: 1\n- Austrian: 1\n- Mexican: 1",
+                        "evaluation": {
+                            "text_to_sql_input": "How many constructors are there for each nationality?",
+                            "user_intention": "Count the constructors grouped by nationality to understand their diversity.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NATIONALITY, COUNT(*) FROM FORMULA_1_CONSTRUCTORS GROUP BY NATIONALITY",
+                            "generated_sql": "SELECT nationality, COUNT(*) AS constructor_count FROM formula_1_constructors GROUP BY nationality",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.073313236236572,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Retrieve constructors and their standings.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the constructors along with their standings?",
+                        "agent_reply": "The query returned a large dataset of constructors along with their standings. Here are some examples:\n\n1. McLaren (British) - Points: 14, Position: 1, Wins: 1\n2. BMW Sauber (German) - Points: 8, Position: 3, Wins: 0\n3. Williams (British) - Points: 9, Position: 2, Wins: 0\n4. Renault (French) - Points: 5, Position: 4, Wins: 0\n5. Toro Rosso (Italian) - Points: 2, Position: 5, Wins: 0\n\nThis pattern continues for 11,836 rows.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show all constructors along with their standings.",
+                            "user_intention": "Retrieve constructors and their standings.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT C.NAME, C.NATIONALITY, CS.POINTS, CS.POSITION FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_CONSTRUCTORSTANDINGS CS ON C.CONSTRUCTORID = CS.CONSTRUCTORID",
+                            "generated_sql": "SELECT c.constructorid, c.name, c.nationality, cs.points, cs.position, cs.wins FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.485509157180786,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve constructors and their qualifying results.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the constructors' qualifying results?",
+                        "agent_reply": "The query returned a large dataset of constructors with their qualifying results. Here are some examples:\n\n1. McLaren (Constructor ID: 1) - Race ID: 18, Driver ID: 1, Qualifying Position: 1, Q1: 1:26.572, Q2: 1:25.187, Q3: 1:26.714\n2. BMW Sauber (Constructor ID: 2) - Race ID: 18, Driver ID: 9, Qualifying Position: 2, Q1: 1:26.103, Q2: 1:25.315, Q3: 1:26.869\n3. McLaren (Constructor ID: 1) - Race ID: 18, Driver ID: 5, Qualifying Position: 3, Q1: 1:25.664, Q2: 1:25.452, Q3: 1:27.079\n4. Ferrari (Constructor ID: 6) - Race ID: 18, Driver ID: 13, Qualifying Position: 4, Q1: 1:25.994, Q2: 1:25.691, Q3: 1:27.178\n5. BMW Sauber (Constructor ID: 2) - Race ID: 18, Driver ID: 2, Qualifying Position: 5, Q1: 1:25.960, Q2: 1:25.518, Q3: 1:27.236\n\nThis pattern continues for 7,397 rows.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show all constructors along with their qualifying results.",
+                            "user_intention": "Retrieve constructors and their qualifying results.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT C.NAME, Q.POSITION, Q.Q1, Q.Q2, Q.Q3 FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_QUALIFYING Q ON C.CONSTRUCTORID = Q.CONSTRUCTORID",
+                            "generated_sql": "SELECT c.constructorid, c.name AS constructor_name, q.raceid, q.driverid, q.position AS qualifying_position, q.q1, q.q2, q.q3 FROM formula_1_constructors c JOIN formula_1_qualifying q ON c.constructorid = q.constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 15.133684158325195,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "11",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:08:59.075467",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Retrieve the laptimes of Formula 1 drivers.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the laptimes of Formula 1 drivers?",
+                        "agent_reply": "The lap times of Formula 1 drivers include information like their name, lap number, time, and milliseconds. For example, Lewis Hamilton had lap times like 1:49.088 (109,088 ms) on lap 1, 1:33.740 (93,740 ms) on lap 2, and so on. The dataset contains a total of 420,369 rows with similar details.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show the lap times of all Formula 1 drivers.",
+                            "user_intention": "Retrieve the laptimes of Formula 1 drivers.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT F1D.FORENAME, F1D.SURNAME, F1L.LAP, F1L.POSITION, F1L.TIME, F1L.MILLISECONDS FROM FORMULA_1_DRIVERS F1D JOIN FORMULA_1_LAPTIMES F1L ON F1D.DRIVERID = F1L.DRIVERID",
+                            "generated_sql": "SELECT d.forename, d.surname, lt.lap, lt.time, lt.milliseconds FROM formula_1_drivers d JOIN formula_1_laptimes lt ON d.driverid = lt.driverid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 54.45461678504944,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Count the number of drivers grouped by nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many drivers are there from each nationality?",
+                        "agent_reply": "The number of Formula 1 drivers from each nationality includes, for example, 162 British drivers, 49 German drivers, 17 Australian drivers, 31 Brazilian drivers, and 99 Italian drivers. Other nationalities include smaller counts such as 3 Venezuelan drivers, 1 Polish driver, and 1 Malaysian driver. The full dataset reflects a comprehensive breakdown by nationality.",
+                        "evaluation": {
+                            "text_to_sql_input": "Count the number of Formula 1 drivers from each nationality.",
+                            "user_intention": "Count the number of drivers grouped by nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NATIONALITY, COUNT(*) FROM FORMULA_1_DRIVERS GROUP BY NATIONALITY",
+                            "generated_sql": "SELECT nationality, COUNT(driverid) AS driver_count FROM formula_1_drivers GROUP BY nationality",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.916153192520142,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve the pitstop details for the drivers grouped by nationality from the previous query.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the pitstop details for drivers from the previous query?",
+                        "agent_reply": "The dataset provides pitstop details for drivers grouped by nationality. For instance, American drivers had pitstops such as stop 1 on lap 1 at 14:06:39 with a duration of 37.748 seconds (37,748 milliseconds), and stop 1 on lap 14 at 14:22:03 with a duration of 25.492 seconds (25,492 milliseconds). Similarly, Venezuelan drivers had pitstops like stop 5 on lap 53 at 15:28:55 with a duration of 22.825 seconds (22,825 milliseconds). The data includes 6,070 rows of pitstop details.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show the pitstop details (stop, lap, time, duration, milliseconds) for all drivers grouped by their nationality.",
+                            "user_intention": "Retrieve the pitstop details for the drivers grouped by nationality from the previous query.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT F1D.FORENAME, F1D.SURNAME, F1P.STOP, F1P.LAP, F1P.TIME, F1P.DURATION FROM FORMULA_1_DRIVERS F1D JOIN FORMULA_1_PITSTOPS F1P ON F1D.DRIVERID = F1P.DRIVERID",
+                            "generated_sql": "SELECT d.nationality, p.stop, p.lap, p.time, p.duration, p.milliseconds FROM formula_1_pitstops p JOIN formula_1_drivers d ON p.driverid = d.driverid ORDER BY d.nationality, p.stop",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.907579898834229,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "12",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:11:46.578098",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Count the number of Formula 1 drivers categorized by their nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me how many Formula 1 drivers there are grouped by their nationality?",
+                        "agent_reply": "The Formula 1 drivers are grouped by their nationalities as follows: British (162 drivers), German (49 drivers), Australian (17 drivers), Indian (2 drivers), New Zealander (8 drivers), Liechtensteiner (1 driver), Rhodesian (4 drivers), American-Italian (1 driver), Polish (1 driver), Danish (5 drivers), Monegasque (3 drivers), South African (23 drivers), Chilean (1 driver), Thai (1 driver), American (157 drivers), Canadian (13 drivers), Argentine (24 drivers), Czech (1 driver), Spanish (15 drivers), Japanese (19 drivers), Malaysian (1 driver), Venezuelan (3 drivers), Argentine-Italian (1 driver), East German (3 drivers), French (72 drivers), Brazilian (31 drivers), Colombian (3 drivers), Portuguese (4 drivers), Dutch (17 drivers), Irish (5 drivers), Belgian (23 drivers), Swedish (10 drivers), Finnish (9 drivers), Italian (99 drivers), Hungarian (1 driver), Swiss (23 drivers), Russian (2 drivers), Austrian (15 drivers), Mexican (6 drivers), and Uruguayan (4 drivers).",
+                        "evaluation": {
+                            "text_to_sql_input": "Count the number of Formula 1 drivers grouped by their nationality.",
+                            "user_intention": "Count the number of Formula 1 drivers categorized by their nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NATIONALITY, COUNT(*) FROM FORMULA_1_DRIVERS GROUP BY NATIONALITY",
+                            "generated_sql": "SELECT nationality, COUNT(driverid) AS driver_count FROM formula_1_drivers GROUP BY nationality",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.95097279548645,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Retrieve the standings of drivers with their nationalities.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the standings of drivers from each nationality?",
+                        "agent_reply": "The standings of drivers from each nationality are as follows:\n\n- German: 68,113 total points and 1,636 wins\n- British: 66,731.5 total points and 2,029 wins\n- Brazilian: 30,607.5 total points and 853 wins\n- Finnish: 26,515.5 total points and 399 wins\n- French: 23,661.1 total points and 708 wins\n- Australian: 20,574 total points and 285 wins\n- Spanish: 19,730 total points and 346 wins\n- Italian: 15,587.7 total points and 281 wins\n- Austrian: 8,256.5 total points and 310 wins\n- American: 6,423 total points and 225 wins\n- Mexican: 4,646 total points and 21 wins\n- Argentine: 4,219.2 total points and 226 wins\n- New Zealander: 3,471.5 total points and 86 wins\n- Dutch: 3,259 total points and 17 wins\n- Canadian: 2,984 total points and 139 wins\n- Colombian: 2,760 total points and 36 wins\n- Polish: 2,737 total points and 12 wins\n- Swedish: 2,735 total points and 77 wins\n- Belgian: 2,485 total points and 56 wins\n- Swiss: 2,473 total points and 42 wins\n- South African: 2,211 total points and 90 wins\n- Russian: 2,179 total points and 0 wins\n- Japanese: 1,986 total points and 0 wins\n- Danish: 873 total points and 0 wins\n- Venezuelan: 790 total points and 16 wins\n- Irish: 138 total points and 0 wins\n- Portuguese: 71 total points and 0 wins\n- Rhodesian: 66 total points and 0 wins\n- Indian: 55 total points and 0 wins\n- Thai: 42 total points and 0 wins\n- Chilean: 30 total points and 0 wins\n- Monegasque: 24 total points and 0 wins\n- Hungarian: 10 total points and 0 wins\n- Uruguayan: 0 total points and 0 wins\n- Argentine-Italian: 0 total points and 0 wins\n- East German: 0 total points and 0 wins\n- Indonesian: 0 total points and 0 wins\n- Czech: 0 total points and 0 wins\n- Liechtensteiner: 0 total points and 0 wins\n- American-Italian: 0 total points and 0 wins\n- Malaysian: 0 total points and 0 wins.",
+                        "evaluation": {
+                            "text_to_sql_input": "Get the standings of drivers grouped by their nationality.",
+                            "user_intention": "Retrieve the standings of drivers with their nationalities.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT D.NATIONALITY, DS.POSITION, DS.POINTS FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS DS ON D.DRIVERID = DS.DRIVERID",
+                            "generated_sql": "SELECT d.nationality, SUM(ds.points) AS total_points, SUM(ds.wins) AS total_wins FROM formula_1_drivers d JOIN formula_1_driverstandings ds ON d.driverid = ds.driverid GROUP BY d.nationality ORDER BY total_points DESC, total_wins DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 15.05015230178833,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Identify drivers who qualified in the top three positions and their nationalities.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which drivers qualified in the top three positions, and what are their nationalities?",
+                        "agent_reply": "The drivers who qualified in the top three positions include notable names such as Damon Hill (British), Fernando Alonso (Spanish), and Heikki Kovalainen (Finnish), among others. The full list contains 1,017 instances of drivers qualifying in the top three positions with their respective nationalities. Let me know if you'd like a detailed breakdown or specific information.",
+                        "evaluation": {
+                            "text_to_sql_input": "Get the drivers who qualified in the top three positions along with their nationalities.",
+                            "user_intention": "Identify drivers who qualified in the top three positions and their nationalities.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT D.FORENAME, D.SURNAME, D.NATIONALITY, Q.POSITION FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON D.DRIVERID = Q.DRIVERID WHERE Q.POSITION <= 3",
+                            "generated_sql": "SELECT q.position, d.forename, d.surname, d.nationality FROM formula_1_qualifying q JOIN formula_1_drivers d ON q.driverid = d.driverid WHERE q.position <= 3 ORDER BY q.position;",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 12.628458976745605,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 12.628468036651611
+            }
+        ]
+    },
+    {
+        "experiment_id": "14",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:12:32.027447",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Retrieve lap times for all drivers.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the lap times for each driver?",
+                        "agent_reply": "The lap times for drivers include details such as race ID, driver ID, lap number, position, time, and milliseconds. For example, Driver 1 in Race 1 completed lap 1 in 1:49.088 (109088 milliseconds). Another sample: Driver 825 in Race 965 completed lap 35 in 1:44.680 (104680 milliseconds).",
+                        "evaluation": {
+                            "text_to_sql_input": "Show the lap times for each driver.",
+                            "user_intention": "Retrieve lap times for all drivers.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT D.DRIVERREF, D.FORENAME, D.SURNAME, L.LAP, L.TIME FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_LAPTIMES L ON D.DRIVERID = L.DRIVERID",
+                            "generated_sql": "SELECT lt.raceid, lt.driverid, lt.lap, lt.position, lt.time, lt.milliseconds FROM formula_1_laptimes lt",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 53.115476846694946,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Count drivers grouped by their nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many drivers are there from each nationality?",
+                        "agent_reply": "The number of drivers from each nationality varies. For instance, there are 162 British drivers, 49 German drivers, 17 Australian drivers, and 72 French drivers. Similarly, there are 99 Italian drivers and 31 Brazilian drivers. Other nationalities have fewer drivers, such as 1 Liechtensteiner, 1 Polish, and 1 Malaysian driver, among others.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many drivers are there from each nationality?",
+                            "user_intention": "Count drivers grouped by their nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NATIONALITY, COUNT(*) FROM FORMULA_1_DRIVERS GROUP BY NATIONALITY",
+                            "generated_sql": "SELECT nationality, COUNT(driverid) AS driver_count FROM formula_1_drivers GROUP BY nationality",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.952701091766357,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve drivers who participated in qualifying sessions along with their positions.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which drivers participated in qualifying sessions, and what were their positions?",
+                        "agent_reply": "Drivers who participated in qualifying sessions include Lewis Hamilton, who achieved position 1, Robert Kubica at position 2, and Heikki Kovalainen at position 3. Other drivers include Felipe Massa (position 4) and Nick Heidfeld (position 5). The list continues with various drivers and their respective positions.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which drivers participated in qualifying sessions, and what were their positions?",
+                            "user_intention": "Retrieve drivers who participated in qualifying sessions along with their positions.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT D.DRIVERREF, D.FORENAME, D.SURNAME, Q.POSITION FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON D.DRIVERID = Q.DRIVERID",
+                            "generated_sql": "SELECT  d.forename, d.surname, q.position FROM formula_1_qualifying q JOIN formula_1_drivers d ON q.driverid = d.driverid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.282076358795166,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "15",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:15:14.285235",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the seasons associated with mappings.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me which seasons are associated with different mappings in the system?",
+                        "agent_reply": "The database contains mappings for seasons from 1950 to 2017. These mappings include details such as table names ('FORMULA_1_SEASONS'), table labels ('seasons'), and specific column information such as 'Year' (column label: Season Year) and 'URL' (column label: url). Additional mapping information includes column descriptions like 'unique identification number for the year' and website links for season introductions.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the seasons and their associated mappings in the FORMULA_1_SEASONS, FORMULA_1_TMDC, FORMULA_1_TMDP, and FORMULA_1_TMJMAP tables.",
+                            "user_intention": "Find the seasons associated with mappings.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_TMJMAP.FROM_T, FORMULA_1_SEASONS.YEAR FROM FORMULA_1_TMJMAP JOIN FORMULA_1_SEASONS ON FORMULA_1_TMJMAP.TO_T = CAST(FORMULA_1_SEASONS.YEAR AS VARCHAR2(4000))",
+                            "generated_sql": "SELECT s.year AS season, t.table_name, t.table_label, t.table_description, c.column_name, c.column_label, c.column_description, c.data_type, c.column_tye, c.value_description, j.from_t, j.to_t FROM formula_1_seasons s LEFT JOIN formula_1_tmdc t ON t.id = 'seasons' LEFT JOIN formula_1_tmdp c ON c.table_id = 'seasons' LEFT JOIN formula_1_tmjmap j ON j.from_t LIKE '%seasons%';",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 16.427366018295288,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the races linked to constructor results.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What about the races linked to constructor results through mappings?",
+                        "agent_reply": "I encountered an error while retrieving the races linked to constructor results. The error message is: 'ORA-01747: invalid user.table.column, table.column, or column specification'. This issue might be due to an incorrect SQL structure or column specification.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the races linked to constructor results through mappings in the FORMULA_1_RACES, FORMULA_1_CONSTRUCTORRESULTS, FORMULA_1_TMDP, and FORMULA_1_TMJMAP tables.",
+                            "user_intention": "Find the races linked to constructor results.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_TMJMAP.FROM_T, FORMULA_1_CONSTRUCTORRESULTS.RACEID FROM FORMULA_1_TMJMAP JOIN FORMULA_1_CONSTRUCTORRESULTS ON FORMULA_1_TMJMAP.TO_T = CAST(FORMULA_1_CONSTRUCTORRESULTS.RACEID AS VARCHAR2(4000))",
+                            "generated_sql": "SELECT r.raceid, r.name, r.year, r.date, cr.constructorresultsid, cr.points, cr.status FROM formula_1_races r JOIN formula_1_constructorresults cr ON r.raceid = cr.raceid",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 11.659238815307617,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 11.659257888793945
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the total points scored by constructors in all races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Show me the total points scored by constructors in all races.",
+                        "agent_reply": "The total points scored by constructors include: Ferrari with 7081.5 points, McLaren with 5232.5 points, Red Bull with 3750.5 points, Williams with 3541.0 points, and Mercedes with 3525.0 points. The full list includes 172 constructors.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show the total points scored by each constructor in all races from the FORMULA_1_CONSTRUCTORRESULTS table.",
+                            "user_intention": "Find the total points scored by constructors in all races.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT SUM(POINTS) AS TOTAL_POINTS FROM FORMULA_1_CONSTRUCTORRESULTS",
+                            "generated_sql": "SELECT c.name AS constructor_name, SUM(cr.points) AS total_points FROM formula_1_constructors c JOIN formula_1_constructorresults cr ON c.constructorid = cr.constructorid GROUP BY c.name ORDER BY total_points DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.319322109222412,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "16",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:15:57.622179",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Retrieve pit stop details for each driver.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the pit stop details for each driver?",
+                        "agent_reply": "Here are the pit stop details for each driver. For example:\n\n1. Driver ID 1:\n   - Stop 1: Lap 16, Time 17:28:24, Duration 23.227 seconds\n   - Stop 2: Lap 36, Time 17:59:29, Duration 23.199 seconds\n\n2. Driver ID 2:\n   - Stop 1: Lap 15, Time 17:27:41, Duration 22.994 seconds\n   - Stop 2: Lap 30, Time 17:51:32, Duration 25.098 seconds\n\n3. Driver ID 3:\n   - Stop 1: Lap 16, Time 17:29:00, Duration 23.716 seconds\n\nThe data contains a total of 6070 records.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show the pit stop details for each driver.",
+                            "user_intention": "Retrieve pit stop details for each driver.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT D.DRIVERREF, P.STOP, P.LAP, P.TIME, P.DURATION FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_PITSTOPS P ON D.DRIVERID = P.DRIVERID",
+                            "generated_sql": "SELECT driverid, stop, lap, time, duration, milliseconds FROM formula_1_pitstops",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.654807090759277,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find drivers who participated in the qualifying rounds.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which drivers participated in the qualifying rounds?",
+                        "agent_reply": "A total of 7397 unique driver entries participated in the qualifying rounds. For example, drivers with IDs such as 1, 9, 5, 13, and 2 are included in the list.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which drivers participated in the qualifying rounds?",
+                            "user_intention": "Find drivers who participated in the qualifying rounds.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT D.DRIVERREF FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON D.DRIVERID = Q.DRIVERID",
+                            "generated_sql": "SELECT DISTINCT DRIVERID FROM FORMULA_1_QUALIFYING",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.387919187545776,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "List qualifying positions for drivers who participated in qualifying rounds.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those drivers, can you list their qualifying positions?",
+                        "agent_reply": "Here are the qualifying positions for the drivers. For example:\n\n1. Driver ID 1: Position 1\n2. Driver ID 9: Position 2\n3. Driver ID 5: Position 3\n4. Driver ID 13: Position 4\n5. Driver ID 2: Position 5\n\nThe data contains a total of 7397 records.",
+                        "evaluation": {
+                            "text_to_sql_input": "For those drivers, list their qualifying positions.",
+                            "user_intention": "List qualifying positions for drivers who participated in qualifying rounds.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT D.DRIVERREF, Q.POSITION FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON D.DRIVERID = Q.DRIVERID",
+                            "generated_sql": "SELECT driverid, position FROM formula_1_qualifying",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.600695133209229,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "17",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:16:43.328004",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the count of Formula 1 constructors grouped by their nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me how many Formula 1 constructors exist for each nationality?",
+                        "agent_reply": "Here is the count of Formula 1 constructors for each nationality: British: 85, German: 10, Indian: 1, Australian: 1, Rhodesian: 1, South African: 3, Canadian: 2, American: 39, Japanese: 5, Hong Kong: 1, East German: 1, Spanish: 1, Malaysian: 2, French: 12, Brazilian: 1, Dutch: 3, Irish: 1, New Zealand: 1, Italian: 29, Russian: 2, Swiss: 4, Belgium: 1, Austrian: 1, Mexican: 1.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many Formula 1 constructors exist for each nationality?",
+                            "user_intention": "Find the count of Formula 1 constructors grouped by their nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.NATIONALITY, COUNT(*) AS CONSTRUCTOR_COUNT FROM FORMULA_1_CONSTRUCTORS GROUP BY FORMULA_1_CONSTRUCTORS.NATIONALITY",
+                            "generated_sql": "SELECT nationality, COUNT(*) AS constructor_count FROM formula_1_constructors GROUP BY nationality",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 17.354868173599243,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Retrieve constructors and their standings points.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you provide the details of constructors along with their standings points?",
+                        "agent_reply": "The query retrieved details of constructors, including their names, nationalities, and associated standings points. The data contains more than 11,800 rows, so here are a few examples: McLaren (British) with 14 points, BMW Sauber (German) with 8 points, Williams (British) with 9 points, Renault (French) with 5 points, Toro Rosso (Italian) with 2 points, and Haas F1 Team (American) with 37 points.",
+                        "evaluation": {
+                            "text_to_sql_input": "Provide the details of Formula 1 constructors along with their standings points.",
+                            "user_intention": "Retrieve constructors and their standings points.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_CONSTRUCTORS.NATIONALITY, FORMULA_1_CONSTRUCTORSTANDINGS.POINTS FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_CONSTRUCTORSTANDINGS ON FORMULA_1_CONSTRUCTORSTANDINGS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID",
+                            "generated_sql": "SELECT c.constructorid, c.name AS constructor_name, c.nationality, cs.points AS standings_points FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.326416969299316,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "List all constructors sorted alphabetically by their names including nationalities.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Sort the constructors alphabetically by their name along with their nationalities.",
+                        "agent_reply": "The Formula 1 constructors sorted alphabetically by their name along with their nationalities include examples like: AFM (German), AGS (French), ATS (Italian), Adams (American), Alfa Romeo (Italian), Williams (British), Wolf (Canadian), and Zakspeed (German). The full list contains 208 constructors.",
+                        "evaluation": {
+                            "text_to_sql_input": "Sort the Formula 1 constructors alphabetically by their name along with their nationalities.",
+                            "user_intention": "List all constructors sorted alphabetically by their names including nationalities.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC",
+                            "generated_sql": "SELECT name, nationality FROM formula_1_constructors ORDER BY name ASC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.053441047668457,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "18",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:17:26.477106",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Count the number of circuits in each country and location.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many circuits are there in each country and location?",
+                        "agent_reply": "There are a total of 70 unique combinations of circuits by country and location. For example, Spain has 1 circuit in Montmel\u00f3, Canada has 1 circuit in Montreal, France has 1 circuit in Magny Cours, the UK has 1 circuit in Silverstone, and Germany has 1 circuit in Hockenheim. Let me know if you need details for specific locations.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many circuits are there in each country and location?",
+                            "user_intention": "Count the number of circuits in each country and location.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LOCATION, COUNT(*) FROM FORMULA_1_CIRCUITS GROUP BY FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LOCATION;",
+                            "generated_sql": "SELECT country, location, COUNT(*) AS circuit_count FROM formula_1_circuits GROUP BY country, location",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.264447927474976,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "List the races held at circuits located in Malaysia.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the list of races held at circuits in Malaysia?",
+                        "agent_reply": "The following races were held at circuits in Malaysia: the Malaysian Grand Prix from 1999 to 2017, spanning multiple years and rounds. For example, the Malaysian Grand Prix was held in 1999 (Round 15), 2000 (Round 17), and continued annually until 2017 (Round 15). Let me know if you need the full list or details for a specific year.",
+                        "evaluation": {
+                            "text_to_sql_input": "List all races held at circuits located in Malaysia along with their names.",
+                            "user_intention": "List the races held at circuits located in Malaysia.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_RACES.NAME FROM FORMULA_1_RACES JOIN FORMULA_1_CIRCUITS ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID WHERE FORMULA_1_CIRCUITS.COUNTRY = 'Malaysia';",
+                            "generated_sql": "SELECT r.name, r.year, r.round FROM formula_1_races r JOIN formula_1_circuits c ON r.circuitid = c.circuitid WHERE LOWER(c.country) = LOWER('Malaysia')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.750910997390747,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the constructors that participated in races held at circuits in Malaysia.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which constructors participated in those races?",
+                        "agent_reply": "A total of 392 constructor entries were recorded for races held in Malaysia. Examples of constructors include Ferrari, BMW Sauber, McLaren, Toyota, and Toro Rosso. Let me know if you need a complete list or details about specific constructors.",
+                        "evaluation": {
+                            "text_to_sql_input": "List all constructors that participated in races held at circuits located in Malaysia.",
+                            "user_intention": "Find the constructors that participated in races held at circuits in Malaysia.",
+                            "recall": 0.75,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_CONSTRUCTORS.NAME FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_CONSTRUCTORRESULTS ON FORMULA_1_CONSTRUCTORS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID JOIN FORMULA_1_RACES ON FORMULA_1_CONSTRUCTORRESULTS.RACEID = FORMULA_1_RACES.RACEID JOIN FORMULA_1_CIRCUITS ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID WHERE FORMULA_1_CIRCUITS.COUNTRY = 'Malaysia';",
+                            "generated_sql": "SELECT  c.name FROM formula_1_constructors c JOIN formula_1_results r ON c.constructorid = r.constructorid JOIN formula_1_races ra ON r.raceid = ra.raceid JOIN formula_1_circuits ci ON ra.circuitid = ci.circuitid WHERE LOWER(ci.country) = LOWER('Malaysia')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.973013877868652,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "19",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:18:08.285213",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Retrieve the standings information for drivers along with their points and wins.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the standings information for drivers, including their points and wins?",
+                        "agent_reply": "The FORMULA_1_DRIVERSTANDINGS table includes information such as Driver Standings ID, Race ID, Driver ID, Points, Position, Position Text, and Wins. For example:\n1. Driver Standings ID: 1, Race ID: 18, Driver ID: 1, Points: 10, Position: 1, Wins: 1\n2. Driver Standings ID: 2, Race ID: 18, Driver ID: 2, Points: 8, Position: 2, Wins: 0\n3. Driver Standings ID: 3, Race ID: 18, Driver ID: 3, Points: 6, Position: 3, Wins: 0",
+                        "evaluation": {
+                            "text_to_sql_input": "Show all information from the FORMULA_1_DRIVERSTANDINGS table, including points and wins.",
+                            "user_intention": "Retrieve the standings information for drivers along with their points and wins.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT D.FORENAME, D.SURNAME, DS.POINTS, DS.WINS FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS DS ON D.DRIVERID = DS.DRIVERID",
+                            "generated_sql": "SELECT driverstandingsid, raceid, driverid, points, position, positiontext, wins FROM formula_1_driverstandings",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 15.404953718185425,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Retrieve lap times for drivers in any race.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the lap times for these drivers in any race?",
+                        "agent_reply": "The lap times for drivers mentioned in the FORMULA_1_DRIVERSTANDINGS table, grouped by races, include details such as Race ID, Driver ID, Lap Number, Time, and Milliseconds. For example:\n1. Race ID: 1, Driver ID: 2, Lap: 1, Time: 2:37.754, Milliseconds: 157754\n2. Race ID: 1, Driver ID: 2, Lap: 2, Time: 1:37.640, Milliseconds: 97640\n3. Race ID: 1, Driver ID: 2, Lap: 3, Time: 1:31.697, Milliseconds: 91697",
+                        "evaluation": {
+                            "text_to_sql_input": "Show the lap times for all drivers mentioned in the FORMULA_1_DRIVERSTANDINGS table, grouped by races.",
+                            "user_intention": "Retrieve lap times for drivers in any race.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT D.FORENAME, D.SURNAME, L.LAP, L.TIME, L.MILLISECONDS FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_LAPTIMES L ON D.DRIVERID = L.DRIVERID",
+                            "generated_sql": "SELECT lt.raceid, lt.driverid, lt.lap, lt.time, lt.milliseconds FROM formula_1_laptimes lt JOIN formula_1_driverstandings ds ON lt.driverid = ds.driverid AND lt.raceid = ds.raceid ORDER BY lt.raceid, lt.driverid, lt.lap",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 53.133270025253296,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve pit stop details for drivers.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you provide the pit stop details for these drivers?",
+                        "agent_reply": "The pit stop details for drivers mentioned in the FORMULA_1_DRIVERSTANDINGS table include Stop Number, Lap, Time, Duration, Milliseconds, and Driver ID. For example:\n1. Stop: 1, Lap: 16, Time: 17:28:24, Duration: 23.227, Milliseconds: 23227, Driver ID: 1\n2. Stop: 2, Lap: 36, Time: 17:59:29, Duration: 23.199, Milliseconds: 23199, Driver ID: 1\n3. Stop: 1, Lap: 12, Time: 16:24:40, Duration: 22.552, Milliseconds: 22552, Driver ID: 1",
+                        "evaluation": {
+                            "text_to_sql_input": "Show the pit stop details for all drivers mentioned in the FORMULA_1_DRIVERSTANDINGS table, including stop number, lap, time, duration, and milliseconds.",
+                            "user_intention": "Retrieve pit stop details for drivers.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT D.FORENAME, D.SURNAME, P.STOP, P.LAP, P.TIME, P.DURATION FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_PITSTOPS P ON D.DRIVERID = P.DRIVERID",
+                            "generated_sql": "SELECT ps.stop, ps.lap, ps.time, ps.duration, ps.milliseconds, ps.driverid FROM formula_1_pitstops ps JOIN formula_1_driverstandings ds ON ps.driverid = ds.driverid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 99.05778884887695,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "20",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:23:58.745806",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Retrieve the status descriptions for the results of all races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the status of the results for all races?",
+                        "agent_reply": "The statuses of the results for all races include values such as 'Finished', 'Disqualified', 'Accident', 'Collision', 'Engine', and many more. A total of 134 unique statuses are recorded in the database.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the status of the results for all races",
+                            "user_intention": "Retrieve the status descriptions for the results of all races.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT F1R.RESULTID, F1R.RACEID, F1S.STATUS FROM FORMULA_1_RESULTS F1R JOIN FORMULA_1_STATUS F1S ON F1R.STATUSID = F1S.STATUSID",
+                            "generated_sql": "SELECT s.status FROM formula_1_status s",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.68093490600586,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Aggregate the total points scored by each driver across all races and identify the highest scorers.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which drivers scored the highest total points across all races?",
+                        "agent_reply": "The driver who scored the highest total points across all races is Lewis Hamilton, with a total of 24,509 points.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the driver(s) who scored the highest total points across all races.",
+                            "user_intention": "Aggregate the total points scored by each driver across all races and identify the highest scorers.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT F1R.DRIVERID, SUM(F1R.POINTS) AS TOTAL_POINTS FROM FORMULA_1_RESULTS F1R GROUP BY F1R.DRIVERID ORDER BY TOTAL_POINTS DESC",
+                            "generated_sql": "SELECT d.driverid, d.forename, d.surname, SUM(ds.points) AS total_points FROM formula_1_drivers d JOIN formula_1_driverstandings ds ON d.driverid = ds.driverid GROUP BY d.driverid, d.forename, d.surname ORDER BY total_points DESC FETCH FIRST 1 ROWS ONLY",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.567800045013428,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Identify the most common status among the results of races across different seasons.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which status is most common among the results of races from different seasons?",
+                        "agent_reply": "The most common status among the results of races across different seasons is 'Finished', which occurred 5,966 times.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the most common status among the results of races across different seasons.",
+                            "user_intention": "Identify the most common status among the results of races across different seasons.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT F1S.STATUS, COUNT(*) AS STATUS_COUNT FROM FORMULA_1_RESULTS F1R JOIN FORMULA_1_STATUS F1S ON F1R.STATUSID = F1S.STATUSID JOIN FORMULA_1_SEASONS F1SE ON F1R.RACEID = F1SE.YEAR GROUP BY F1S.STATUS ORDER BY STATUS_COUNT DESC",
+                            "generated_sql": "SELECT status, COUNT(*) AS status_count FROM formula_1_results r JOIN formula_1_status s ON r.statusid = s.statusid GROUP BY status ORDER BY status_count DESC FETCH FIRST 1 ROWS ONLY",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.146586894989014,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "21",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:24:36.742517",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the constructors with the most wins in races along with the race names.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which constructors had the most wins in races along with the race names?",
+                        "agent_reply": "The constructors with the most wins in races include Mercedes with notable wins such as 19 wins in the Abu Dhabi Grand Prix, 18 wins in the Brazilian Grand Prix, and 17 wins in the Mexican Grand Prix. The dataset contains detailed records showing constructors' wins for over 2500 race entries.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which constructors had the most wins in races along with the race names?",
+                            "user_intention": "Find the constructors with the most wins in races along with the race names.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT C.CONSTRUCTORID, R.NAME, C.WINS FROM FORMULA_1_CONSTRUCTORSTANDINGS C JOIN FORMULA_1_RACES R ON C.RACEID = R.RACEID WHERE C.WINS > 0 ORDER BY C.WINS DESC",
+                            "generated_sql": "SELECT c.name AS constructor_name, r.name AS race_name, cs.wins FROM formula_1_constructorstandings cs JOIN formula_1_constructors c ON cs.constructorid = c.constructorid JOIN formula_1_races r ON cs.raceid = r.raceid WHERE cs.wins > 0 ORDER BY cs.wins DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 24.155637979507446,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the number of pit stops made by constructors during the races they won.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those constructors, how many pit stops were made during those races?",
+                        "agent_reply": "For the constructor Mercedes, which had the most wins, a total of 55 pit stops were made during their races.",
+                        "evaluation": {
+                            "text_to_sql_input": "For those constructors with the most wins, how many pit stops were made during their races?",
+                            "user_intention": "Find the number of pit stops made by constructors during the races they won.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT C.CONSTRUCTORID, R.NAME, COUNT(P.STOP) AS TOTAL_PITSTOPS FROM FORMULA_1_CONSTRUCTORSTANDINGS C JOIN FORMULA_1_RACES R ON C.RACEID = R.RACEID JOIN FORMULA_1_PITSTOPS P ON R.RACEID = P.RACEID WHERE C.WINS > 0 GROUP BY C.CONSTRUCTORID, R.NAME",
+                            "generated_sql": "SELECT c.name AS constructor_name, SUM(ps.stop) AS total_pit_stops FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid JOIN formula_1_pitstops ps ON cs.raceid = ps.raceid WHERE cs.wins = (SELECT MAX(wins) FROM formula_1_constructorstandings) GROUP BY c.name",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.159671068191528,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the qualifying positions for the constructors in the races they won.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What were the qualifying positions for the constructors in those races?",
+                        "agent_reply": "For the constructor Mercedes in races with the most wins, their qualifying positions included 1st and 2nd place in the Abu Dhabi Grand Prix where they achieved 19 wins.",
+                        "evaluation": {
+                            "text_to_sql_input": "What were the qualifying positions for the constructors in those races?",
+                            "user_intention": "Find the qualifying positions for the constructors in the races they won.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT C.CONSTRUCTORID, R.NAME, Q.POSITION FROM FORMULA_1_CONSTRUCTORSTANDINGS C JOIN FORMULA_1_RACES R ON C.RACEID = R.RACEID JOIN FORMULA_1_QUALIFYING Q ON C.CONSTRUCTORID = Q.CONSTRUCTORID AND R.RACEID = Q.RACEID WHERE C.WINS > 0 ORDER BY Q.POSITION",
+                            "generated_sql": "SELECT qc.position, c.name AS constructor_name, r.name AS race_name, cs.wins FROM formula_1_qualifying qc JOIN formula_1_constructors c ON qc.constructorid = c.constructorid JOIN formula_1_races r ON qc.raceid = r.raceid JOIN formula_1_constructorstandings cs ON cs.constructorid = c.constructorid AND cs.raceid = r.raceid WHERE cs.wins = (     SELECT MAX(cs_inner.wins)     FROM formula_1_constructorstandings cs_inner )",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.782613039016724,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "22",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:25:30.727088",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Count the number of Formula 1 drivers grouped by their nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many Formula 1 drivers are there grouped by their nationality?",
+                        "agent_reply": "Here is the count of Formula 1 drivers grouped by their nationality: British (162), German (49), Australian (17), Indian (2), New Zealander (8), Liechtensteiner (1), Rhodesian (4), American-Italian (1), Polish (1), Danish (5), Monegasque (3), South African (23), Chilean (1), Thai (1), American (157), Canadian (13), Argentine (24), Czech (1), Spanish (15), Japanese (19), Malaysian (1), Venezuelan (3), Argentine-Italian (1), East German (3), French (72), Brazilian (31), Colombian (3), Portuguese (4), Dutch (17), Irish (5), Belgian (23), Swedish (10), Finnish (9), Italian (99), Hungarian (1), Swiss (23), Russian (2), Austrian (15), Mexican (6), and Uruguayan (4).",
+                        "evaluation": {
+                            "text_to_sql_input": "How many Formula 1 drivers are there grouped by their nationality?",
+                            "user_intention": "Count the number of Formula 1 drivers grouped by their nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NATIONALITY, COUNT(*) FROM FORMULA_1_DRIVERS GROUP BY NATIONALITY;",
+                            "generated_sql": "SELECT nationality, COUNT(driverid) AS driver_count FROM formula_1_drivers GROUP BY nationality",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.8729829788208,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "List the names of all Formula 1 drivers from Germany.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you list the names of all drivers from Germany?",
+                        "agent_reply": "The following are the names of Formula 1 drivers from Germany: Nick Heidfeld, Nico Rosberg, Timo Glock, Adrian Sutil, Sebastian Vettel, Ralf Schumacher, Markus Winkelhock, Michael Schumacher, Heinz-Harald Frentzen, Michael Bartels, Bernd Schneider, Hans-Joachim Stuck, Rolf Stommelen, Hans Heyer, Hubert Hahne, Christian Danner, Volker Weidler, Joachim Winkelhock, Manfred Winkelhock, Stefan Bellof, Jochen Mass, Wolfgang Seidel, Wolfgang von Trips, Hans Herrmann, Karl Kling, Hermann Lang, Theo Helfrich, Oswald Karch, Willi Heeks, Kurt Adolff, G\u00fcnther Bechem, Erwin Bauer, Hans von Stuck, Ernst Loof, Toni Ulmen, Adolf Brudes, Fritz Riess, Helmut Niedermayr, Hans Klenk, Paul Pietsch, Josef Peters, Nico H\u00fclkenberg, Andr\u00e9 Lotterer, Pascal Wehrlein, Kurt Ahrens, Gerhard Mitter, Edgar Barth, Kurt Kuhnke, and G\u00fcnther Seiffert.",
+                        "evaluation": {
+                            "text_to_sql_input": "List the names of all Formula 1 drivers from Germany.",
+                            "user_intention": "List the names of all Formula 1 drivers from Germany.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORENAME, SURNAME FROM FORMULA_1_DRIVERS WHERE NATIONALITY = 'German';",
+                            "generated_sql": "SELECT d.forename, d.surname FROM formula_1_drivers d WHERE LOWER(d.nationality) = LOWER('German')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.846739053726196,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve the lap times of German drivers in specific races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the lap times of German drivers in specific races?",
+                        "agent_reply": "Could you specify the race(s) you are interested in? For example, you can provide the race name, year, or other details to identify the races.",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the lap times of German drivers in specific races?",
+                            "user_intention": "Retrieve the lap times of German drivers in specific races.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT L.RACEID, L.LAP, L.POSITION, L.TIME, L.MILLISECONDS FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_LAPTIMES L ON D.DRIVERID = L.DRIVERID WHERE D.NATIONALITY = 'German';",
+                            "generated_sql": "",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 4.823123216629028,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 4.8231520652771
+            }
+        ]
+    },
+    {
+        "experiment_id": "23",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:25:58.377147",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the constructor standings entry with the highest points.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the standings with the highest points?",
+                        "agent_reply": "The constructor standings with the highest points are for Mercedes with 765 points, ranked 1st position, and 19 wins.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show the standings with the highest points.",
+                            "user_intention": "Find the constructor standings entry with the highest points.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT * FROM FORMULA_1_CONSTRUCTORSTANDINGS ORDER BY POINTS DESC FETCH FIRST 1 ROWS ONLY",
+                            "generated_sql": "SELECT cs.constructorstandingsid, cs.points, cs.position, cs.wins, c.name AS constructor_name FROM formula_1_constructorstandings cs JOIN formula_1_constructors c ON cs.constructorid = c.constructorid ORDER BY cs.points DESC FETCH FIRST 1 ROWS ONLY",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.953119993209839,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the number of wins for the constructor with the highest points.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many wins does that constructor have?",
+                        "agent_reply": "The constructor with the highest points has 19 wins.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many wins does the constructor with the highest points have?",
+                            "user_intention": "Find the number of wins for the constructor with the highest points.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT WINS FROM FORMULA_1_CONSTRUCTORSTANDINGS ORDER BY POINTS DESC FETCH FIRST 1 ROWS ONLY",
+                            "generated_sql": "SELECT cs.wins FROM formula_1_constructorstandings cs WHERE cs.points = (SELECT MAX(cs2.points) FROM formula_1_constructorstandings cs2)",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.398482322692871,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Find the race name where the constructor with the highest points earned those points.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What was the name of the race where this constructor earned those points?",
+                        "agent_reply": "The race where the constructor with the highest points earned those points was the Abu Dhabi Grand Prix.",
+                        "evaluation": {
+                            "text_to_sql_input": "What was the name of the race where the constructor with the highest points earned those points?",
+                            "user_intention": "Find the race name where the constructor with the highest points earned those points.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NAME FROM FORMULA_1_RACES WHERE RACEID = (SELECT RACEID FROM FORMULA_1_CONSTRUCTORSTANDINGS ORDER BY POINTS DESC FETCH FIRST 1 ROWS ONLY)",
+                            "generated_sql": "SELECT r.name FROM formula_1_constructorresults cr JOIN formula_1_races r ON cr.raceid = r.raceid WHERE cr.points = (SELECT MAX(points) FROM formula_1_constructorresults);",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.686873197555542,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "25",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:26:34.529957",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Retrieve circuits and the names of the races held at those circuits.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the circuits along with the race names they hosted?",
+                        "agent_reply": "Here is a list of circuits and the respective race names they hosted. For example: Albert Park Grand Circuit hosted the Australian Grand Prix, Sepang International Circuit hosted the Malaysian Grand Prix, and Suzuka Circuit hosted the Japanese Grand Prix. There are a total of 976 entries.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show all circuits along with the race names they hosted.",
+                            "user_intention": "Retrieve circuits and the names of the races held at those circuits.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_RACES.NAME FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID;",
+                            "generated_sql": "SELECT c.name AS circuit_name, r.name AS race_name FROM formula_1_circuits c JOIN formula_1_races r ON c.circuitid = r.circuitid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.93441390991211,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Count the number of circuits in each country and location.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many circuits are there in each country and location?",
+                        "agent_reply": "There are 70 unique combinations of countries and locations with circuits. For example, Spain has 1 circuit in Montmel\u00f3, Canada has 1 circuit in Montreal, and the UK has 1 circuit in Silverstone. Each combination typically has one circuit.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many circuits are there in each country and location?",
+                            "user_intention": "Count the number of circuits in each country and location.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LOCATION, COUNT(*) FROM FORMULA_1_CIRCUITS GROUP BY FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LOCATION;",
+                            "generated_sql": "SELECT country, location, COUNT(*) AS circuit_count FROM formula_1_circuits GROUP BY country, location",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.434080123901367,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve the names of circuits located in a specific country, such as Spain.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you list the names of circuits that are located in a specific country, like Spain?",
+                        "agent_reply": "The circuits located in Spain are: Circuit de Barcelona-Catalunya, Valencia Street Circuit, Circuito de Jerez, Jarama, Montju\u00efc, and Circuit de Pedralbes.",
+                        "evaluation": {
+                            "text_to_sql_input": "List the names of circuits located in Spain.",
+                            "user_intention": "Retrieve the names of circuits located in a specific country, such as Spain.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CIRCUITS.NAME FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.COUNTRY = 'Spain';",
+                            "generated_sql": "SELECT name FROM formula_1_circuits WHERE LOWER(country) = LOWER('Spain')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.187355995178223,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "26",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-11T15:27:12.911911",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the count of Formula 1 drivers grouped by their nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me how many Formula 1 drivers are there grouped by their nationality?",
+                        "agent_reply": "The count of Formula 1 drivers grouped by nationality is as follows: British - 162, German - 49, Australian - 17, Indian - 2, New Zealander - 8, Liechtensteiner - 1, Rhodesian - 4, American-Italian - 1, Polish - 1, Danish - 5, Monegasque - 3, South African - 23, Chilean - 1, Thai - 1, American - 157, Canadian - 13, Argentine - 24, Czech - 1, Spanish - 15, Japanese - 19, Malaysian - 1, Venezuelan - 3, Argentine-Italian - 1, East German - 3, French - 72, Brazilian - 31, Colombian - 3, Portuguese - 4, Dutch - 17, Irish - 5, Belgian - 23, Swedish - 10, Finnish - 9, Italian - 99, Hungarian - 1, Swiss - 23, Russian - 2, Austrian - 15, Mexican - 6, Uruguayan - 4, Indonesian - 1.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the count of Formula 1 drivers grouped by their nationality.",
+                            "user_intention": "Find the count of Formula 1 drivers grouped by their nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_DRIVERS.NATIONALITY, COUNT(*) FROM FORMULA_1_DRIVERS GROUP BY FORMULA_1_DRIVERS.NATIONALITY",
+                            "generated_sql": "SELECT nationality, COUNT(driverid) AS driver_count FROM formula_1_drivers GROUP BY nationality",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.103249788284302,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "List the names of all Formula 1 drivers who are German.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Could you list the names of all drivers who are German?",
+                        "agent_reply": "The names of German Formula 1 drivers are: Nick Heidfeld, Nico Rosberg, Timo Glock, Adrian Sutil, Sebastian Vettel, Ralf Schumacher, Markus Winkelhock, Michael Schumacher, Heinz-Harald Frentzen, Michael Bartels, Bernd Schneider, Hans-Joachim Stuck, Rolf Stommelen, Hans Heyer, Hubert Hahne, Christian Danner, Volker Weidler, Joachim Winkelhock, Manfred Winkelhock, Stefan Bellof, Jochen Mass, Wolfgang Seidel, Wolfgang von Trips, Hans Herrmann, Karl Kling, Hermann Lang, Theo Helfrich, Oswald Karch, Willi Heeks, Kurt Adolff, G\u00fcnther Bechem, Erwin Bauer, Hans von Stuck, Ernst Loof, Toni Ulmen, Adolf Brudes, Fritz Riess, Helmut Niedermayr, Hans Klenk, Paul Pietsch, Josef Peters, Nico H\u00fclkenberg, Andr\u00e9 Lotterer, Pascal Wehrlein, Kurt Ahrens, Gerhard Mitter, Edgar Barth, Kurt Kuhnke, G\u00fcnther Seiffert.",
+                        "evaluation": {
+                            "text_to_sql_input": "List the names of all Formula 1 drivers who are German.",
+                            "user_intention": "List the names of all Formula 1 drivers who are German.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY = 'German'",
+                            "generated_sql": "SELECT d.forename, d.surname FROM formula_1_drivers d WHERE LOWER(d.nationality) = LOWER('German')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.53213882446289,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Retrieve the lap times for the German drivers.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the lap times for the German drivers?",
+                        "agent_reply": "There are 78,657 lap time records for German drivers. For example, in race ID 1, driver ID 2 completed lap 1 in position 17 with a time of 2:37.754 (157,754 milliseconds). Another instance is in race ID 967, driver ID 3 completed lap 11 in position 2 with a time of 1:27.577 (87,577 milliseconds). Please specify if you need details for specific races or drivers.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the lap times for all Formula 1 drivers who are German.",
+                            "user_intention": "Retrieve the lap times for the German drivers.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_LAPTIMES.LAP, FORMULA_1_LAPTIMES.TIME FROM FORMULA_1_LAPTIMES JOIN FORMULA_1_DRIVERS ON FORMULA_1_LAPTIMES.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_DRIVERS.NATIONALITY = 'German'",
+                            "generated_sql": "SELECT lt.raceid, lt.driverid, lt.lap, lt.position, lt.time, lt.milliseconds FROM formula_1_laptimes lt JOIN formula_1_drivers d ON lt.driverid = d.driverid WHERE LOWER(d.nationality) = 'german'",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 36.68430709838867,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 36.68431806564331
+            }
+        ]
+    }
+]
