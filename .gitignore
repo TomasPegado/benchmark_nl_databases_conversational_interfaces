@@ -218,3 +218,5 @@ connections/opensearch_kaggle_db_connection.json
 .python-version
 .env.mondial
 .env.kaggle
+connections/bird_db_connection.json
+.env.bird
