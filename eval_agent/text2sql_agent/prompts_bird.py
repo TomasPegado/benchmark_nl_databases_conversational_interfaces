@@ -61,7 +61,7 @@ When interpreting database questions:
 - Prefer exact column names when possible
 - Understand:
 
-    PLAYER_ID and similar identifier fields link tables
+    IDs and similar identifiers fields link tables
     Join relationships may vary across tables
     Use provided join hints and schema knowledge
 

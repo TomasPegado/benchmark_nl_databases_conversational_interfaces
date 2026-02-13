@@ -135,41 +135,254 @@ DATABASE SCHEMA
 
 Tables and Columns:
 
-- mondial_mountain (Name, Mountains, Elevation, Type, Coordinates);
-- mondial_mountainonisland (Mountain, Island);
-- mondial_organization (Abbreviation, Name, City, Country, Province, Established);
-- mondial_politics (Country, Independence, Was dependent, Dependent, Government);
-- mondial_population (Country, Population growth, Infant mortality);
-- mondial_province (Name, Country, Population, Area, Capital, Province Capital);
-- mondial_province other name (Province, Country, Other name);
-- mondial_province population (Province, Country, Year, Population);
-- mondial_religion (Country, Name, Percentage);
-- mondial_river (Name, River, Lake, Sea, Length, Area, Mountains, Source elevation, Estuary elevation, Source, Estuary);
-- mondial_geo_desert (Desert, Country, Province);
-- mondial_riverthrough (River, Lake);
-- mondial_geo_estuary (River, Country, Province);
-- mondial_sea (Name, Area, Depth);
-- mondial_geo_island (Island, Country, Province);
-- mondial_ethnicgroup (Country, Name, Percentage);
-- mondial_geo_lake (Lake, Country, Province);
-- mondial_geo_mountain (Mountain, Country, Province);
-- mondial_geo_river (River, Country, Province);
-- mondial_geo_sea (Sea, Country, Province);
-- mondial_geo_source (River, Country, Province);
-- mondial_island (Name, Islands, Area, Elevation, Type, Coordinates);
-- mondial_ismember (Country, Organization, Type);
-- mondial_airport (IATA code, Name, Country, City, Province, Island, Latitude, Longitude, Elevation, GMT offset);
-- mondial_borders (Country1, Country2, Length);
-- mondial_city (Name, Country, Province, Population, Latitude, Longitude, Elevation);
-- mondial_cityothername (City, Country, Province, Other name);
-- mondial_continent (Name, Area);
-- mondial_country (Name, Code, Capital, Province, Area, Population);
-- mondial_desert (Name, Area, Coordinates);
-- mondial_economy (Country, GDP, Agriculture, Service, Industry, Inflation, Unemployment);
-- mondial_encompasses (Country, Continent, Percentage);
-- mondial_lake (Name, River, Area, Elevation, Depth, Height, Type, Coordinates);
-- mondial_language (Country, Name, Percentage);
-- mondial_located (City, Province, Country, River, Lake, Sea);
+MONDIAL_MOUNTAIN
+- NAME
+- MOUNTAINS
+- ELEVATION
+- TYPE
+- COORDINATES
+
+MONDIAL_MOUNTAINONISLAND
+- MOUNTAIN
+- ISLAND
+
+MONDIAL_ORGANIZATION
+- ABBREVIATION
+- NAME
+- CITY
+- COUNTRY
+- PROVINCE
+- ESTABLISHED
+
+MONDIAL_MERGESWITH
+- SEA1
+- SEA2
+
+MONDIAL_POLITICS
+- COUNTRY
+- INDEPENDENCE
+- WAS DEPENDENT
+- DEPENDENT
+- GOVERNMENT
+
+MONDIAL_POPULATION
+- COUNTRY
+- POPULATION GROWTH
+- INFANT MORTALITY
+
+MONDIAL_PROVINCE
+- NAME
+- COUNTRY
+- POPULATION
+- AREA
+- CAPITAL
+- PROVINCE CAPITAL
+
+MONDIAL_PROVINCEOTHERNAME
+- PROVINCE
+- COUNTRY
+- OTHER NAME
+
+MONDIAL_PROVPOPS
+- COUNTRY
+- YEAR
+- POPULATION
+
+MONDIAL_RELIGION
+- COUNTRY
+- NAME
+- PERCENTAGE
+
+MONDIAL_RIVER
+- NAME
+- RIVER
+- LAKE
+- SEA
+- LENGTH
+- AREA
+- MOUNTAINS
+- SOURCE ELEVATION
+- ESTUARY ELEVATION
+- SOURCE
+- ESTUARY
+
+MONDIAL_GEO_DESERT
+- DESERT
+- COUNTRY
+- PROVINCE
+
+MONDIAL_RIVERTHROUGH
+- RIVER
+- LAKE
+
+MONDIAL_GEO_ESTUARY
+- RIVER
+- COUNTRY
+- PROVINCE
+
+MONDIAL_SEA
+- NAME
+- AREA
+- DEPTH
+
+MONDIAL_GEO_ISLAND
+- ISLAND
+- COUNTRY
+- PROVINCE
+
+MONDIAL_ETHNICGROUP
+- COUNTRY
+- NAME
+- PERCENTAGE
+
+MONDIAL_GEO_LAKE
+- LAKE
+- COUNTRY
+- PROVINCE
+
+MONDIAL_GEO_MOUNTAIN
+- MOUNTAIN
+- COUNTRY
+- PROVINCE
+
+MONDIAL_GEO_RIVER
+- RIVER
+- COUNTRY
+- PROVINCE
+
+MONDIAL_GEO_SEA
+- SEA
+- COUNTRY
+- PROVINCE
+
+MONDIAL_GEO_SOURCE
+- RIVER
+- COUNTRY
+- PROVINCE
+
+MONDIAL_ISLAND
+- NAME
+- ISLANDS
+- AREA
+- ELEVATION
+- TYPE
+- COORDINATES
+
+MONDIAL_ISLANDIN
+- ISLAND
+- SEA
+- LAKE
+- RIVER
+
+MONDIAL_ISMEMBER
+- COUNTRY
+- ORGANIZATION
+- TYPE
+
+MONDIAL_AIRPORT
+- IATA CODE
+- NAME
+- COUNTRY
+- CITY
+- PROVINCE
+- ISLAND
+- LATITUDE
+- LONGITUDE
+- ELEVATION
+- GMT OFFSET
+
+MONDIAL_BORDERS
+- COUNTRY1
+- COUNTRY2
+- LENGTH
+
+MONDIAL_CITY
+- NAME
+- COUNTRY
+- PROVINCE
+- POPULATION
+- LATITUDE
+- LONGITUDE
+- ELEVATION
+
+MONDIAL_CITYPOPS
+- CITY
+- COUNTRY
+- PROVINCE
+- YEAR
+- POPULATION
+
+MONDIAL_CITYOTHERNAME
+- CITY
+- COUNTRY
+- PROVINCE
+- OTHER NAME
+
+MONDIAL_CONTINENT
+- NAME
+- AREA
+
+MONDIAL_COUNTRY
+- NAME
+- CODE
+- CAPITAL
+- PROVINCE
+- AREA
+- POPULATION
+
+MONDIAL_COUNTRYPOPS
+- COUNTRY
+- YEAR
+- POPULATION
+
+MONDIAL_DESERT
+- NAME
+- AREA
+- COORDINATES
+
+MONDIAL_ECONOMY
+- COUNTRY
+- GDP
+- AGRICULTURE
+- SERVICE
+- INDUSTRY
+- INFLATION
+- UNEMPLOYMENT
+
+MONDIAL_ENCOMPASSES
+- COUNTRY
+- CONTINENT
+- PERCENTAGE
+
+MONDIAL_LAKE
+- NAME
+- RIVER
+- AREA
+- ELEVATION
+- DEPTH
+- HEIGHT
+- TYPE
+- COORDINATES
+
+MONDIAL_LANGUAGE
+- COUNTRY
+- NAME
+- PERCENTAGE
+
+MONDIAL_LOCATED
+- CITY
+- PROVINCE
+- COUNTRY
+- RIVER
+- LAKE
+- SEA
+
+MONDIAL_LOCATEDON
+-  CITY
+- PROVINCE
+- COUNTRY
+- ISLAND
+
 
 ------------------------------------------------------------
 TOOL RESPONSE STRUCTURE

@@ -364,7 +364,7 @@ class EvaluatorNodes:
                     print(f"[ERROR] Query execution error: {e}")
                     correctness = False
                     state["retry_reason"] = "query_execution_error"
-                    # Important: re-raise or short-circuit so we DON'T treat execution errors as LLM-judge cases
+                    
                     raise
                 # 2) Comparison logic here. If this fails (bugs, edge cases, pandas issues, etc),
                 #    fall back to AI-as-judge instead of silently marking execution error.

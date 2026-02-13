@@ -634,6 +634,7 @@ The execution of the ground truth query returned the following data:
 {true_sample}
 
 # Evaluation Question:
+BE AWARE that the tables provided are only samples of the full query results, and may not contain all rows.
 Based on the information provided above, do both SQL queries answer the user question? 
 Even if the resulting dataframes have minor differences in ordering, formatting, or other formal aspects, do they produce equivalent responses to the original question?
 

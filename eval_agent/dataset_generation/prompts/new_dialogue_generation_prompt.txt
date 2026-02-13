@@ -47,7 +47,8 @@ You MUST strictly follow the binary interaction list in order. Do NOT change its
 - If interaction_binary_list[i] == 1:
   - The question must focus on filtering, aggregation, grouping, or ordering using columns.
   - Do NOT introduce new joins.
-  - golden_sql must be context-correct: include any JOINs required by entities/constraints introduced in previous interaction, even if the current interaction was generated under a column-based directive.
+  - golden_sql must be context-correct: include any JOINs required by entities/constraints introduced in previous interaction, 
+even if the current interaction was generated under a column-based directive.
 ---
 
 ## Required Output Format (STRICT)
