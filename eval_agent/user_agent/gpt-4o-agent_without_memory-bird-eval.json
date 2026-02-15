@@ -10120,6 +10120,295 @@
         ]
     },
     {
+        "experiment_id": "42",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-15T00:18:26.396383",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Count the number of races held each year.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many races were held each year?",
+                        "agent_reply": "Races were held every year starting from 1950. For example, in 1950 there were 7 races, in 1951 there were 8 races, and in recent years like 2016 there were 21 races and 2017 had 20 races.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many races were held each year?",
+                            "user_intention": "Count the number of races held each year.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_RACES.YEAR, COUNT(*) FROM FORMULA_1_RACES GROUP BY FORMULA_1_RACES.YEAR",
+                            "generated_sql": "SELECT year, COUNT(raceid) AS race_count FROM formula_1_races GROUP BY year ORDER BY year",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 6.75412130355835,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Find the URLs for seasons corresponding to the races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which websites can I visit to learn more about these seasons?",
+                        "agent_reply": "The FORMULA_1_SEASONS table contains a URL column with links to websites for more information about the seasons.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which websites can I visit to learn more about these seasons?",
+                            "user_intention": "Find the URLs for seasons corresponding to the races.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_RACES.YEAR, FORMULA_1_SEASONS.URL FROM FORMULA_1_RACES JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR",
+                            "generated_sql": "",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 2.1891369819641113,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 2.1891369819641113
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Get the description of circuits used in the races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you link the circuits with their descriptions for these races?",
+                        "agent_reply": "Could you clarify which descriptions you are referring to? Are you asking for circuit details from the FORMULA_1_CIRCUITS table or descriptions from another table?",
+                        "evaluation": {
+                            "text_to_sql_input": "Link circuits with their descriptions for the races",
+                            "user_intention": "Get the description of circuits used in the races.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_RACES.CIRCUITID, FORMULA_1_TMDP.COLUMN_DESCRIPTION FROM FORMULA_1_RACES JOIN FORMULA_1_TMDP ON FORMULA_1_TMDP.COLUMN_NAME = 'CIRCUITID'",
+                            "generated_sql": "",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 2.3483808040618896,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 2.3483808040618896
+            },
+            {
+                "interaction_id": 4,
+                "original_intent": "Fetch the URLs of seasons and their corresponding circuit descriptions.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Show me the list of season URLs along with the circuit descriptions.",
+                        "agent_reply": "The list contains season URLs along with circuit descriptions. For example: \n1. URL: http://en.wikipedia.org/wiki/1950_Formula_One_season, Description: Stores information about Formula 1 circuits where races were held.\n2. URL: http://en.wikipedia.org/wiki/1951_Formula_One_season, Description: Stores information about Formula 1 circuits where races were held.\n...\nThere are a total of 68 entries.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show me the list of season URLs along with the circuit descriptions.",
+                            "user_intention": "Fetch the URLs of seasons and their corresponding circuit descriptions.",
+                            "recall": 0.3333333333333333,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_SEASONS.URL, FORMULA_1_TMDP.COLUMN_DESCRIPTION FROM FORMULA_1_RACES JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR JOIN FORMULA_1_TMDP ON FORMULA_1_TMDP.COLUMN_NAME = 'CIRCUITID'",
+                            "generated_sql": "SELECT s.url, t.table_description FROM formula_1_seasons s JOIN formula_1_tmdc t ON LOWER(t.table_name) = LOWER('formula_1_circuits')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 6.90343451499939,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 5,
+                "original_intent": "Identify circuits used in races over multiple years.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which circuits are used across different years?",
+                        "agent_reply": "Circuits such as A1-Ring, Zolder, and many others have been used across multiple years. There are 976 entries in the data showing circuits used in different years.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which circuits are used across different years?",
+                            "user_intention": "Identify circuits used in races over multiple years.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_RACES.CIRCUITID, FORMULA_1_RACES.YEAR FROM FORMULA_1_RACES",
+                            "generated_sql": "SELECT  c.name, r.year FROM formula_1_circuits c JOIN formula_1_races r ON c.circuitid = r.circuitid ORDER BY c.name, r.year;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 6.619463920593262,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 6,
+                "original_intent": "List the race names and their corresponding circuit descriptions.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you provide the race names along with their circuit descriptions?",
+                        "agent_reply": "The database contains race names paired with their respective circuit descriptions including names, locations, and countries. For example:\n1. Australian Grand Prix at Albert Park Grand Circuit in Melbourne, Australia.\n2. Malaysian Grand Prix at Sepang International Circuit in Kuala Lumpur, Malaysia.\n3. Chinese Grand Prix at Shanghai International Circuit in Shanghai, China.\n... and many more races across different countries.",
+                        "evaluation": {
+                            "text_to_sql_input": "Provide the race names along with their circuit descriptions.",
+                            "user_intention": "List the race names and their corresponding circuit descriptions.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_RACES.NAME, FORMULA_1_TMDP.COLUMN_DESCRIPTION FROM FORMULA_1_RACES JOIN FORMULA_1_TMDP ON FORMULA_1_TMDP.COLUMN_NAME = 'NAME'",
+                            "generated_sql": "SELECT r.name AS race_name, c.name AS circuit_name, c.location AS circuit_location, c.country AS circuit_country FROM formula_1_races r JOIN formula_1_circuits c ON r.circuitid = c.circuitid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.8170435428619385,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 7,
+                "original_intent": "Find the year with the maximum number of race rounds.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which year had the highest number of race rounds?",
+                        "agent_reply": "The year 2016 had the highest number of race rounds, with a total of 21 rounds.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which year had the highest number of race rounds?",
+                            "user_intention": "Find the year with the maximum number of race rounds.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_RACES.YEAR, MAX(FORMULA_1_RACES.ROUND) AS MAX_ROUND FROM FORMULA_1_RACES GROUP BY FORMULA_1_RACES.YEAR",
+                            "generated_sql": "SELECT year, COUNT(round) AS total_rounds FROM formula_1_races GROUP BY year ORDER BY total_rounds DESC FETCH FIRST 1 ROWS ONLY;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 30.206258296966553,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 8,
+                "original_intent": "Fetch race names and related descriptions for a season.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "List all the races and their descriptions for a specific season.",
+                        "agent_reply": "Could you specify the season (year) you're interested in?",
+                        "evaluation": {
+                            "text_to_sql_input": "List all the races and their descriptions for a specific season.",
+                            "user_intention": "Fetch race names and related descriptions for a season.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_RACES.NAME, FORMULA_1_RACES.YEAR, FORMULA_1_TMDP.COLUMN_DESCRIPTION FROM FORMULA_1_RACES JOIN FORMULA_1_TMDP ON FORMULA_1_TMDP.COLUMN_NAME = 'NAME' JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR",
+                            "generated_sql": "",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 4.417400121688843,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 4.417400121688843
+            },
+            {
+                "interaction_id": 9,
+                "original_intent": "Fetch races and their rounds held after a specific year.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the races held after a specific year and their rounds?",
+                        "agent_reply": "Please specify the year you are interested in, so I can refine the query for you.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show the races held after a specific year and their rounds.",
+                            "user_intention": "Fetch races and their rounds held after a specific year.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_RACES.NAME, FORMULA_1_RACES.ROUND FROM FORMULA_1_RACES WHERE FORMULA_1_RACES.YEAR >= 2010 ORDER BY FORMULA_1_RACES.ROUND ASC",
+                            "generated_sql": "",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 4.847732782363892,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 4.847732782363892
+            },
+            {
+                "interaction_id": 10,
+                "original_intent": "List the races held between 2000 and 2010.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What races happened between the years 2000 and 2010?",
+                        "agent_reply": "There were 193 races between the years 2000 and 2010. For example, the Australian Grand Prix was held on 2000-03-12, the Brazilian Grand Prix on 2000-03-26, and the San Marino Grand Prix on 2000-04-09. The last race in this range was the Abu Dhabi Grand Prix on 2010-11-14.",
+                        "evaluation": {
+                            "text_to_sql_input": "What races happened between the years 2000 and 2010?",
+                            "user_intention": "List the races held between 2000 and 2010.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_RACES.NAME, FORMULA_1_RACES.YEAR FROM FORMULA_1_RACES WHERE FORMULA_1_RACES.YEAR BETWEEN 2000 AND 2010",
+                            "generated_sql": "SELECT raceid, year, name, \"date\" FROM formula_1_races WHERE year BETWEEN 2000 AND 2010 ORDER BY year, \"date\"",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.857056140899658,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "experiment_id": "44",
         "experiment_config": {
             "max_retries": 2,

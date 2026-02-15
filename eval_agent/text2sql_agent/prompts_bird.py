@@ -106,30 +106,6 @@ RESULT HANDLING
     Leave schema_linking and sql empty
 
 ------------------------------------------------------------
-OUTPUT FORMAT (MANDATORY)
-------------------------------------------------------------
-
-You MUST respond ONLY in JSON using one of the following structures.
-
-CASE 1 — Tool Invocation Result
-{{
-    "input": <tool input>,
-    "schema_linking": <tables used>,
-    "answer": <natural language response>,
-    "sql": <SQL query>
-}}
-
-CASE 2 — No Tool Invocation
-{{
-    "input": <rewritten or original question>,
-    "schema_linking": "",
-    "answer": <response>,
-    "sql": ""
-}}
-
-Never output text outside JSON.
-
-------------------------------------------------------------
 DATABASE SCHEMA (KAGGLE — BASEBALL)
 ------------------------------------------------------------
 
@@ -304,7 +280,32 @@ The tool returns:
     "sql": <SQL query>
 }}
 
-You must transform this into the required output JSON format.
+You must transform this into the required output JSON format:
+
+------------------------------------------------------------
+OUTPUT FORMAT (MANDATORY)
+------------------------------------------------------------
+
+You MUST respond ONLY in JSON using one of the following structures.
+
+CASE 1 — Tool Invocation Result
+{{
+    "input": <tool input>,
+    "schema_linking": <tables used>,
+    "answer": <natural language response>,
+    "sql": <SQL query>
+}}
+
+CASE 2 — No Tool Invocation
+{{
+    "input": <rewritten or original question>,
+    "schema_linking": "",
+    "answer": <response>,
+    "sql": ""
+}}
+
+Never output text outside JSON.
+
 """
 
 TEXT_TO_SQL_PROMPT = assistant_prompt
