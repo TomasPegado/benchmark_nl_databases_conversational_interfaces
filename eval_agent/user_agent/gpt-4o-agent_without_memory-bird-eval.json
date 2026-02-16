@@ -6949,6 +6949,295 @@
         ]
     },
     {
+        "experiment_id": "28",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-02-16T01:39:53.680045",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Provide details of constructors who have participated in races along with their standings.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you tell me the details of constructors who have participated in races along with their standings?",
+                        "agent_reply": "The query retrieved details of constructors such as their name, nationality, points, position, and wins in the standings. For example, McLaren (British) scored 14 points, ranked 1st, and achieved 1 win; BMW Sauber (German) scored 8 points, ranked 3rd with no wins; Williams (British) scored 9 points, ranked 2nd with no wins; Renault (French) scored 5 points, ranked 4th with no wins; Toro Rosso (Italian) scored 2 points, ranked 5th with no wins, and many more similar records.",
+                        "evaluation": {
+                            "text_to_sql_input": "Provide the details of constructors who have participated in races along with their standings.",
+                            "user_intention": "Provide details of constructors who have participated in races along with their standings.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT C.NAME, C.NATIONALITY, CS.POINTS, CS.POSITION FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_CONSTRUCTORSTANDINGS CS ON C.CONSTRUCTORID = CS.CONSTRUCTORID",
+                            "generated_sql": "SELECT c.name AS constructor_name, c.nationality, cs.points, cs.position, cs.wins FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.386144876480103,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "List constructors that have results available for their races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which constructors have results available for their races?",
+                        "agent_reply": "The constructors with results available for their races include McLaren, BMW Sauber, Williams, Renault, Toro Rosso, Haas F1 Team, Sauber, Ferrari, among others.",
+                        "evaluation": {
+                            "text_to_sql_input": "List the constructors who have results available for their races.",
+                            "user_intention": "List constructors that have results available for their races.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT C.NAME, C.NATIONALITY FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_RESULTS R ON C.CONSTRUCTORID = R.CONSTRUCTORID",
+                            "generated_sql": "SELECT  c.name FROM formula_1_constructors c JOIN formula_1_constructorresults cr ON c.constructorid = cr.constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.117135763168335,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Show constructors and their statuses in races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show me the constructors and their statuses in races?",
+                        "agent_reply": "Here are the constructors and their statuses in races. Examples include constructors like McLaren, BMW Sauber, Williams, Renault, and Toro Rosso with status values mostly showing 'None'. There are a total of 11,082 records.",
+                        "evaluation": {
+                            "text_to_sql_input": "Show me all constructors and their statuses in races.",
+                            "user_intention": "Show constructors and their statuses in races.",
+                            "recall": 0.3333333333333333,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT C.NAME, C.NATIONALITY, S.STATUS FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_RESULTS R ON C.CONSTRUCTORID = R.CONSTRUCTORID JOIN FORMULA_1_STATUS S ON R.STATUSID = S.STATUSID",
+                            "generated_sql": "SELECT c.name AS constructor_name, cr.status AS race_status FROM formula_1_constructors c JOIN formula_1_constructorresults cr ON c.constructorid = cr.constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.937453269958496,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 4,
+                "original_intent": "Count the number of constructors for each nationality.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many constructors are there for each nationality?",
+                        "agent_reply": "There are 85 British constructors, 39 American constructors, 29 Italian constructors, 12 French constructors, 10 German constructors, 5 Japanese constructors, 4 Swiss constructors, 3 Dutch constructors, 3 South African constructors, 2 Russian constructors, 2 Canadian constructors, 2 Malaysian constructors, and 1 constructor each from Austrian, Belgium, New Zealand, Irish, Brazilian, Mexican, East German, Hong Kong, Rhodesian, Australian, Indian, and Spanish nationalities.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many constructors are there for each nationality?",
+                            "user_intention": "Count the number of constructors for each nationality.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NATIONALITY, COUNT(*) AS CONSTRUCTOR_COUNT FROM FORMULA_1_CONSTRUCTORS GROUP BY NATIONALITY",
+                            "generated_sql": "SELECT c.nationality, COUNT(*) AS constructor_count FROM formula_1_constructors c GROUP BY c.nationality ORDER BY constructor_count DESC;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 6.039285898208618,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 5,
+                "original_intent": "Find constructors who have participated in both standings and results.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which constructors have participated in both standings and results?",
+                        "agent_reply": "Several constructors, such as McLaren and BRM, have participated in both standings and results. The complete list is extensive, with 7,598,211 rows of data.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which constructors have participated in both standings and results?",
+                            "user_intention": "Find constructors who have participated in both standings and results.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT C.NAME FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_CONSTRUCTORSTANDINGS CS ON C.CONSTRUCTORID = CS.CONSTRUCTORID JOIN FORMULA_1_RESULTS R ON C.CONSTRUCTORID = R.CONSTRUCTORID",
+                            "generated_sql": "SELECT  c.name FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid JOIN formula_1_results r ON c.constructorid = r.constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 3272.832448244095,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 6,
+                "original_intent": "Provide constructors along with their race standings and race results.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you show constructors along with their race standings and their race results?",
+                        "agent_reply": "The query retrieved information about constructors, their race standings, and race results. For example:\n\n1. Constructor McLaren (ID: 1) in race 18 scored 14.0 points in standings with position 1 and achieved 10.0 points in results with position 1.\n2. Constructor BMW Sauber (ID: 2) in race 18 scored 8.0 points in standings with position 3 and achieved 8.0 points in results with position 2.\n3. Constructor Williams (ID: 3) in race 18 scored 9.0 points in standings with position 2 and achieved 6.0 points in results with position 3.\n\nThe dataset contains over 21,782 rows with similar details.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve all constructors along with their race standings and race results.",
+                            "user_intention": "Provide constructors along with their race standings and race results.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT C.NAME, CS.POINTS, CS.WINS, R.POSITION, R.POINTS FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_CONSTRUCTORSTANDINGS CS ON C.CONSTRUCTORID = CS.CONSTRUCTORID JOIN FORMULA_1_RESULTS R ON C.CONSTRUCTORID = R.CONSTRUCTORID",
+                            "generated_sql": "SELECT c.constructorid, c.name AS constructor_name, cs.raceid, cs.points AS race_standing_points, cs.position AS race_standing_position, r.points AS race_result_points, r.position AS race_result_position FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid JOIN formula_1_results r ON cs.raceid = r.raceid AND cs.constructorid = r.constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 18.203211307525635,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 7,
+                "original_intent": "List constructors whose statuses are recorded for a specific race.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which constructors have their statuses recorded for a specific race?",
+                        "agent_reply": "Could you specify the race you are referring to? For example, provide the race name, year, or ID.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which constructors have their statuses recorded for a specific race?",
+                            "user_intention": "List constructors whose statuses are recorded for a specific race.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT C.NAME, S.STATUS FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_RESULTS R ON C.CONSTRUCTORID = R.CONSTRUCTORID JOIN FORMULA_1_STATUS S ON R.STATUSID = S.STATUSID",
+                            "generated_sql": "",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 3.2274162769317627,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 3.2274162769317627
+            },
+            {
+                "interaction_id": 8,
+                "original_intent": "Show all constructors along with their reference names.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "List all constructors along with their reference names.",
+                        "agent_reply": "Here are some constructors and their reference names: McLaren (mclaren), BMW Sauber (bmw_sauber), Williams (williams), Renault (renault), Toro Rosso (toro_rosso). There are a total of 208 entries.",
+                        "evaluation": {
+                            "text_to_sql_input": "List all constructors along with their reference names.",
+                            "user_intention": "Show all constructors along with their reference names.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NAME, CONSTRUCTORREF FROM FORMULA_1_CONSTRUCTORS",
+                            "generated_sql": "SELECT name, constructorref FROM formula_1_constructors",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 6.384873151779175,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 6.384873151779175
+            },
+            {
+                "interaction_id": 9,
+                "original_intent": "Find details of constructors associated with standings and results where they won races.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the details of constructors associated with standings and results where they won races?",
+                        "agent_reply": "The constructors who won races include McLaren (British) with details at http://en.wikipedia.org/wiki/McLaren, BRM (British) with details at http://en.wikipedia.org/wiki/BRM, among others. The full dataset contains extensive race-winning constructor information.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve details of constructors (name, nationality, and URL) involved in standings and results where they won races.",
+                            "user_intention": "Find details of constructors associated with standings and results where they won races.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT C.NAME, C.NATIONALITY FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_CONSTRUCTORSTANDINGS CS ON C.CONSTRUCTORID = CS.CONSTRUCTORID JOIN FORMULA_1_RESULTS R ON C.CONSTRUCTORID = R.CONSTRUCTORID WHERE CS.WINS > 0",
+                            "generated_sql": "SELECT  c.name, c.nationality, c.url FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid JOIN formula_1_results r ON c.constructorid = r.constructorid WHERE cs.wins > 0 OR r.position = 1",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 21083.030205726624,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 21083.030205726624
+            },
+            {
+                "interaction_id": 10,
+                "original_intent": "Count the total number of constructors in the dataset.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you count the total number of constructors in the dataset?",
+                        "agent_reply": "I encountered an error while executing the query: DPY-4011 - the database or network closed the connection. Please check the database connection or network settings and try again.",
+                        "evaluation": {
+                            "text_to_sql_input": "Count the total number of constructors in the dataset.",
+                            "user_intention": "Count the total number of constructors in the dataset.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT COUNT(*) AS TOTAL_CONSTRUCTORS FROM FORMULA_1_CONSTRUCTORS",
+                            "generated_sql": "SELECT COUNT(*) AS total_constructors FROM formula_1_constructors",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 40.029234409332275,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 40.029234409332275
+            }
+        ]
+    },    
+    {
         "experiment_id": "29",
         "experiment_config": {
             "max_retries": 2,
