@@ -34,13 +34,18 @@ class TextToSQLAgentNodes:
         He receives a query, decides if it is a NL question about database or not and returns a response
         based on that
         """
-
+        
         LLM = LLMConfig(provider="azure", environment=self.env).get_llm(model=self.model)
 
         llm_with_tools = LLM.bind_tools(self.TOOLS, parallel_tool_calls=False)
+        
+        feedback_error = ""
+        if ("retry_reason" in state and state["retry_reason"] == "json_decode_error") and state["actual_number_of_retries"] < state["max_retries"]:
+            feedback_error = "\n\nThe previous response was not in a valid JSON format. Please ensure that your response strictly adheres to the specified JSON structure and does not include any additional text or formatting outside of the JSON."
 
-        prompt_with_schema = self.TEXT_TO_SQL_PROMPT.format(input=state["messages"][-1].content)
+        prompt_with_schema = self.TEXT_TO_SQL_PROMPT.format(input=state["messages"][-1].content + feedback_error)
 
         sys_msg = SystemMessage(content=prompt_with_schema)
 
         return {"messages": [llm_with_tools.invoke([sys_msg] + state["messages"])]}
+    

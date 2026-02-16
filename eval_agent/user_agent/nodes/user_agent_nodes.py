@@ -266,8 +266,18 @@ class EvaluatorNodes:
 
         try:
             print(f"[INFO] O resultado da execução foi: {state['last_response']['messages'][-1].content}.\n")
-            json_str = self.extract_outer_json(state["last_response"]["messages"][-1].content)
-            response = json.loads(json_str)
+            llm_response_content = state["last_response"]["messages"][-1].content
+            json_str = self.extract_outer_json(llm_response_content)
+            if json_str is None:
+                response = {
+                    "input": state["last_user_input"],
+                    "schema_linking": [],
+                    "answer": llm_response_content,
+                    "sql": ""
+                }
+            
+            else:
+                response = json.loads(json_str)
 
             answer = response["answer"]
             function_input = response["input"]
