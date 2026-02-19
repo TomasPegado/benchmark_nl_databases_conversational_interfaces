@@ -53,25 +53,46 @@ even if the current interaction was generated under a column-based directive.
 
 ## Required Output Format (STRICT)
 
-You must output a single JSON object with the following structure and NOTHING ELSE:
+You must output a single JSON object with the structure of the EXAMPLE below and NOTHING ELSE:
 
 {{
   "experiment_id": "{experiment_id}",
-  "total_expected_interactions": {total_expected_interactions},
+  "total_expected_interactions": 3,
   "interactions": [
     {{
       "interaction_id": "1",
       "speaker": "User",
-      "utterance": "...",
-      "intention": "...",
+      "utterance": "What are the biggest city in the world?",
+      "intention": "What are the biggest city in the world?",
       "ground_truths": {{
-        "tables_from_schema_linking": [ ... ],
-        "golden_sql": "<VALID SQL QUERY>"
+         "tables_from_schema_linking": [ ... ],
+         "golden_sql": "<Valid SQL query corresponding to the question>"
+      }}
+    }},
+    {{
+      "interaction_id": "2",
+      "speaker": "User",
+      "utterance": "What are the area of this city?",
+      "intention": "What are the area of <city retrieved in the previous interaction>?",
+      "ground_truths": {{
+         "tables_from_schema_linking": [ ... ],
+         "golden_sql": "<Valid SQL query for the follow-up question>"
+      }}
+    }},
+    {{
+      "interaction_id": "3",
+      "speaker": "User",
+      "utterance": "And tell me also in wich continent it is?",
+      "intention": "In wich continent is <city retrieved in the previous interaction>?",
+      "ground_truths": {{
+         "tables_from_schema_linking": [ ... ],
+         "golden_sql": "<Valid SQL query for the additional question>"
       }}
     }}
   ]
 }}
 
+As you see, follow up questions are always related to the previous one, and the intention is a natural language version of the question, considering that you don't know the global context of the dialogue.
 ---
 
 ## Field Constraints

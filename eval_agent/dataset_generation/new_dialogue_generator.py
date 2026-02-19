@@ -552,7 +552,7 @@ class DialogueGenerator:
             f"GROUP_BY: {group_by_str}\n"
             f"FILTERS: {filter_str}\n"
             f"ORDER_BY: {order_str}\n"
-            f"RATIONALE: {combo['rationale']}\n"
+            # f"RATIONALE: {combo['rationale']}\n"
         )
     
     def build_table_to_column_combos_map(self) -> Dict[str, List[dict]]:
