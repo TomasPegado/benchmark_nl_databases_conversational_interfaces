@@ -216,7 +216,5 @@ connections/opensearch_kaggle_db_connection.json
 /eval_agent/text2sql_agent/text_to_sql/synthetic_dataset/*.npy
 /eval_agent/dataset_generation/experiments_datasets/*.py
 .python-version
-.env.mondial
-.env.kaggle
 connections/bird_db_connection.json
-.env.bird
+
