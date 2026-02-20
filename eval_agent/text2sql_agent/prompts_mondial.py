@@ -384,9 +384,17 @@ CASE 1 — Tool Invocation Result
     "sql": <SQL query>
 }}
 
-CASE 2 — No Tool Invocation
+CASE 2 — No Tool Invocation (Feedback or clarification Requested)
 {{
-    "input": <rewritten or original question>,
+    "input": "feedback",
+    "schema_linking": "",
+    "answer": <response>,
+    "sql": ""
+}}
+
+CASE 3 — No Tool Invocation (General Response )
+{{
+    "input": "response",
     "schema_linking": "",
     "answer": <response>,
     "sql": ""
