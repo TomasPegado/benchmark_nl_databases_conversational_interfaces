@@ -8,8 +8,8 @@ import json
 from dotenv import load_dotenv
 load_dotenv()
 
-def build_graph(text_to_sql_agent_memory: bool = True, env: Literal["tec"] = "tec") -> StateGraph:
-    evaluator_nodes = EvaluatorNodes(agent_memory=text_to_sql_agent_memory, env=env)
+def build_graph(conversational_agent_memory: bool = True, env: Literal["tec"] = "tec") -> StateGraph:
+    evaluator_nodes = EvaluatorNodes(agent_memory=conversational_agent_memory, env=env)
 
     graph_builder = StateGraph(UserState)
     graph_builder.add_node("Setup", evaluator_nodes.setup)

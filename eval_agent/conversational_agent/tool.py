@@ -11,7 +11,7 @@ load_dotenv()
 # sys.path.append(str(root_path))
 # print()
 from functions.llm_config import LLMConfig
-from eval_agent.text2sql_agent.text_to_sql.text_to_sql_extended_schema import TextToSQLExtendedSchema
+from eval_agent.conversational_agent.text_to_sql_tool.text_to_sql_extended_schema import TextToSQLExtendedSchema
 from functions.retrieval import QuestionRetriever
 from functions.query_decomposer import QueryDecomposer
 
