@@ -270,7 +270,7 @@ class EvaluatorNodes:
             json_str = self.extract_outer_json(llm_response_content)
             if json_str is None:
                 response = {
-                    "input": state["last_user_input"],
+                    "input": "feedback",
                     "schema_linking": [],
                     "answer": llm_response_content,
                     "sql": ""
@@ -364,7 +364,7 @@ class EvaluatorNodes:
         evaluator = state.get("evaluator", None)
         correctness = True
         
-        if evaluator and ground_truth_golden_sql and golden_sql != "":
+        if evaluator and ground_truth_golden_sql and golden_sql != "" and alignment != False:
             try:
                 # 1) Only execution here. If this fails, it's truly an execution error.
                 try:
@@ -562,11 +562,15 @@ class EvaluatorNodes:
 
         print(
             f"[AI as JUDGE] Comparing intention between queries '{function_input}' and '{intention}' using AI as Judge method.")
-        input = HumanMessage(content=prompt)
+        
+        if function_input=="feedback":
+            result = "false"  # Se a função de input for "feedback", assumimos que não está alinhado com a intenção original, pois o usuário está pedindo para corrigir o erro.
+        else:
+            input = HumanMessage(content=prompt)
 
-        chain = self.llm | StrOutputParser()
+            chain = self.llm | StrOutputParser()
 
-        result = chain.invoke([input])
+            result = chain.invoke([input])
         print(f"[AI as JUDGE] Result: {result}.")
 
         return "true" in result.lower()
