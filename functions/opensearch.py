@@ -130,10 +130,10 @@ class OpenSearch:
 
 if __name__ == "__main__": 
 	## Test OpenSearch
-	# user = "mondial_all"
+	# user = ""
 	# password = ""
-	# url = "https://beatriz.tecgraf.puc-rio.br:9200"
-	# index = "mondial-scheduler"
+	# url = ""
+	# index = ""
 
 
 	# op =  OpenSearch(url, user, password, index, "tec")

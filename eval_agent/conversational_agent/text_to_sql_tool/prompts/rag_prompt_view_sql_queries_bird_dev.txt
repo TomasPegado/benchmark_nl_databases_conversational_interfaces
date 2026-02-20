@@ -1,0 +1,384 @@
+# You are an Oracle SQL expert. Given an input question, first create a syntactically correct Oracle SQL query to run, then look at the results of the query and return the answer to the input question. Unless the user specifies in the question a specific number of examples to obtain, don't query for at 0 most results or any using the FETCH FIRST n ROWS ONLY clause as per Oracle SQL. You can order the results to return the most informative data in the database. Never query for all columns from a table. You must query only the columns that are needed to answer the question. Attention to use only the column names you can see in the tables below. Be careful to not query for columns that do not exist. Also, pay attention to which column is in which table. Pay attention to use TRUNC(SYSDATE) function to get the current date, if the question involves "today". Generate only the sql query. Don't give the answer and don't explain.
+
+# Some hints:
+- Don't use double quotes in column name
+- Don't use LEFT JOIN, only JOIN
+- You can use the LOWER, UPPER functions to compare columns and categorical values LOWER(<column>) = LOWER("VALUE") or LIKE. Pay attention to the use of ‘LIKE’ for both exact and partial matches. Use to the format of the table samples in the database below ("<number> rows of <table>") to compare with the values correctly.
+- Use the synonym only to help identify the tables that will be used in queries
+- use alias to represent tables when doing joins
+
+## Use the following format:
+
+Question: Question here
+SELECT
+
+## Only use the following tables:
+
+CREATE TABLE formula_1_circuits (
+	circuitid NUMBER(38, 0) NOT NULL, 
+	circuitref VARCHAR(40 CHAR), 
+	name VARCHAR(128 CHAR), 
+	location VARCHAR(40 CHAR), 
+	country VARCHAR(26 CHAR), 
+	lat NUMBER(38, 5), 
+	lng NUMBER(38, 6), 
+	alt NUMBER(38, 0), 
+	url VARCHAR(400 CHAR) DEFAULT '', 
+	CONSTRAINT pk_circuits PRIMARY KEY (circuitid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_circuits table:
+circuitid	circuitref	name	location	country	lat	lng	alt	url
+2	sepang	Sepang International Circuit	Kuala Lumpur	Malaysia	2.76083	101.738	None	http://en.wikipedia.org/wiki/Sepang_International_Circuit
+3	bahrain	Bahrain International Circuit	Sakhir	Bahrain	26.0325	50.5106	None	http://en.wikipedia.org/wiki/Bahrain_International_Circuit
+4	catalunya	Circuit de Barcelona-Catalunya	Montmeló	Spain	41.57	2.26111	None	http://en.wikipedia.org/wiki/Circuit_de_Barcelona-Catalunya
+*/
+
+
+CREATE TABLE formula_1_constructorresults (
+	constructorresultsid NUMBER(38, 0) NOT NULL, 
+	raceid NUMBER(38, 0), 
+	constructorid NUMBER(38, 0), 
+	points NUMBER(38, 1), 
+	status VARCHAR(26 CHAR), 
+	CONSTRAINT pk_constructorresults PRIMARY KEY (constructorresultsid), 
+	CONSTRAINT fk_cres_constructor FOREIGN KEY(constructorid) REFERENCES bird_dev.formula_1_constructors (constructorid), 
+	CONSTRAINT fk_cres_race FOREIGN KEY(raceid) REFERENCES bird_dev.formula_1_races (raceid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_constructorresults table:
+constructorresultsid	raceid	constructorid	points	status
+1	18	1	14	None
+2	18	2	8	None
+3	18	3	9	None
+*/
+
+
+CREATE TABLE formula_1_constructors (
+	constructorid NUMBER(38, 0) NOT NULL, 
+	constructorref VARCHAR(26 CHAR) DEFAULT '', 
+	name VARCHAR(26 CHAR) DEFAULT '', 
+	nationality VARCHAR(26 CHAR), 
+	url VARCHAR(400 CHAR) DEFAULT '', 
+	CONSTRAINT pk_constructors PRIMARY KEY (constructorid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_constructors table:
+constructorid	constructorref	name	nationality	url
+1	mclaren	McLaren	British	http://en.wikipedia.org/wiki/McLaren
+2	bmw_sauber	BMW Sauber	German	http://en.wikipedia.org/wiki/BMW_Sauber
+3	williams	Williams	British	http://en.wikipedia.org/wiki/Williams_Grand_Prix_Engineering
+*/
+
+
+CREATE TABLE formula_1_constructorstandings (
+	constructorstandingsid NUMBER(38, 0) NOT NULL, 
+	raceid NUMBER(38, 0) DEFAULT 0, 
+	constructorid NUMBER(38, 0) DEFAULT 0, 
+	points NUMBER(38, 1) DEFAULT 0, 
+	position NUMBER(38, 0), 
+	positiontext VARCHAR(26 CHAR), 
+	wins NUMBER(38, 0) DEFAULT 0, 
+	CONSTRAINT pk_constructorstandings PRIMARY KEY (constructorstandingsid), 
+	CONSTRAINT fk_cstd_constructor FOREIGN KEY(constructorid) REFERENCES bird_dev.formula_1_constructors (constructorid), 
+	CONSTRAINT fk_cstd_race FOREIGN KEY(raceid) REFERENCES bird_dev.formula_1_races (raceid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_constructorstandings table:
+constructorstandingsid	raceid	constructorid	points	position	positiontext	wins
+1	18	1	14	1	1	1
+2	18	2	8	3	3	0
+3	18	3	9	2	2	0
+*/
+
+
+CREATE TABLE formula_1_drivers (
+	driverid NUMBER(38, 0) NOT NULL, 
+	driverref VARCHAR(26 CHAR), 
+	"number" NUMBER(38, 0), 
+	code VARCHAR(26 CHAR), 
+	forename VARCHAR(26 CHAR) DEFAULT '', 
+	surname VARCHAR(26 CHAR) DEFAULT '', 
+	dob DATE, 
+	nationality VARCHAR(26 CHAR), 
+	url VARCHAR(240 CHAR), 
+	CONSTRAINT pk_drivers PRIMARY KEY (driverid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_drivers table:
+driverid	driverref	number	code	forename	surname	dob	nationality	url
+1	hamilton	44	HAM	Lewis	Hamilton	1985-01-07 00:00:00	British	http://en.wikipedia.org/wiki/Lewis_Hamilton
+2	heidfeld	None	HEI	Nick	Heidfeld	1977-05-10 00:00:00	German	http://en.wikipedia.org/wiki/Nick_Heidfeld
+3	rosberg	6	ROS	Nico	Rosberg	1985-06-27 00:00:00	German	http://en.wikipedia.org/wiki/Nico_Rosberg
+*/
+
+
+CREATE TABLE formula_1_driverstandings (
+	driverstandingsid NUMBER(38, 0) NOT NULL, 
+	raceid NUMBER(38, 0) DEFAULT 0, 
+	driverid NUMBER(38, 0) DEFAULT 0, 
+	points NUMBER(38, 1), 
+	position NUMBER(38, 0), 
+	positiontext VARCHAR(26 CHAR), 
+	wins NUMBER(38, 0) DEFAULT 0, 
+	CONSTRAINT pk_driverstandings PRIMARY KEY (driverstandingsid), 
+	CONSTRAINT fk_dstd_driver FOREIGN KEY(driverid) REFERENCES bird_dev.formula_1_drivers (driverid), 
+	CONSTRAINT fk_dstd_race FOREIGN KEY(raceid) REFERENCES bird_dev.formula_1_races (raceid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_driverstandings table:
+driverstandingsid	raceid	driverid	points	position	positiontext	wins
+1	18	1	10	1	1	1
+2	18	2	8	2	2	0
+3	18	3	6	3	3	0
+*/
+
+
+CREATE TABLE formula_1_laptimes (
+	raceid NUMBER(38, 0) NOT NULL, 
+	driverid NUMBER(38, 0) NOT NULL, 
+	lap NUMBER(38, 0) NOT NULL, 
+	position NUMBER(38, 0), 
+	time VARCHAR(26 CHAR), 
+	milliseconds NUMBER(38, 0), 
+	CONSTRAINT pk_laptimes PRIMARY KEY (raceid, driverid, lap), 
+	CONSTRAINT fk_lap_driver FOREIGN KEY(driverid) REFERENCES bird_dev.formula_1_drivers (driverid), 
+	CONSTRAINT fk_lap_race FOREIGN KEY(raceid) REFERENCES bird_dev.formula_1_races (raceid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_laptimes table:
+raceid	driverid	lap	position	time	milliseconds
+1	1	1	13	1:49.088	109088
+1	1	2	12	1:33.740	93740
+1	1	3	11	1:31.600	91600
+*/
+
+
+CREATE TABLE formula_1_pitstops (
+	raceid NUMBER(38, 0) NOT NULL, 
+	driverid NUMBER(38, 0) NOT NULL, 
+	stop NUMBER(38, 0) NOT NULL, 
+	lap NUMBER(38, 0), 
+	time VARCHAR(26 CHAR), 
+	duration VARCHAR(26 CHAR), 
+	milliseconds NUMBER(38, 0), 
+	CONSTRAINT pk_pitstops PRIMARY KEY (raceid, driverid, stop), 
+	CONSTRAINT fk_pit_driver FOREIGN KEY(driverid) REFERENCES bird_dev.formula_1_drivers (driverid), 
+	CONSTRAINT fk_pit_race FOREIGN KEY(raceid) REFERENCES bird_dev.formula_1_races (raceid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_pitstops table:
+raceid	driverid	stop	lap	time	duration	milliseconds
+841	1	1	16	17:28:24	23.227	23227
+841	1	2	36	17:59:29	23.199	23199
+841	2	1	15	17:27:41	22.994	22994
+*/
+
+
+CREATE TABLE formula_1_qualifying (
+	qualifyid NUMBER(38, 0) NOT NULL, 
+	raceid NUMBER(38, 0), 
+	driverid NUMBER(38, 0), 
+	constructorid NUMBER(38, 0), 
+	"number" NUMBER(38, 0), 
+	position NUMBER(38, 0), 
+	q1 VARCHAR(26 CHAR), 
+	q2 VARCHAR(26 CHAR), 
+	q3 VARCHAR(26 CHAR), 
+	CONSTRAINT pk_qualifying PRIMARY KEY (qualifyid), 
+	CONSTRAINT fk_qual_constructor FOREIGN KEY(constructorid) REFERENCES bird_dev.formula_1_constructors (constructorid), 
+	CONSTRAINT fk_qual_driver FOREIGN KEY(driverid) REFERENCES bird_dev.formula_1_drivers (driverid), 
+	CONSTRAINT fk_qual_race FOREIGN KEY(raceid) REFERENCES bird_dev.formula_1_races (raceid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_qualifying table:
+qualifyid	raceid	driverid	constructorid	number	position	q1	q2	q3
+1	18	1	1	22	1	1:26.572	1:25.187	1:26.714
+2	18	9	2	4	2	1:26.103	1:25.315	1:26.869
+3	18	5	1	23	3	1:25.664	1:25.452	1:27.079
+*/
+
+
+CREATE TABLE formula_1_races (
+	raceid NUMBER(38, 0) NOT NULL, 
+	year NUMBER(38, 0), 
+	round NUMBER(38, 0), 
+	circuitid NUMBER(38, 0), 
+	name VARCHAR(40 CHAR), 
+	"date" DATE, 
+	time VARCHAR(26 CHAR), 
+	url VARCHAR(240 CHAR), 
+	CONSTRAINT pk_races PRIMARY KEY (raceid), 
+	CONSTRAINT fk_races_circuits FOREIGN KEY(circuitid) REFERENCES bird_dev.formula_1_circuits (circuitid), 
+	CONSTRAINT fk_races_seasons FOREIGN KEY(year) REFERENCES bird_dev.formula_1_seasons (year)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_races table:
+raceid	year	round	circuitid	name	date	time	url
+1	2009	1	1	Australian Grand Prix	2009-03-29 00:00:00	06:00:00	http://en.wikipedia.org/wiki/2009_Australian_Grand_Prix
+2	2009	2	2	Malaysian Grand Prix	2009-04-05 00:00:00	09:00:00	http://en.wikipedia.org/wiki/2009_Malaysian_Grand_Prix
+3	2009	3	17	Chinese Grand Prix	2009-04-19 00:00:00	07:00:00	http://en.wikipedia.org/wiki/2009_Chinese_Grand_Prix
+*/
+
+
+CREATE TABLE formula_1_results (
+	resultid NUMBER(38, 0) NOT NULL, 
+	raceid NUMBER(38, 0) DEFAULT 0, 
+	driverid NUMBER(38, 0) DEFAULT 0, 
+	constructorid NUMBER(38, 0) DEFAULT 0, 
+	"number" NUMBER(38, 0), 
+	grid NUMBER(38, 0) DEFAULT 0, 
+	position NUMBER(38, 0), 
+	positiontext VARCHAR(26 CHAR) DEFAULT '', 
+	positionorder NUMBER(38, 0) DEFAULT 0, 
+	points NUMBER(38, 1) DEFAULT 0, 
+	laps NUMBER(38, 0) DEFAULT 0, 
+	time VARCHAR(26 CHAR), 
+	milliseconds NUMBER(38, 0), 
+	fastestlap NUMBER(38, 0), 
+	rank NUMBER(38, 0) DEFAULT 0, 
+	fastestlaptime VARCHAR(26 CHAR), 
+	fastestlapspeed VARCHAR(26 CHAR), 
+	statusid NUMBER(38, 0) DEFAULT 0, 
+	CONSTRAINT pk_results PRIMARY KEY (resultid), 
+	CONSTRAINT fk_res_constructor FOREIGN KEY(constructorid) REFERENCES bird_dev.formula_1_constructors (constructorid), 
+	CONSTRAINT fk_res_driver FOREIGN KEY(driverid) REFERENCES bird_dev.formula_1_drivers (driverid), 
+	CONSTRAINT fk_res_race FOREIGN KEY(raceid) REFERENCES bird_dev.formula_1_races (raceid), 
+	CONSTRAINT fk_res_status FOREIGN KEY(statusid) REFERENCES bird_dev.formula_1_status (statusid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_results table:
+resultid	raceid	driverid	constructorid	number	grid	position	positiontext	positionorder	points	laps	time	milliseconds	fastestlap	rank	fastestlaptime	fastestlapspeed	statusid
+1	18	1	1	22	1	1	1	1	10	58	1:34:50.616	5690616	39	2	1:27.452	218.300	1
+2	18	2	2	3	5	2	2	2	8	58	+5.478	5696094	41	3	1:27.739	217.586	1
+3	18	3	3	7	7	3	3	3	6	58	+8.163	5698779	41	5	1:28.090	216.719	1
+*/
+
+
+CREATE TABLE formula_1_seasons (
+	year NUMBER(38, 0) DEFAULT 0 NOT NULL, 
+	url VARCHAR(240 CHAR) DEFAULT '', 
+	CONSTRAINT pk_seasons PRIMARY KEY (year)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_seasons table:
+year	url
+1950	http://en.wikipedia.org/wiki/1950_Formula_One_season
+1951	http://en.wikipedia.org/wiki/1951_Formula_One_season
+1952	http://en.wikipedia.org/wiki/1952_Formula_One_season
+*/
+
+
+CREATE TABLE formula_1_status (
+	statusid NUMBER(38, 0) NOT NULL, 
+	status VARCHAR(26 CHAR) DEFAULT '', 
+	CONSTRAINT pk_status PRIMARY KEY (statusid)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_status table:
+statusid	status
+1	Finished
+2	Disqualified
+3	Accident
+*/
+
+
+CREATE TABLE formula_1_tmdc (
+	id VARCHAR(4000 CHAR), 
+	table_name VARCHAR(4000 CHAR), 
+	table_label VARCHAR(4000 CHAR), 
+	table_description VARCHAR(4000 CHAR)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_tmdc table:
+id	table_name	table_label	table_description
+circuits	FORMULA_1_CIRCUITS	circuits	Stores information about Formula 1 circuits where races take place
+constructorResults	FORMULA_1_CONSTRUCTORRESULTS	constructors	Contains the results of each constructor in every race.
+constructors	FORMULA_1_CONSTRUCTORS	constructor results	Stores all constructors (teams) participating in Formula 1.
+*/
+
+
+CREATE TABLE formula_1_tmdp (
+	id VARCHAR(4000 CHAR), 
+	column_name VARCHAR(4000 CHAR), 
+	column_label VARCHAR(4000 CHAR), 
+	column_description VARCHAR(4000 CHAR), 
+	data_type VARCHAR(4000 CHAR), 
+	column_tye VARCHAR(4000 CHAR), 
+	value_description VARCHAR(4000 CHAR), 
+	table_id VARCHAR(50 CHAR)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_tmdp table:
+id	column_name	column_label	column_description	data_type	column_tye	value_description	table_id
+circuitId 	CIRCUITID	Circuit Id 	circuit Id 	integer 	None	None	races
+name 	NAME	name 	name of the race 	text	None	None	races
+date 	DATE	date 	duration time 	date	None	None	races
+*/
+
+
+CREATE TABLE formula_1_tmjmap (
+	id VARCHAR(4000 CHAR), 
+	from_t VARCHAR(4000 CHAR), 
+	to_t VARCHAR(4000 CHAR)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_tmjmap table:
+id	from_t	to_t
+races#seasons	FORMULA_1_RACES.YEAR	FORMULA_1_SEASONS.YEAR
+races#circuits	FORMULA_1_RACES.CIRCUITID	FORMULA_1_CIRCUITS.CIRCUITID
+constructorResults#races	FORMULA_1_CONSTRUCTORRESULTS.RACEID	FORMULA_1_RACES.RACEID
+*/
+
+
+CREATE TABLE formula_1_tpv (
+	table_id VARCHAR(4000 CHAR), 
+	column_id VARCHAR(4000 CHAR), 
+	value VARCHAR(4000 CHAR)
+)
+ TABLESPACE "BIRD_DEV"
+
+/*
+3 rows from formula_1_tpv table:
+table_id	column_id	value
+circuits	country	USA
+circuits	country	Morocco
+circuits	country	Italy
+*/
+
+{samples}
+
+Question: {input}
+SELECT

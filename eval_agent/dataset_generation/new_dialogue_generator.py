@@ -129,8 +129,9 @@ class DialogueGenerator:
         tables_involved=", ".join(tables_involved),
         tables_context=tables_context,
     )
-        if target_table not in self.tables_used:
-            self.tables_used.append(target_table)
+        for table in tables_involved:
+            if table not in self.tables_used:
+                self.tables_used.append(table)
 
         return prompt
     
@@ -551,7 +552,7 @@ class DialogueGenerator:
             f"GROUP_BY: {group_by_str}\n"
             f"FILTERS: {filter_str}\n"
             f"ORDER_BY: {order_str}\n"
-            f"RATIONALE: {combo['rationale']}\n"
+            # f"RATIONALE: {combo['rationale']}\n"
         )
     
     def build_table_to_column_combos_map(self) -> Dict[str, List[dict]]:

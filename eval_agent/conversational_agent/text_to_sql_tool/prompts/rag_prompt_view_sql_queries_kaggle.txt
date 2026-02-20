@@ -1,0 +1,124 @@
+# You are an Oracle SQL expert. Given an input question, first create a syntactically correct Oracle SQL query to run, then look at the results of the query and return the answer to the input question. Unless the user specifies in the question a specific number of examples to obtain, don't query for at 0 most results or any using the FETCH FIRST n ROWS ONLY clause as per Oracle SQL. You can order the results to return the most informative data in the database. Never query for all columns from a table. You must query only the columns that are needed to answer the question. Attention to use only the column names you can see in the tables below. Be careful to not query for columns that do not exist. Also, pay attention to which column is in which table. Pay attention to use TRUNC(SYSDATE) function to get the current date, if the question involves "today". Generate only the sql query. Don't give the answer and don't explain.
+
+# Some hints:
+- Don't use double quotes in column name
+- Don't use LEFT JOIN, only JOIN
+- You can use the LOWER, UPPER functions to compare columns and categorical values LOWER(<column>) = LOWER("VALUE") or LIKE. Pay attention to the use of ‘LIKE’ for both exact and partial matches. Use to the format of the table samples in the database below ("<number> rows of <table>") to compare with the values correctly.
+- Use the synonym only to help identify the tables that will be used in queries
+- use alias to represent tables when doing joins
+
+## Use the following format:
+
+Question: Question here
+SELECT
+
+## Only use the following tables:
+
+
+
+CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_HALL_OF_FAME" 
+   (	"PLAYER_ID" VARCHAR2(20 CHAR), 
+	"YEARID" NUMBER, 
+	"VOTEDBY" VARCHAR2(20 CHAR), 
+	"BALLOTS" NUMBER, 
+	"NEEDED" NUMBER, 
+	"VOTES" NUMBER, 
+	"INDUCTED" CHAR(1), 
+	"CATEGORY" VARCHAR2(20 CHAR), 
+	"NEEDED_NOTE" VARCHAR2(100 CHAR)
+   ) ;
+
+/*
+3 rows from thehistoryofbaseball_hall_of_fame table:
+player_id	yearid	votedby	ballots	needed	votes	inducted	category	needed_note
+cobbty01	1936	BBWAA	226	170	222	Y	Player	None
+ruthba01	1936	BBWAA	226	170	215	Y	Player	None
+wagneho01	1936	BBWAA	226	170	215	Y	Player	None
+*/
+
+CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER" 
+   (	"PLAYER_ID" VARCHAR2(100 CHAR), 
+	"BIRTH_YEAR" VARCHAR2(100 CHAR), 
+	"BIRTH_MONTH" VARCHAR2(100 CHAR), 
+	"BIRTH_DAY" VARCHAR2(100 CHAR), 
+	"BIRTH_COUNTRY" VARCHAR2(100 CHAR), 
+	"BIRTH_STATE" VARCHAR2(100 CHAR), 
+	"BIRTH_CITY" VARCHAR2(100 CHAR), 
+	"DEATH_YEAR" VARCHAR2(100 CHAR), 
+	"DEATH_MONTH" VARCHAR2(100 CHAR), 
+	"DEATH_DAY" VARCHAR2(100 CHAR), 
+	"DEATH_COUNTRY" VARCHAR2(100 CHAR), 
+	"DEATH_STATE" VARCHAR2(100 CHAR), 
+	"DEATH_CITY" VARCHAR2(100 CHAR), 
+	"NAME_FIRST" VARCHAR2(100 CHAR), 
+	"NAME_LAST" VARCHAR2(100 CHAR), 
+	"NAME_GIVEN" VARCHAR2(100 CHAR), 
+	"WEIGHT" VARCHAR2(100 CHAR)
+   );
+
+/*
+3 rows from thehistoryofbaseball_player table:
+"PLAYER_ID"	"BIRTH_YEAR"	"BIRTH_MONTH"	"BIRTH_DAY"	"BIRTH_COUNTRY"	"BIRTH_STATE"	"BIRTH_CITY"	"DEATH_YEAR"	"DEATH_MONTH"	"DEATH_DAY"	"DEATH_COUNTRY"	"DEATH_STATE"	"DEATH_CITY"	"NAME_FIRST"	"NAME_LAST"	"NAME_GIVEN"	"WEIGHT"
+"aardsda01"	"1981.0"	"12.0"	"27.0"	"USA"	"CO"	"Denver"	""	""	""	""	""	""	"David"	"Aardsma"	"David Allan"	"220.0"
+"aaronha01"	"1934.0"	"2.0"	"5.0"	"USA"	"AL"	"Mobile"	""	""	""	""	""	""	"Hank"	"Aaron"	"Henry Louis"	"180.0"
+"aaronto01"	"1939.0"	"8.0"	"5.0"	"USA"	"AL"	"Mobile"	"1984.0"	"8.0"	"16.0"	"USA"	"GA"	"Atlanta"	"Tommie"	"Aaron"	"Tommie Lee"	"190.0"
+/*
+
+CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD" 
+   (	"PLAYER_ID" VARCHAR2(20 CHAR), 
+	"AWARD_ID" VARCHAR2(60 CHAR), 
+	"YEAR" NUMBER, 
+	"LEAGUE_ID" VARCHAR2(5 CHAR), 
+	"TIE" VARCHAR2(5 CHAR), 
+	"NOTES" VARCHAR2(200 CHAR)
+   ) ;
+
+/*
+3 rows from thehistoryofbaseball_player_award table:
+player_id	award_id	year	league_id	tie	notes
+bondto01	Pitching Triple Crown	1877	NL	None	None
+hinespa01	Triple Crown	1878	NL	None	None
+heckegu01	Pitching Triple Crown	1884	AA	None	None
+*/
+
+
+CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_PLAYER_AWARD_VOTE" 
+   (	"AWARD_ID" VARCHAR2(60 CHAR), 
+	"YEAR" NUMBER, 
+	"LEAGUE_ID" VARCHAR2(5 CHAR), 
+	"PLAYER_ID" VARCHAR2(20 CHAR), 
+	"POINTS_WON" NUMBER, 
+	"POINTS_MAX" NUMBER, 
+	"VOTES_FIRST" NUMBER
+   ) ;
+
+/*
+3 rows from thehistoryofbaseball_player_award_vote table:
+award_id	year	league_id	player_id	points_won	points_max	votes_first
+Cy Young	1956	ML	fordwh01	1	16	1
+Cy Young	1956	ML	maglisa01	4	16	4
+Cy Young	1956	ML	newcodo01	10	16	10
+*/
+
+
+CREATE TABLE "KAGGLE"."THEHISTORYOFBASEBALL_SALARY" 
+   (	"YEAR" NUMBER, 
+	"TEAM_ID" VARCHAR2(10 CHAR), 
+	"LEAGUE_ID" VARCHAR2(5 CHAR), 
+	"PLAYER_ID" VARCHAR2(20 CHAR), 
+	"SALARY" NUMBER
+   ) ;
+
+/*
+3 rows from thehistoryofbaseball_salary table:
+year	team_id	league_id	player_id	salary
+1985	ATL	NL	barkele01	870000
+1985	ATL	NL	bedrost01	550000
+1985	ATL	NL	benedbr01	545000
+*/
+
+
+{samples}
+
+Question: {input}
+SELECT
