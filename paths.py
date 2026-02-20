@@ -18,8 +18,8 @@ DB_INFO_PATH = os.path.join(experiment_root_path, "connections")
 DB_CONNECTION_FILE = os.path.join(DB_INFO_PATH, f"{run_environment}{PREFIX}_db_connection.json")
 
 #Text-to-sql Tool
-PROMPT_DECOMPOSER_FILE= os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql",  "prompts", "prompt_decomposer.txt")
-EXTENDED_SCHEMA_PROMPT= os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "prompts", f"rag_prompt_view_sql_queries_{SCHEMA.lower()}.txt")
+PROMPT_DECOMPOSER_FILE= os.path.join(experiment_root_path, "eval_agent", "conversational_agent", "text_to_sql_tool",  "prompts", "prompt_decomposer.txt")
+EXTENDED_SCHEMA_PROMPT= os.path.join(experiment_root_path, "eval_agent", "conversational_agent", "text_to_sql_tool", "prompts", f"rag_prompt_view_sql_queries_{SCHEMA.lower()}.txt")
 NUMBER_OF_SAMPLES = 8
 
 DATASET_SYNTHETIC = os.getenv("DATASET_SYNTHETIC", "")
@@ -28,12 +28,12 @@ EMBEDDINGS = os.getenv("EMBEDDINGS_FILE", "")
 if DATASET_SYNTHETIC == "":
     DATASET_SYNTHETIC_PATH = ""
 else:
-    DATASET_SYNTHETIC_PATH = os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "synthetic_dataset", DATASET_SYNTHETIC)
+    DATASET_SYNTHETIC_PATH = os.path.join(experiment_root_path, "eval_agent", "conversational_agent", "text_to_sql_tool", "synthetic_dataset", DATASET_SYNTHETIC)
 
 if EMBEDDINGS == "":
     EMBEDDINGS_PATH = ""
 else:
-    EMBEDDINGS_PATH = os.path.join(experiment_root_path, "eval_agent", "text2sql_agent", "text_to_sql", "synthetic_dataset", EMBEDDINGS)
+    EMBEDDINGS_PATH = os.path.join(experiment_root_path, "eval_agent", "conversational_agent", "text_to_sql_tool", "synthetic_dataset", EMBEDDINGS)
 
 # User Agent
 CHATBOT_PROMPT_PATH= os.path.join(experiment_root_path, "eval_agent", "user_agent", "chat_prompts", "chatbot_prompt_v2_english.txt")

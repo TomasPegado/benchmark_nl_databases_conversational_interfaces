@@ -1,5 +1,5 @@
 from numpy import empty_like
-from eval_agent.text2sql_agent.agent_graph import build_graph
+from eval_agent.conversational_agent.conversational_agent_graph import build_graph
 from functions.llm_config import LLMConfig
 from eval_agent.user_agent.states.user_agent_state import UserState
 from langchain_core.output_parsers import StrOutputParser
@@ -39,7 +39,7 @@ class EvaluatorNodes:
         else:
             self.EVALUATOR = None
   
-        self.AGENT = build_graph(have_memory=agent_memory, env=env)
+        self.conversational_agent_graph = build_graph(have_memory=agent_memory, env=env)
         self.llm = LLMConfig(provider="azure", environment=env).get_llm(model=MODEL_4O, max_tokens=2000)
 
     def classify_query_complexity(self, sql: Optional[str]) -> str:
@@ -235,7 +235,7 @@ class EvaluatorNodes:
 
         if state["debug_mode"]: print("[INFO] Enviando a query para o agente: ", nl_query)
 
-        state["last_response"] = self.text_to_sql_agent(nl_query, state["dialogue_agent_config"])
+        state["last_response"] = self.conversational_agent(nl_query, state["dialogue_agent_config"])
 
         state["interaction_history"] = state["last_response"]["messages"]
 
@@ -663,7 +663,7 @@ class EvaluatorNodes:
             
             state["experiment_eval"].append(new_interaction)
 
-    def text_to_sql_agent(self, nl_query: str, memory_config: dict) -> str:
+    def conversational_agent(self, nl_query: str, memory_config: dict) -> str:
         """
         This function calls a text-to-sql agent that use a natural language question (nl_query) and process it to a SQL query. The agent will return the SQL query executed and some observations about it.
         Args:
@@ -672,6 +672,6 @@ class EvaluatorNodes:
         """
 
         messages = [HumanMessage(content=nl_query)]
-        return self.AGENT.invoke({"messages": messages}, memory_config)
+        return self.conversational_agent_graph.invoke({"messages": messages}, memory_config)
 
 

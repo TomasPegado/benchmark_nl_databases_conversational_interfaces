@@ -2,15 +2,15 @@ from langgraph.prebuilt import tools_condition, ToolNode
 from langgraph.graph import START, StateGraph, MessagesState
 from typing import Literal
 from langchain_core.messages import HumanMessage
-from eval_agent.text2sql_agent.nodes import TextToSQLAgentNodes
+from eval_agent.conversational_agent.nodes import ConversationalAgentNodes
 from langgraph.checkpoint.memory import MemorySaver
 
-from eval_agent.text2sql_agent.tool import TOOLS as EXPERIMENT_TOOLS
+from eval_agent.conversational_agent.tool import TOOLS as EXPERIMENT_TOOLS
 
 memory = MemorySaver()
 
 def build_graph(have_memory: bool = True, env: Literal["tec"] = "tec") -> StateGraph:
-    nodes = TextToSQLAgentNodes(env=env)
+    nodes = ConversationalAgentNodes(env=env)
 
     match env:
         case "tec":

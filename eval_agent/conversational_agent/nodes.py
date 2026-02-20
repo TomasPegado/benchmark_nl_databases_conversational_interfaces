@@ -9,21 +9,21 @@ import importlib
 
 experiment = os.getenv("EXPERIMENT_NAME")
 
-class TextToSQLAgentNodes:
+class ConversationalAgentNodes:
     def __init__(self, env: str):
         self.env = env
         self.model = ""
         match self.env:
             case "tec":
                 # Importing the prompt for the experiment environment
-                prompt_module_path = f"eval_agent.text2sql_agent.prompts_{experiment}"
+                prompt_module_path = f"eval_agent.conversational_agent.prompts_{experiment}"
                 prompt_module = importlib.import_module(prompt_module_path)
                 self.TEXT_TO_SQL_PROMPT = prompt_module.TEXT_TO_SQL_PROMPT
                 # Setting the model for the experiment environment
                 from functions.gptconfig import MODEL_4O
                 self.model = MODEL_4O
                 # Importing the tools for the mondial environment
-                from eval_agent.text2sql_agent.tool import TOOLS
+                from eval_agent.conversational_agent.tool import TOOLS
                 self.TOOLS = TOOLS
             case _:
                 raise ValueError(f"Invalid environment: {self.env}")
