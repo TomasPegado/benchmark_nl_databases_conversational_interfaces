@@ -1,0 +1,1272 @@
+# You are an Oracle SQL expert. Given an input question, first create a syntactically correct Oracle SQL query to run, then look at the results of the query and return the answer to the input question. Unless the user specifies in the question a specific number of examples to obtain, don't query for at 0 most results or any using the FETCH FIRST n ROWS ONLY clause as per Oracle SQL. You can order the results to return the most informative data in the database. Never query for all columns from a table. You must query only the columns that are needed to answer the question. ay attention to use only the column names you can see in the tables below. Be careful to not query for columns that do not exist. Also, pay attention to which column is in which table. Pay attention to use TRUNC(SYSDATE) function to get the current date, if the question involves "today". Generate only the sql query. Don't give the answer and don't explain.
+
+# Some hints:
+- Don't use double quotes in column name
+- Don't use LEFT JOIN, only JOIN
+- You can use the LOWER, UPPER functions to compare columns and categorical values LOWER(<column>) = LOWER("VALUE") or LIKE. Pay attention to the use of ‘LIKE’ for both exact and partial matches. Use to the format of the table samples in the database below ("<number> rows of <table>") to compare with the values correctly.
+- Use the synonym only to help identify the tables that will be used in queries
+- use alias to represent tables when doing joins
+
+## Use the following format:
+
+Question: Question here
+SELECT
+
+## Only use the following tables:
+
+CREATE TABLE "MONDIAL_GPT".airport (
+	iatacode VARCHAR(3 CHAR) NOT NULL, 
+	name VARCHAR(100 CHAR), 
+	country VARCHAR(4 CHAR), 
+	city VARCHAR(50 CHAR), 
+	province VARCHAR(50 CHAR), 
+	island VARCHAR(50 CHAR), 
+	latitude NUMBER, 
+	longitude NUMBER, 
+	elevation NUMBER, 
+	gmtoffset NUMBER, 
+	CONSTRAINT sys_c00163097 PRIMARY KEY (iatacode), 
+	CONSTRAINT airport_city_province_fk FOREIGN KEY(city, country, province) REFERENCES mondial_gpt.city (name, country, province), 
+	CONSTRAINT airport_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT airport_island_fk FOREIGN KEY(island) REFERENCES mondial_gpt.island (name), 
+	CONSTRAINT airport_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country), 
+	CONSTRAINT airplat CHECK ((Latitude >= -90) AND (Latitude <= 90)), 
+	CONSTRAINT airplon CHECK ((Longitude >= -180) AND (Longitude <= 180))
+)
+
+/*
+3 rows from airport table:
+iatacode	name	country	city	province	island	latitude	longitude	elevation	gmtoffset
+CNF	Tancredo Neves Intl	BR	Belo Horizonte	Minas Gerais	None	-19.63375	-43.968856	828.0	-3.0
+SLZ	Marechal Cunha Machado Intl	BR	São Luís	Maranhão	None	-2.585361	-44.234139	54.0	-3.0
+CPQ	Amarais Airport	BR	Campinas	São Paulo	None	-22.8592	-47.1082	612.0	-3.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".borders (
+	country1 VARCHAR(4 CHAR) NOT NULL, 
+	country2 VARCHAR(4 CHAR) NOT NULL, 
+	length NUMBER, 
+	CONSTRAINT borderkey PRIMARY KEY (country1, country2), 
+	CONSTRAINT borders_country1_fk FOREIGN KEY(country1) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT borders_country2_fk FOREIGN KEY(country2) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT sys_c00162792 CHECK (Length > 0)
+)
+
+/*
+3 rows from borders table:
+country1	country2	length
+AL	GR	282.0
+AL	MK	151.0
+AL	MNE	172.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".city (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	population NUMBER, 
+	latitude NUMBER, 
+	longitude NUMBER, 
+	elevation NUMBER, 
+	CONSTRAINT citykey PRIMARY KEY (name, country, province), 
+	CONSTRAINT city_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT city_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country), 
+	CONSTRAINT citylat CHECK ((Latitude >= -90) AND (Latitude <= 90)), 
+	CONSTRAINT citylon CHECK ((Longitude >= -180) AND (Longitude <= 180)), 
+	CONSTRAINT citypop CHECK (Population >= 0)
+)
+
+/*
+3 rows from city table:
+name	country	province	population	latitude	longitude	elevation
+Chimki	R	Moskovskaya	207425.0	55.9	37.45	180.0
+Odincovo	R	Moskovskaya	138930.0	55.67	37.27	190.0
+Orechovo-Zujevo	R	Moskovskaya	120670.0	55.8	38.97	120.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".citylocalname (
+	city VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	localname VARCHAR(300 CHAR), 
+	CONSTRAINT citylocalnamekey PRIMARY KEY (country, province, city), 
+	CONSTRAINT citylocalname_city_province_fk FOREIGN KEY(city, country, province) REFERENCES mondial_gpt.city (name, country, province), 
+	CONSTRAINT citylocalname_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT citylocalname_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from citylocalname table:
+city	country	province	localname
+Shantou	CN	Guangdong	¿¿¿
+Shenzhen	CN	Guangdong	¿¿¿
+Dongguan	CN	Guangdong	¿¿¿
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".cityothername (
+	city VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	othername VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT cityothernamekey PRIMARY KEY (country, province, city, othername), 
+	CONSTRAINT cityothername_city_province_fk FOREIGN KEY(city, country, province) REFERENCES mondial_gpt.city (name, country, province), 
+	CONSTRAINT cityothername_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT cityothername_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from cityothername table:
+city	country	province	othername
+Bhisho	RSA	Eastern Cape	Bisho
+Buffalo City	RSA	Eastern Cape	East London
+Nelson Mandela Bay	RSA	Eastern Cape	Port Elizabeth
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".citypops (
+	city VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	year NUMBER NOT NULL, 
+	population NUMBER, 
+	CONSTRAINT citypopkey PRIMARY KEY (country, province, city, year), 
+	CONSTRAINT citypops_city_province_fk FOREIGN KEY(city, country, province) REFERENCES mondial_gpt.city (name, country, province), 
+	CONSTRAINT citypops_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT citypops_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country), 
+	CONSTRAINT citypopspop CHECK (Population >= 0), 
+	CONSTRAINT citypopsyear CHECK (Year >= 0)
+)
+
+/*
+3 rows from citypops table:
+city	country	province	year	population
+Hospitalet de Llobregat	E	Catalunya	1994.0	266242.0
+Hospitalet de Llobregat	E	Catalunya	2001.0	239019.0
+Hospitalet de Llobregat	E	Catalunya	2011.0	256509.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".continent (
+	name VARCHAR(20 CHAR) NOT NULL, 
+	area NUMBER(10, 0), 
+	CONSTRAINT continentkey PRIMARY KEY (name)
+)
+
+/*
+3 rows from continent table:
+name	area
+Europe	9938000
+Asia	44579000
+Australia/Oceania	8600000
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".country (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	code VARCHAR(4 CHAR) NOT NULL, 
+	capital VARCHAR(50 CHAR), 
+	province VARCHAR(50 CHAR), 
+	area NUMBER, 
+	population NUMBER, 
+	CONSTRAINT countrykey PRIMARY KEY (code), 
+	CONSTRAINT countryarea CHECK (Area >= 0), 
+	CONSTRAINT countrypop CHECK (Population >= 0)
+)
+
+/*
+3 rows from country table:
+name	code	capital	province	area	population
+Albania	AL	Tirana	Albania	28750.0	2821977.0
+Greece	GR	Athina	Attikis	131940.0	10816286.0
+Macedonia	MK	Skopje	Macedonia	25333.0	2059794.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".countrylocalname (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	localname VARCHAR(300 CHAR), 
+	CONSTRAINT countrylocalnamekey PRIMARY KEY (country), 
+	CONSTRAINT countrylocalname_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code)
+)
+
+/*
+3 rows from countrylocalname table:
+country	localname
+GR	¿¿¿¿¿¿¿¿ ¿¿µ¿¿¿at¿a
+MK	¿¿¿¿¿¿¿¿¿ ¿¿¿¿¿¿¿¿j¿
+SRB	¿¿¿¿¿¿¿¿¿ ¿¿¿¿¿¿
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".countryothername (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	othername VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT countryothernamekey PRIMARY KEY (country, othername), 
+	CONSTRAINT countryothername_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code)
+)
+
+/*
+3 rows from countryothername table:
+country	othername
+
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".countrypops (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	year NUMBER NOT NULL, 
+	population NUMBER, 
+	CONSTRAINT countrypopskey PRIMARY KEY (country, year), 
+	CONSTRAINT countrypops_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT countrypopspop CHECK (Population >= 0), 
+	CONSTRAINT countrypopsyear CHECK (Year >= 0)
+)
+
+/*
+3 rows from countrypops table:
+country	year	population
+XMAS	2011.0	2072.0
+COCO	2005.0	628.0
+COCO	2010.0	596.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".desert (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	area NUMBER, 
+	CONSTRAINT desertkey PRIMARY KEY (name), 
+	CONSTRAINT descoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180)), 
+	CONSTRAINT descoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180))
+)
+
+/*
+3 rows from desert table:
+name	area
+Kalahari	1200000.0
+Namib	95000.0
+Ferlo	70000.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".economy (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	gdp NUMBER, 
+	agriculture NUMBER, 
+	service NUMBER, 
+	industry NUMBER, 
+	inflation NUMBER, 
+	unemployment NUMBER, 
+	CONSTRAINT economykey PRIMARY KEY (country), 
+	CONSTRAINT economy_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT economygdp CHECK (GDP >= 0)
+)
+
+/*
+3 rows from economy table:
+country	gdp	agriculture	service	industry	inflation	unemployment
+AL	12800.0	19.5	68.5	12.0	1.7	16.9
+GR	243300.0	3.5	80.5	16.0	-0.8	27.9
+MK	10650.0	10.2	62.3	27.5	2.8	28.6
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".encompasses (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	continent VARCHAR(20 CHAR) NOT NULL, 
+	percentage NUMBER, 
+	CONSTRAINT encompasseskey PRIMARY KEY (country, continent), 
+	CONSTRAINT encompasses_continent_fk FOREIGN KEY(continent) REFERENCES mondial_gpt.continent (name), 
+	CONSTRAINT encompasses_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT sys_c00162796 CHECK ((Percentage > 0) AND (Percentage <= 100))
+)
+
+/*
+3 rows from encompasses table:
+country	continent	percentage
+AL	Europe	100.0
+GR	Europe	100.0
+MK	Europe	100.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".ethnicgroup (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	name VARCHAR(50 CHAR) NOT NULL, 
+	percentage NUMBER, 
+	CONSTRAINT ethnickey PRIMARY KEY (name, country), 
+	CONSTRAINT ethnic_group_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT ethnicpercent CHECK ((Percentage > 0) AND (Percentage <= 100))
+)
+
+/*
+3 rows from ethnicgroup table:
+country	name	percentage
+CAM	Kirdi	11.0
+CAM	Northwestern Bantu	8.0
+CAM	Eastern Nigritic	7.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".geo_desert (
+	desert VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT gdesertkey PRIMARY KEY (province, country, desert), 
+	CONSTRAINT geo_desert_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT geo_desert_desert_fk FOREIGN KEY(desert) REFERENCES mondial_gpt.desert (name), 
+	CONSTRAINT geo_desert_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from geo_desert table:
+desert	country	province
+Erg Maqteir	RIM	Adrar
+Erg Ouarane	RIM	Adrar
+Trarza	RIM	Adrar
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".geo_estuary (
+	river VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT gestuarykey PRIMARY KEY (province, country, river), 
+	CONSTRAINT geo_estuary_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT geo_estuary_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country), 
+	CONSTRAINT geo_estuary_river_fk FOREIGN KEY(river) REFERENCES mondial_gpt.river (name)
+)
+
+/*
+3 rows from geo_estuary table:
+river	country	province
+Aare	CH	Aargau
+Limmat	CH	Aargau
+Reuss	CH	Aargau
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".geo_island (
+	island VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT gislandkey PRIMARY KEY (province, country, island), 
+	CONSTRAINT geo_island_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT geo_island_island_fk FOREIGN KEY(island) REFERENCES mondial_gpt.island (name), 
+	CONSTRAINT geo_island_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from geo_island table:
+island	country	province
+Sumatra	RI	Aceh
+Honshu	J	Aichi
+Honshu	J	Akita
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".geo_lake (
+	lake VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT glakekey PRIMARY KEY (province, country, lake), 
+	CONSTRAINT geo_lake_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT geo_lake_lake_fk FOREIGN KEY(lake) REFERENCES mondial_gpt.lake (name), 
+	CONSTRAINT geo_lake_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from geo_lake table:
+lake	country	province
+Lake Kossou	CI	Abidjan
+Barrage de Mbakaou	CAM	Adamaoua
+Lake Abbe	ETH	Afar
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".geo_mountain (
+	mountain VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT gmountainkey PRIMARY KEY (province, country, mountain), 
+	CONSTRAINT geo_mountain_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT geo_mountain_mountain_fk FOREIGN KEY(mountain) REFERENCES mondial_gpt.mountain (name), 
+	CONSTRAINT geo_mountain_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from geo_mountain table:
+mountain	country	province
+Corno Grande	I	Abruzzo
+Monte Amaro	I	Abruzzo
+Aso Rock	WAN	Abuja
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".geo_river (
+	river VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT griverkey PRIMARY KEY (province, country, river), 
+	CONSTRAINT geo_river_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT geo_river_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country), 
+	CONSTRAINT geo_river_river_fk FOREIGN KEY(river) REFERENCES mondial_gpt.river (name)
+)
+
+/*
+3 rows from geo_river table:
+river	country	province
+Aare	CH	Aargau
+Limmat	CH	Aargau
+Reuss	CH	Aargau
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".geo_sea (
+	sea VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT gseakey PRIMARY KEY (province, country, sea), 
+	CONSTRAINT geo_sea_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT geo_sea_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country), 
+	CONSTRAINT geo_sea_sea_fk FOREIGN KEY(sea) REFERENCES mondial_gpt.sea (name)
+)
+
+/*
+3 rows from geo_sea table:
+sea	country	province
+Atlantic Ocean	CI	Abidjan
+Mediterranean Sea	I	Abruzzo
+Andaman Sea	RI	Aceh
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".geo_source (
+	river VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT gsourcekey PRIMARY KEY (province, country, river), 
+	CONSTRAINT geo_source_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT geo_source_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country), 
+	CONSTRAINT geo_source_river_fk FOREIGN KEY(river) REFERENCES mondial_gpt.river (name)
+)
+
+/*
+3 rows from geo_source table:
+river	country	province
+Amudarja	AFG	Afghanistan
+Helmand	AFG	Afghanistan
+Pjandsh	AFG	Afghanistan
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".island (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	islands VARCHAR(50 CHAR), 
+	area NUMBER, 
+	elevation NUMBER, 
+	type VARCHAR(15 CHAR), 
+	CONSTRAINT islandkey PRIMARY KEY (name), 
+	CONSTRAINT islandar CHECK (Area >= 0), 
+	CONSTRAINT islandcoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180)), 
+	CONSTRAINT islandcoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180))
+)
+
+/*
+3 rows from island table:
+name	islands	area	elevation	type
+Lanai	Hawaii Islands	364.0	1026.0	volcanic
+Maui	Hawaii Islands	1883.0	3055.0	volcanic
+Hawaii	Hawaii Islands	10450.0	4214.0	volcanic
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".islandin (
+	island VARCHAR(50 CHAR), 
+	sea VARCHAR(50 CHAR), 
+	lake VARCHAR(50 CHAR), 
+	river VARCHAR(50 CHAR), 
+	CONSTRAINT islandin_island_fk FOREIGN KEY(island) REFERENCES mondial_gpt.island (name), 
+	CONSTRAINT islandin_lake_fk FOREIGN KEY(lake) REFERENCES mondial_gpt.lake (name), 
+	CONSTRAINT islandin_river_fk FOREIGN KEY(river) REFERENCES mondial_gpt.river (name), 
+	CONSTRAINT islandin_sea_fk FOREIGN KEY(sea) REFERENCES mondial_gpt.sea (name)
+)
+
+/*
+3 rows from islandin table:
+island	sea	lake	river
+Ceram	Banda Sea	None	None
+Halmahera	Pacific Ocean	None	None
+Halmahera	Banda Sea	None	None
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".ismember (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	organization VARCHAR(12 CHAR) NOT NULL, 
+	type VARCHAR(60 CHAR) DEFAULT 'member', 
+	CONSTRAINT memberkey PRIMARY KEY (country, organization), 
+	CONSTRAINT ismember_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT ismember_organization_fk FOREIGN KEY(organization) REFERENCES mondial_gpt.organization (abbreviation)
+)
+
+/*
+3 rows from ismember table:
+country	organization	type
+SLB	AOSIS	member
+TO	AOSIS	member
+TUV	AOSIS	member
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".lake (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	river VARCHAR(50 CHAR), 
+	area NUMBER, 
+	elevation NUMBER, 
+	depth NUMBER, 
+	height NUMBER, 
+	type VARCHAR(12 CHAR), 
+	CONSTRAINT lakekey PRIMARY KEY (name), 
+	CONSTRAINT lake_river_fk FOREIGN KEY(river) REFERENCES mondial_gpt.river (name), 
+	CONSTRAINT damheight CHECK (Height > 0), 
+	CONSTRAINT lakear CHECK (Area >= 0), 
+	CONSTRAINT lakecoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180)), 
+	CONSTRAINT lakecoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180)), 
+	CONSTRAINT lakedpth CHECK (Depth >= 0)
+)
+
+/*
+3 rows from lake table:
+name	river	area	elevation	depth	height	type
+Inarijärvi	Paatsjoki	1040.0	119.0	92.0	None	None
+Oulujärvi	Oulujoki	928.0	123.0	35.0	None	None
+Saimaa	Vuoksi	4370.0	76.0	85.0	None	None
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".lakeonisland (
+	lake VARCHAR(50 CHAR) NOT NULL, 
+	island VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT lakeislkey PRIMARY KEY (lake, island), 
+	CONSTRAINT lakeonisland_island_fk FOREIGN KEY(island) REFERENCES mondial_gpt.island (name), 
+	CONSTRAINT lakeonisland_lake_fk FOREIGN KEY(lake) REFERENCES mondial_gpt.lake (name)
+)
+
+/*
+3 rows from lakeonisland table:
+lake	island
+Arresø	Seeland
+Danau Kumbang	Sumatra
+Koltsevoye Lake	Onekotan
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".language (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	name VARCHAR(50 CHAR) NOT NULL, 
+	percentage NUMBER, 
+	CONSTRAINT languagekey PRIMARY KEY (name, country), 
+	CONSTRAINT language_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT languagepercent CHECK ((Percentage > 0) AND (Percentage <= 100))
+)
+
+/*
+3 rows from language table:
+country	name	percentage
+AL	Albanian	98.8
+AL	Greek	0.5
+GR	Greek	99.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".located (
+	city VARCHAR(50 CHAR), 
+	province VARCHAR(50 CHAR), 
+	country VARCHAR(4 CHAR), 
+	river VARCHAR(50 CHAR), 
+	lake VARCHAR(50 CHAR), 
+	sea VARCHAR(50 CHAR), 
+	CONSTRAINT located_city_province_fk FOREIGN KEY(city, country, province) REFERENCES mondial_gpt.city (name, country, province), 
+	CONSTRAINT located_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT located_lake_fk FOREIGN KEY(lake) REFERENCES mondial_gpt.lake (name), 
+	CONSTRAINT located_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country), 
+	CONSTRAINT located_river_fk FOREIGN KEY(river) REFERENCES mondial_gpt.river (name), 
+	CONSTRAINT located_sea_fk FOREIGN KEY(sea) REFERENCES mondial_gpt.sea (name)
+)
+
+/*
+3 rows from located table:
+city	province	country	river	lake	sea
+Salerno	Campania	I	None	None	Mediterranean Sea
+Nápoli	Campania	I	None	None	Mediterranean Sea
+Torre del Greco	Campania	I	None	None	Mediterranean Sea
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".locatedon (
+	city VARCHAR(50 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	island VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT locatedonkey PRIMARY KEY (city, province, country, island), 
+	CONSTRAINT locatedon_city_province_fk FOREIGN KEY(city, country, province) REFERENCES mondial_gpt.city (name, country, province), 
+	CONSTRAINT locatedon_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT locatedon_island_fk FOREIGN KEY(island) REFERENCES mondial_gpt.island (name), 
+	CONSTRAINT locatedon_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from locatedon table:
+city	province	country	island
+Aberdeen	Scotland	GB	Great Britain
+Adamstown	Pitcairn	PITC	Pitcairn
+Ajaccio	Corse	F	Corse
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".mergeswith (
+	sea1 VARCHAR(50 CHAR) NOT NULL, 
+	sea2 VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT mergeswithkey PRIMARY KEY (sea1, sea2), 
+	CONSTRAINT mergeswith_sea1_fk FOREIGN KEY(sea1) REFERENCES mondial_gpt.sea (name), 
+	CONSTRAINT mergeswith_sea2_fk FOREIGN KEY(sea2) REFERENCES mondial_gpt.sea (name)
+)
+
+/*
+3 rows from mergeswith table:
+sea1	sea2
+Andaman Sea	Gulf of Bengal
+Andaman Sea	Indian Ocean
+Andaman Sea	Malakka Strait
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".mountain (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	mountains VARCHAR(50 CHAR), 
+	elevation NUMBER, 
+	type VARCHAR(10 CHAR), 
+	CONSTRAINT mountainkey PRIMARY KEY (name), 
+	CONSTRAINT mountaincoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180)), 
+	CONSTRAINT mountaincoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180))
+)
+
+/*
+3 rows from mountain table:
+name	mountains	elevation	type
+Shah Fuladi	Koh-e-Baba	4951.0	None
+Zarghun Ghar	Sulaiman Range	3578.0	None
+Batura Sar	Karakorum	7795.0	None
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".mountainonisland (
+	mountain VARCHAR(50 CHAR) NOT NULL, 
+	island VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT mountainislkey PRIMARY KEY (mountain, island), 
+	CONSTRAINT mountainonisland_island_fk FOREIGN KEY(island) REFERENCES mondial_gpt.island (name), 
+	CONSTRAINT mountainonisland_mountain_fk FOREIGN KEY(mountain) REFERENCES mondial_gpt.mountain (name)
+)
+
+/*
+3 rows from mountainonisland table:
+mountain	island
+Aenos	Kefallinia
+Agung	Bali
+Andringitra	Madagaskar
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".organization (
+	abbreviation VARCHAR(12 CHAR) NOT NULL, 
+	name VARCHAR(100 CHAR) NOT NULL, 
+	city VARCHAR(50 CHAR), 
+	country VARCHAR(4 CHAR), 
+	province VARCHAR(50 CHAR), 
+	established DATE, 
+	CONSTRAINT orgkey PRIMARY KEY (abbreviation), 
+	CONSTRAINT organization_city_province_fk FOREIGN KEY(city, country, province) REFERENCES mondial_gpt.city (name, country, province), 
+	CONSTRAINT organization_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT organization_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from organization table:
+abbreviation	name	city	country	province	established
+AfDB	African Development Bank Group	Abidjan	CI	Abidjan	1964-09-09 00:00:00
+AU	African Union	Addis Ababa	ETH	Addis Ababa	1963-05-25 00:00:00
+UNAMID	African Union/United Nations Hybrid Operation in Darfur	None	None	None	2007-07-31 00:00:00
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".politics (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	independence DATE, 
+	wasdependent VARCHAR(50 CHAR), 
+	dependent VARCHAR(4 CHAR), 
+	government VARCHAR(120 CHAR), 
+	CONSTRAINT politicskey PRIMARY KEY (country), 
+	CONSTRAINT politics_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code)
+)
+
+/*
+3 rows from politics table:
+country	independence	wasdependent	dependent	government
+AL	1912-11-28 00:00:00	Ottoman Empire	None	parliamentary democracy
+GR	1829-01-01 00:00:00	Ottoman Empire	None	parliamentary republic
+MK	1991-09-17 00:00:00	Yugoslavia	None	parliamentary democracy
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".population (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	population_growth NUMBER, 
+	infant_mortality NUMBER, 
+	CONSTRAINT popkey PRIMARY KEY (country), 
+	CONSTRAINT population_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code)
+)
+
+/*
+3 rows from population table:
+country	population_growth	infant_mortality
+AL	0.3	13.19
+GR	0.01	4.78
+MK	0.21	7.9
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".province (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	population NUMBER, 
+	area NUMBER, 
+	capital VARCHAR(50 CHAR), 
+	capprov VARCHAR(50 CHAR), 
+	CONSTRAINT prkey PRIMARY KEY (name, country), 
+	CONSTRAINT province_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT prar CHECK (Area >= 0), 
+	CONSTRAINT prpop CHECK (Population >= 0)
+)
+
+/*
+3 rows from province table:
+name	country	population	area	capital	capprov
+Astana	KAZ	814401.0	710.0	Astana	Astana
+Albania	AL	2821977.0	28750.0	Tirana	Albania
+Anatolikis Makedonias kai Thrakis	GR	608182.0	14157.0	Komotini	Anatolikis Makedonias kai Thrakis
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".provincelocalname (
+	province VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	localname VARCHAR(300 CHAR), 
+	CONSTRAINT provlocalnamekey PRIMARY KEY (country, province), 
+	CONSTRAINT provincelocalname_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT provincelocalname_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from provincelocalname table:
+province	country	localname
+Anatolikis Makedonias kai Thrakis	GR	¿¿at¿¿¿¿¿¿ ¿a¿ed¿¿¿a¿ ¿a¿ T¿¿¿¿¿
+Attikis	GR	¿tt¿¿¿¿
+Dytikis Elladas	GR	¿¿t¿¿¿¿ ¿¿¿¿da¿
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".provinceothername (
+	province VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	othername VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT provothernamekey PRIMARY KEY (country, province, othername), 
+	CONSTRAINT provinceothername_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT provinceothername_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from provinceothername table:
+province	country	othername
+Liège	B	Luik
+San Andrés, Providencia y Santa Catalina	CO	San Andres y Providencia
+Catalunya	E	Catalonia
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".provpops (
+	province VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	year NUMBER NOT NULL, 
+	population NUMBER, 
+	CONSTRAINT provpopkey PRIMARY KEY (country, province, year), 
+	CONSTRAINT provpops_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT provpops_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country), 
+	CONSTRAINT provpopspop CHECK (Population >= 0), 
+	CONSTRAINT provpopsyear CHECK (Year >= 0)
+)
+
+/*
+3 rows from provpops table:
+province	country	year	population
+Hakkari	TR	2012.0	279982.0
+Anatolikis Makedonias kai Thrakis	GR	1991.0	570197.0
+Anatolikis Makedonias kai Thrakis	GR	1994.0	574308.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".religion (
+	country VARCHAR(4 CHAR) NOT NULL, 
+	name VARCHAR(50 CHAR) NOT NULL, 
+	percentage NUMBER, 
+	CONSTRAINT religionkey PRIMARY KEY (name, country), 
+	CONSTRAINT religion_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT religionpercent CHECK ((Percentage > 0) AND (Percentage <= 100))
+)
+
+/*
+3 rows from religion table:
+country	name	percentage
+AL	Muslim	70.0
+AL	Roman Catholic	10.0
+AL	Christian Orthodox	20.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".river (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	river VARCHAR(50 CHAR), 
+	lake VARCHAR(50 CHAR), 
+	sea VARCHAR(50 CHAR), 
+	length NUMBER, 
+	area NUMBER, 
+	mountains VARCHAR(50 CHAR), 
+	sourceelevation NUMBER, 
+	estuaryelevation NUMBER, 
+	CONSTRAINT riverkey PRIMARY KEY (name), 
+	CONSTRAINT river_lake_fk FOREIGN KEY(lake) REFERENCES mondial_gpt.lake (name), 
+	CONSTRAINT river_sea_fk FOREIGN KEY(sea) REFERENCES mondial_gpt.sea (name), 
+	CONSTRAINT estcoord CHECK ((Estuary.Latitude >= -90) AND 
+            (Estuary.Latitude <= 90) AND
+            (Estuary.Longitude > -180) AND
+            (Estuary.Longitude <= 180)), 
+	CONSTRAINT estcoord CHECK ((Estuary.Latitude >= -90) AND 
+            (Estuary.Latitude <= 90) AND
+            (Estuary.Longitude > -180) AND
+            (Estuary.Longitude <= 180)), 
+	CONSTRAINT riverarea CHECK (Area >= 0), 
+	CONSTRAINT riverlength CHECK (Length >= 0), 
+	CONSTRAINT rivflowsinto CHECK ((River IS NULL AND Lake IS NULL)
+            OR (River IS NULL AND Sea IS NULL)
+            OR (Lake IS NULL AND Sea is NULL)), 
+	CONSTRAINT rivflowsinto CHECK ((River IS NULL AND Lake IS NULL)
+            OR (River IS NULL AND Sea IS NULL)
+            OR (Lake IS NULL AND Sea is NULL)), 
+	CONSTRAINT rivflowsinto CHECK ((River IS NULL AND Lake IS NULL)
+            OR (River IS NULL AND Sea IS NULL)
+            OR (Lake IS NULL AND Sea is NULL)), 
+	CONSTRAINT sourcecoord CHECK ((Source.Latitude >= -90) AND 
+            (Source.Latitude <= 90) AND
+            (Source.Longitude > -180) AND
+            (Source.Longitude <= 180)), 
+	CONSTRAINT sourcecoord CHECK ((Source.Latitude >= -90) AND 
+            (Source.Latitude <= 90) AND
+            (Source.Longitude > -180) AND
+            (Source.Longitude <= 180))
+)
+
+/*
+3 rows from river table:
+name	river	lake	sea	length	area	mountains	sourceelevation	estuaryelevation
+Brigach	Donau	None	None	43.0	195.0	Black Forest	940.0	686.0
+Iller	Donau	None	None	147.0	2152.0	Alps	783.0	468.0
+Lech	Donau	None	None	264.0	3926.0	Alps	1840.0	392.0
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".riveronisland (
+	river VARCHAR(50 CHAR) NOT NULL, 
+	island VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT riverislkey PRIMARY KEY (river, island), 
+	CONSTRAINT riveronisland_island_fk FOREIGN KEY(island) REFERENCES mondial_gpt.island (name), 
+	CONSTRAINT riveronisland_river_fk FOREIGN KEY(river) REFERENCES mondial_gpt.river (name)
+)
+
+/*
+3 rows from riveronisland table:
+river	island
+Agus River	Mindanao
+Asahan	Sumatra
+Bann	Ireland
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".riverthrough (
+	river VARCHAR(50 CHAR) NOT NULL, 
+	lake VARCHAR(50 CHAR) NOT NULL, 
+	CONSTRAINT rthroughkey PRIMARY KEY (river, lake), 
+	CONSTRAINT riverthrough_lake_fk FOREIGN KEY(lake) REFERENCES mondial_gpt.lake (name), 
+	CONSTRAINT riverthrough_river_fk FOREIGN KEY(river) REFERENCES mondial_gpt.river (name)
+)
+
+/*
+3 rows from riverthrough table:
+river	lake
+Aare	Brienzersee
+Aare	Thunersee
+Adda	Lago di Como
+*/
+
+
+CREATE TABLE "MONDIAL_GPT".sea (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	area NUMBER, 
+	depth NUMBER, 
+	CONSTRAINT seakey PRIMARY KEY (name), 
+	CONSTRAINT seaar CHECK (Area >= 0), 
+	CONSTRAINT seadepth CHECK (Depth >= 0)
+)
+
+/*
+3 rows from sea table:
+name	area	depth
+Atlantic Ocean	None	9219.0
+Mediterranean Sea	2500000.0	5267.0
+Black Sea	436000.0	2211.0
+*/
+
+
+CREATE TABLE mondial_gpt.city (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	province VARCHAR(50 CHAR) NOT NULL, 
+	population NUMBER, 
+	latitude NUMBER, 
+	longitude NUMBER, 
+	elevation NUMBER, 
+	CONSTRAINT citykey PRIMARY KEY (name, country, province), 
+	CONSTRAINT city_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT city_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country), 
+	CONSTRAINT citylat CHECK ((Latitude >= -90) AND (Latitude <= 90)), 
+	CONSTRAINT citylon CHECK ((Longitude >= -180) AND (Longitude <= 180)), 
+	CONSTRAINT citypop CHECK (Population >= 0)
+)
+
+/*
+3 rows from city table:
+name	country	province	population	latitude	longitude	elevation
+Chimki	R	Moskovskaya	207425.0	55.9	37.45	180.0
+Odincovo	R	Moskovskaya	138930.0	55.67	37.27	190.0
+Orechovo-Zujevo	R	Moskovskaya	120670.0	55.8	38.97	120.0
+*/
+
+
+CREATE TABLE mondial_gpt.continent (
+	name VARCHAR(20 CHAR) NOT NULL, 
+	area NUMBER(10, 0), 
+	CONSTRAINT continentkey PRIMARY KEY (name)
+)
+
+/*
+3 rows from continent table:
+name	area
+Europe	9938000
+Asia	44579000
+Australia/Oceania	8600000
+*/
+
+
+CREATE TABLE mondial_gpt.country (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	code VARCHAR(4 CHAR) NOT NULL, 
+	capital VARCHAR(50 CHAR), 
+	province VARCHAR(50 CHAR), 
+	area NUMBER, 
+	population NUMBER, 
+	CONSTRAINT countrykey PRIMARY KEY (code), 
+	CONSTRAINT countryarea CHECK (Area >= 0), 
+	CONSTRAINT countrypop CHECK (Population >= 0)
+)
+
+/*
+3 rows from country table:
+name	code	capital	province	area	population
+Albania	AL	Tirana	Albania	28750.0	2821977.0
+Greece	GR	Athina	Attikis	131940.0	10816286.0
+Macedonia	MK	Skopje	Macedonia	25333.0	2059794.0
+*/
+
+
+CREATE TABLE mondial_gpt.desert (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	area NUMBER, 
+	CONSTRAINT desertkey PRIMARY KEY (name), 
+	CONSTRAINT descoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180)), 
+	CONSTRAINT descoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180))
+)
+
+/*
+3 rows from desert table:
+name	area
+Kalahari	1200000.0
+Namib	95000.0
+Ferlo	70000.0
+*/
+
+
+CREATE TABLE mondial_gpt.island (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	islands VARCHAR(50 CHAR), 
+	area NUMBER, 
+	elevation NUMBER, 
+	type VARCHAR(15 CHAR), 
+	CONSTRAINT islandkey PRIMARY KEY (name), 
+	CONSTRAINT islandar CHECK (Area >= 0), 
+	CONSTRAINT islandcoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180)), 
+	CONSTRAINT islandcoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180))
+)
+
+/*
+3 rows from island table:
+name	islands	area	elevation	type
+Lanai	Hawaii Islands	364.0	1026.0	volcanic
+Maui	Hawaii Islands	1883.0	3055.0	volcanic
+Hawaii	Hawaii Islands	10450.0	4214.0	volcanic
+*/
+
+
+CREATE TABLE mondial_gpt.lake (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	river VARCHAR(50 CHAR), 
+	area NUMBER, 
+	elevation NUMBER, 
+	depth NUMBER, 
+	height NUMBER, 
+	type VARCHAR(12 CHAR), 
+	CONSTRAINT lakekey PRIMARY KEY (name), 
+	CONSTRAINT lake_river_fk FOREIGN KEY(river) REFERENCES mondial_gpt.river (name), 
+	CONSTRAINT damheight CHECK (Height > 0), 
+	CONSTRAINT lakear CHECK (Area >= 0), 
+	CONSTRAINT lakecoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180)), 
+	CONSTRAINT lakecoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180)), 
+	CONSTRAINT lakedpth CHECK (Depth >= 0)
+)
+
+/*
+3 rows from lake table:
+name	river	area	elevation	depth	height	type
+Inarijärvi	Paatsjoki	1040.0	119.0	92.0	None	None
+Oulujärvi	Oulujoki	928.0	123.0	35.0	None	None
+Saimaa	Vuoksi	4370.0	76.0	85.0	None	None
+*/
+
+
+CREATE TABLE mondial_gpt.mountain (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	mountains VARCHAR(50 CHAR), 
+	elevation NUMBER, 
+	type VARCHAR(10 CHAR), 
+	CONSTRAINT mountainkey PRIMARY KEY (name), 
+	CONSTRAINT mountaincoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180)), 
+	CONSTRAINT mountaincoord CHECK ((Coordinates.Latitude >= -90) AND 
+            (Coordinates.Latitude <= 90) AND
+            (Coordinates.Longitude > -180) AND
+            (Coordinates.Longitude <= 180))
+)
+
+/*
+3 rows from mountain table:
+name	mountains	elevation	type
+Shah Fuladi	Koh-e-Baba	4951.0	None
+Zarghun Ghar	Sulaiman Range	3578.0	None
+Batura Sar	Karakorum	7795.0	None
+*/
+
+
+CREATE TABLE mondial_gpt.organization (
+	abbreviation VARCHAR(12 CHAR) NOT NULL, 
+	name VARCHAR(100 CHAR) NOT NULL, 
+	city VARCHAR(50 CHAR), 
+	country VARCHAR(4 CHAR), 
+	province VARCHAR(50 CHAR), 
+	established DATE, 
+	CONSTRAINT orgkey PRIMARY KEY (abbreviation), 
+	CONSTRAINT organization_city_province_fk FOREIGN KEY(city, country, province) REFERENCES mondial_gpt.city (name, country, province), 
+	CONSTRAINT organization_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT organization_province_country_fk FOREIGN KEY(province, country) REFERENCES mondial_gpt.province (name, country)
+)
+
+/*
+3 rows from organization table:
+abbreviation	name	city	country	province	established
+AfDB	African Development Bank Group	Abidjan	CI	Abidjan	1964-09-09 00:00:00
+AU	African Union	Addis Ababa	ETH	Addis Ababa	1963-05-25 00:00:00
+UNAMID	African Union/United Nations Hybrid Operation in Darfur	None	None	None	2007-07-31 00:00:00
+*/
+
+
+CREATE TABLE mondial_gpt.province (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	country VARCHAR(4 CHAR) NOT NULL, 
+	population NUMBER, 
+	area NUMBER, 
+	capital VARCHAR(50 CHAR), 
+	capprov VARCHAR(50 CHAR), 
+	CONSTRAINT prkey PRIMARY KEY (name, country), 
+	CONSTRAINT province_country_fk FOREIGN KEY(country) REFERENCES mondial_gpt.country (code), 
+	CONSTRAINT prar CHECK (Area >= 0), 
+	CONSTRAINT prpop CHECK (Population >= 0)
+)
+
+/*
+3 rows from province table:
+name	country	population	area	capital	capprov
+Astana	KAZ	814401.0	710.0	Astana	Astana
+Albania	AL	2821977.0	28750.0	Tirana	Albania
+Anatolikis Makedonias kai Thrakis	GR	608182.0	14157.0	Komotini	Anatolikis Makedonias kai Thrakis
+*/
+
+
+CREATE TABLE mondial_gpt.river (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	river VARCHAR(50 CHAR), 
+	lake VARCHAR(50 CHAR), 
+	sea VARCHAR(50 CHAR), 
+	length NUMBER, 
+	area NUMBER, 
+	mountains VARCHAR(50 CHAR), 
+	sourceelevation NUMBER, 
+	estuaryelevation NUMBER, 
+	CONSTRAINT riverkey PRIMARY KEY (name), 
+	CONSTRAINT river_lake_fk FOREIGN KEY(lake) REFERENCES mondial_gpt.lake (name), 
+	CONSTRAINT river_sea_fk FOREIGN KEY(sea) REFERENCES mondial_gpt.sea (name), 
+	CONSTRAINT estcoord CHECK ((Estuary.Latitude >= -90) AND 
+            (Estuary.Latitude <= 90) AND
+            (Estuary.Longitude > -180) AND
+            (Estuary.Longitude <= 180)), 
+	CONSTRAINT estcoord CHECK ((Estuary.Latitude >= -90) AND 
+            (Estuary.Latitude <= 90) AND
+            (Estuary.Longitude > -180) AND
+            (Estuary.Longitude <= 180)), 
+	CONSTRAINT riverarea CHECK (Area >= 0), 
+	CONSTRAINT riverlength CHECK (Length >= 0), 
+	CONSTRAINT rivflowsinto CHECK ((River IS NULL AND Lake IS NULL)
+            OR (River IS NULL AND Sea IS NULL)
+            OR (Lake IS NULL AND Sea is NULL)), 
+	CONSTRAINT rivflowsinto CHECK ((River IS NULL AND Lake IS NULL)
+            OR (River IS NULL AND Sea IS NULL)
+            OR (Lake IS NULL AND Sea is NULL)), 
+	CONSTRAINT rivflowsinto CHECK ((River IS NULL AND Lake IS NULL)
+            OR (River IS NULL AND Sea IS NULL)
+            OR (Lake IS NULL AND Sea is NULL)), 
+	CONSTRAINT sourcecoord CHECK ((Source.Latitude >= -90) AND 
+            (Source.Latitude <= 90) AND
+            (Source.Longitude > -180) AND
+            (Source.Longitude <= 180)), 
+	CONSTRAINT sourcecoord CHECK ((Source.Latitude >= -90) AND 
+            (Source.Latitude <= 90) AND
+            (Source.Longitude > -180) AND
+            (Source.Longitude <= 180))
+)
+
+/*
+3 rows from river table:
+name	river	lake	sea	length	area	mountains	sourceelevation	estuaryelevation
+Brigach	Donau	None	None	43.0	195.0	Black Forest	940.0	686.0
+Iller	Donau	None	None	147.0	2152.0	Alps	783.0	468.0
+Lech	Donau	None	None	264.0	3926.0	Alps	1840.0	392.0
+*/
+
+
+CREATE TABLE mondial_gpt.sea (
+	name VARCHAR(50 CHAR) NOT NULL, 
+	area NUMBER, 
+	depth NUMBER, 
+	CONSTRAINT seakey PRIMARY KEY (name), 
+	CONSTRAINT seaar CHECK (Area >= 0), 
+	CONSTRAINT seadepth CHECK (Depth >= 0)
+)
+
+/*
+3 rows from sea table:
+name	area	depth
+Atlantic Ocean	None	9219.0
+Mediterranean Sea	2500000.0	5267.0
+Black Sea	436000.0	2211.0
+*/
+
+CREATE TABLE "mondial_gpt"."mondial_located" 
+   (	"CITY" VARCHAR2(50 BYTE), 
+	"PROVINCE" VARCHAR2(50 BYTE), 
+	"COUNTRY" VARCHAR2(4 BYTE), 
+	"RIVER" VARCHAR2(50 BYTE), 
+	"LAKE" VARCHAR2(50 BYTE), 
+	"SEA" VARCHAR2(50 BYTE), 
+	"META_REPCOL" VARCHAR2(4000 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "MONDIAL_GPT" ;
+
+"CITY"	"PROVINCE"	"COUNTRY"	"RIVER"	"LAKE"	"SEA"
+"Salerno"	"Campania"	"I"	""	""	"Mediterranean Sea"
+"Nápoli"	"Campania"	"I"	""	""	"Mediterranean Sea"
+"Torre del Greco"	"Campania"	"I"	""	""	"Mediterranean Sea"
+
+{samples}
+
+Observation: !!!The "country" column of all tables refers to a "country code" that references the "code" column of the mondial_gpt.country table. !!!
+
+Question: {input}
+SELECT

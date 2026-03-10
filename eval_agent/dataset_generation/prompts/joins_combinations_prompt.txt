@@ -1,0 +1,23 @@
+Given the schema of the database, generate all possible join combinations between table i'll give you and the other tables in schema. Use PK and FK informations for that, and consider that the tables are connected by a single join.
+
+Be very careful with composed keys, they are a combination of two or more columns that are used to reference another table.
+
+Be very careful to not create joins that don't exist in the schema. There can be tables that are not connected at all.
+
+For each join condition, use the fully qualified column name format: 'TABLE1.COLUMN1=TABLE2.COLUMN2'
+
+Examples of the required format:
+- For a simple join: 
+  Join(from_='DATABASE_TABLE_1', to='DATABASE_TABLE_2', on=['DATABASE_TABLE_2.FK_COLUMN=DATABASE_TABLE_1.PK_COLUMN'])
+
+- For a compound join:
+  Join(from_='DATABASE_TABLE_1', to='DATABASE_TABLE_2', on=['DATABASE_TABLE_2.FK_COLUMN=DATABASE_TABLE_1.PK_COLUMN'])
+
+# Full Schema:
+{full_schema}
+ 
+# Target table:
+{target_table}
+
+BE CAREFUL TO NOT MISS ANY JOIN, AND DON'T CREATE A JOIN THAT DOESN'T EXIST IN THE SCHEMA. ALSO DON'T FORGET ANY TABLE IN THE SCHEMA.
+Structured Output:

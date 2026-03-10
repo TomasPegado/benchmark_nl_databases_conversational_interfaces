@@ -1,0 +1,299 @@
+Mondial_Country: the countries (and similar areas) of the world with some data.
+name: the country name
+code: the car code
+capital: the name of the capital
+province: the province where the capital belongs to
+area: the total area
+population: the population number
+--
+Mondial_Economy: economical information about the countries.
+country: the country code
+GDP: gross domestic product (in million $)
+agriculture: percentage of agriculture of the GDP
+service: percentage of services of the GDP
+industry: percentage of industry of the GDP
+inflation: inflation rate (per annum)
+unemployment: unemployment rate
+--
+Mondial_Politics: political information about the countries.
+country: the country code
+independence: date of independence (if independent)
+wasdependent: the political body where the area was dependent of; usually a country (but not
+always).
+dependent: the country code where the area belongs to
+government: type of government
+--
+Mondial_Population: information about the population of the countries.
+country: the country code
+population growth: population growth rate (per annum)
+infant mortality: infant mortality (per thousand)
+--
+Mondial_Countrypops: information about the population number of the countries in different years.
+country: the country code
+population: number of inhabitants
+year: in which year
+--
+Mondial_CountryLocalName: information about the local name of the country.
+country: the country code
+localname: the local name, usually in a local alphabet (UTF-8)
+--
+Mondial_Language: infomation about the languages spoken in a country
+country: the country code
+name: name of the languange
+percentage: percentage of the language in this country
+--
+Mondial_Religion: information about the religions in a country
+country: the country code
+name: name of the religion
+percentage: percentage of the language in this country
+--
+Mondial_EthnicGroup: information about the ethnic groups in a country
+country: the country code
+name: name of the religion
+percentage: percentage of the language in this country
+borders: informations about neighboring countries. Note that in this relation, for every pair of
+neighboring countries (A,B), only one tuple is given – thus, the relation is not symmetric.
+country1: a country code
+country2: a country code
+length: length of the border between country1 and country2
+--
+Mondial_Continent: Information about continents.
+name: name of the continent
+area: total area of the continent
+--
+Mondial_encompasses: information to which continents a country belongs.
+country: the country code
+continent: the continent name
+percentage: percentage, how much of the area of a country belongs to the continent
+--
+Mondial_City: information about cities.
+name: the name of the city
+country: the code of the country where it belongs to
+province: the name of the province where it belongs to
+population: population of the city
+elevation: the elevation (above sea level) of the city
+latitude: geographic latitude
+longitude: geographic longitude
+--
+Mondial_Citypops: information about the population number of the cities in different years.
+city: the name of the city
+province: the name of the province
+country: the code of the country where it belongs to
+population: number of inhabitants
+year: in which year
+--
+Mondial_CityLocalName: information about the local name of the city.
+city: the name of the city
+province: the name of the province
+country: the code of the country where it belongs to
+localname: the local name, usually in a local alphabet (UTF-8)
+--
+Mondial_Province: information about administrative divisions.
+name: the name of the administrative division
+country: the country code where it belongs to
+area: the total area of the province
+population: the population of the province
+capital: the name of the capital
+capprov: the name of the province where the capital belongs to
+note that capprov is not necessarily equal to name. E.g., the municipality of Bogota (Colombia) is a province of its own, and Bogota is also the capital of the surrounding province
+Cundinamarca.
+--
+Mondial_Provpops: information about the population number of the provinces in different years.
+province: the name of the province
+country: the code of the country where it belongs to
+population: number of inhabitants
+year: in which year
+--
+Mondial_ProvinceLocalName: information about the local name of the province.
+province: the name of the province
+country: the code of the country where it belongs to
+localname: the local name, usually in a local alphabet (UTF-8)
+--
+Mondial_Organization: information about political and economical organizations.
+name: the full name of the organization
+abbreviation: its abbreviation
+city: the city where the headquarters are located
+country: the code of the country where the headquarters are located
+province: the name of the province where the headquarters are located
+established: date of establishment
+--
+Mondial_isMember: memberships in political and economical organizations.
+organization: the abbreviation of the organization
+country: the code of the member country
+type: the type of membership
+--
+Mondial_Lake: information about lakes.
+name: the name of the lake
+area: the total area of the lake
+depth: the depth of the lake
+elevation: the elevation (above sea level) of the lake
+river: the river that flows out of the lake (may be null)
+type: the type of the lake, e.g., salt, caldera, ...
+coordinates: its geographical coordinates as (latitude, longitude)
+-
+Sea: information about seas.
+name: the name of the sea
+depth: the maximal depth of the sea
+area: the total area of the sea
+--
+Mondial_River: information about rivers.
+name: the name of the river
+length: the length of the river
+area: the size of its catchment area
+river: the river where it finally flows to
+lake: the lake where it finally flows to
+sea: the sea where it finally flows to;
+(note that at most one out of {river,lake,sea} can be non-null)
+source: the coordinates of its source
+sourceElevation: the elevation (above sea level) of its source
+mountains: the montains where its source is located
+estuary: the coordinates of its estuary
+estuaryElevation: the elevation (above sea level) of its estuary
+--
+Mondial_RiverThrough: information about rivers flowing through lakes.
+river: the name of the river
+lake: the lake where it flows through
+--
+Mondial_Mountain: information about mountains
+name: the name of the mountain
+mountains: the montains where the it belongs to
+elevation: the maximal elevation of the summit of the mountain
+type: the type of the mountain, e.g. volcanic, (active) volcano, ...
+coordinates: its geographical coordinates as (latitude, longitude)
+--
+Mondial_Island: information about islands
+name: the name of the island
+islands: the group of islands where it belongs to
+area: the area of the island
+elevation: the maximal elevation of the island
+type: the type of the island, e.g. volcanic, coral, atoll, ...
+coordinates: its geographical coordinates as (latitude, longitude)
+--
+Mondial_Desert: information about deserts.
+name: the name of the desert
+area: the total area of the desert
+coordinates: its geographical coordinates as (latitude, longitude)
+--
+Mondial_geo_Mountain: geographical information about mountains
+mountain: the name of the mountain
+country: the country code where it is located
+province: the province of this country
+Note that for a country there can be several provinces where the mountain is located in.
+analogous for geo island, geo desert, geo river, geo lake, geo sea. Analogously, there are also
+geo source and geo estuary.
+--
+Mondial_mergesWith: information about neighboring seas. Note that in this relation, for every pair of
+neighboring seas (A,B), only one tuple is given – thus, the relation is not symmetric.
+sea1: a sea
+sea2: a sea
+--
+Mondial_located: information about cities located at rivers, lakes, and seas.
+city: the name of the city
+country: the country code where the city belongs to
+province: the province where the city belongs to
+river: the river where it is located at
+lake: the lake where it is located at
+sea: the sea where it is located at
+Note that for a given city, there can be several lakes/seas/rivers where it is located at.
+--
+Mondial_locatedOn: information about cities located in islands.
+city: the name of the city
+country: the country code where the city belongs to
+province: the province where the city belongs to
+island: the island it is (maybe only partially) located on
+Note that for a given city, there can be several islands where it is located on.
+--
+Mondial_islandIn: information the waters where the islands are located in.
+island: the name of the island
+sea: the sea where the island is located in
+lake: the lake where the island is located in
+river: the river where the island is located in
+Note that an island can have coasts to several seas.
+--
+Mondial_MountainOnIsland: information which mountains are located on islands.
+mountain: the name of the mountain
+island: the name of the island
+--
+Mondial_RiverOnIsland: information which rivers are located on islands.
+river: the name of the river
+island: the name of the island
+--
+Mondial_LakeOnIsland: information which lakes are located on islands.
+lake: the name of the lake
+island: the name of the island
+--
+Mondial_Airport: information about airports
+iatacode: the IATA code of the airport
+name: the name of the airport
+country: the country code where the airport is located
+city: in case the airport is associated with a city, the name of the city
+province: the province where the city belongs to
+island: if it is located on an island, the name of this island
+latitude: geographic latitude
+longitude: geographic longitude
+elevation: the elevation (above sea level) of the city
+gmtOffset: the GMT offset of the local time
+--
+Mondial_Sublanguage: information about sublanguages
+Sublang: the sublanguage
+Suplang: the superlanguage
+--
+Mondial_Countryothername: information about other names of countries
+country: the country code
+othername: the other name
+--
+Mondial_Provinceothername: information about other names of provinces
+Province: the name of the province
+Country: the country code where it belongs to
+othername: the other name
+--
+Mondial_Cityothername: information about other names of cities
+City: the name of the city
+Country: the country code where it belongs to
+Province: the province where it belongs to
+othername: the other name
+--
+Mondial_borders: information about neighboring countries. Note that in this relation, for every pair of neighboring countries (A,B), only one tuple is given – thus, the relation is not symmetric.
+Country1: a country code
+Country2: a country code
+Length: length of the border between country1 and country2
+--
+Mondial_Sea: information about seas.
+Name: the name of the sea
+Area: the total area of the sea
+Depth: the maximal depth of the sea
+--
+Mondial_geo_Desert: geographical information about deserts
+Desert: the name of the desert
+Country: the country code where it is located
+Province: the province of this country
+--
+Mondial_geo_Island: geographical information about islands
+Island: the name of the island
+Country: the country code where it is located
+Province: the province of this country
+--
+Mondial_geo_River: geographical information about rivers
+River: the name of the river
+Country: the country code where it is located
+Province: the province of this country
+--
+Mondial_geo_Sea: geographical information about seas
+Sea: the name of the sea
+Country: the country code where it is located
+Province: the province of this country
+--
+Mondial_geo_lake: geographical information about lakes
+Lake: the name of the lake
+Country: the country code where it is located
+Province: the province of this country
+--
+Mondial_geo_Source: geographical information about the source of rivers
+River: the name of the river
+Country: the country code where it is located
+Province: the province of this country
+--
+Mondial_geo_Estuary: geographical information about the estuary of rivers
+River: the name of the river
+Country: the country code where it is located
+Province: the province of this country

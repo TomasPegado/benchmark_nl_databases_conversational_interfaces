@@ -1,4 +1,5 @@
-from eval_agent.text2sql_agent.agent_graph import build_graph
+from numpy import empty_like
+from eval_agent.conversational_agent.conversational_agent_graph import build_graph
 from functions.llm_config import LLMConfig
 from eval_agent.user_agent.states.user_agent_state import UserState
 from langchain_core.output_parsers import StrOutputParser
@@ -12,6 +13,7 @@ from pathlib import Path
 import time
 from datetime import datetime
 import paths  
+import pandas as pd
 # from functions.sqldatabase_langchain_utils import SQLDatabaseLangchainUtils
 import eval_agent.user_agent.prompts as prompts
 from functions.gptconfig import MODEL_4O
@@ -37,7 +39,7 @@ class EvaluatorNodes:
         else:
             self.EVALUATOR = None
   
-        self.AGENT = build_graph(have_memory=agent_memory, env=env)
+        self.conversational_agent_graph = build_graph(have_memory=agent_memory, env=env)
         self.llm = LLMConfig(provider="azure", environment=env).get_llm(model=MODEL_4O, max_tokens=2000)
 
     def classify_query_complexity(self, sql: Optional[str]) -> str:
@@ -233,7 +235,7 @@ class EvaluatorNodes:
 
         if state["debug_mode"]: print("[INFO] Enviando a query para o agente: ", nl_query)
 
-        state["last_response"] = self.text_to_sql_agent(nl_query, state["dialogue_agent_config"])
+        state["last_response"] = self.conversational_agent(nl_query, state["dialogue_agent_config"])
 
         state["interaction_history"] = state["last_response"]["messages"]
 
@@ -245,6 +247,11 @@ class EvaluatorNodes:
 
         print("----" * 10)
         return state
+    
+    def _empty_like(df: pd.DataFrame | None) -> pd.DataFrame:
+        # When we can't produce a table, fall back to an empty DF (LLM judge can handle it)
+        return df if isinstance(df, pd.DataFrame) else pd.DataFrame()
+
 
     def check_response(self, state: UserState) -> UserState:
         """
@@ -259,8 +266,18 @@ class EvaluatorNodes:
 
         try:
             print(f"[INFO] O resultado da execução foi: {state['last_response']['messages'][-1].content}.\n")
-            json_str = self.extract_outer_json(state["last_response"]["messages"][-1].content)
-            response = json.loads(json_str)
+            llm_response_content = state["last_response"]["messages"][-1].content
+            json_str = self.extract_outer_json(llm_response_content)
+            if json_str is None:
+                response = {
+                    "input": "feedback",
+                    "schema_linking": [],
+                    "answer": llm_response_content,
+                    "sql": ""
+                }
+            
+            else:
+                response = json.loads(json_str)
 
             answer = response["answer"]
             function_input = response["input"]
@@ -347,24 +364,56 @@ class EvaluatorNodes:
         evaluator = state.get("evaluator", None)
         correctness = True
         
-        if evaluator and ground_truth_golden_sql and golden_sql != "":
+        if evaluator and ground_truth_golden_sql and golden_sql != "" and alignment != False:
             try:
-                result_table = evaluator.run_sql_query(golden_sql)
-                true_table = evaluator.run_sql_query(ground_truth_golden_sql)
-                correctness, sim, col_match = evaluator.compare_sql_query_similarity_and_semantic(
-                    user_query=function_input,
-                    generated_query=golden_sql,
-                    result_table=result_table,
-                    true_query=ground_truth_golden_sql,
-                    true_table=true_table,
-                    similarity_threshold=0.8,
-                    column_matching_threshold=0.5,
-                    debug_mode=True
-                )
-            except Exception as e:
-                print(f"[ERROR] Erro ao executar a query: {e}")
-                correctness = False
-                state["retry_reason"] = "query_execution_error"
+                # 1) Only execution here. If this fails, it's truly an execution error.
+                try:
+                    result_table = evaluator.run_sql_query(golden_sql)
+                    true_table   = evaluator.run_sql_query(ground_truth_golden_sql)
+                except Exception as e:
+                    print(f"[ERROR] Query execution error: {e}")
+                    correctness = False
+                    state["retry_reason"] = "query_execution_error"
+                    
+                    raise
+                # 2) Comparison logic here. If this fails (bugs, edge cases, pandas issues, etc),
+                #    fall back to AI-as-judge instead of silently marking execution error.
+                try:
+                    correctness, sim, col_match = evaluator.compare_sql_query_similarity_and_semantic(
+                        user_query=function_input,
+                        generated_query=golden_sql,
+                        result_table=result_table,
+                        true_query=ground_truth_golden_sql,
+                        true_table=true_table,
+                        similarity_threshold=0.8,
+                        column_matching_threshold=0.5,
+                        debug_mode=True
+                    )
+                except Exception as e:
+                    print(f"[WARN] Non-execution error during comparison; falling back to AI judge: {e}")
+                    
+                    # Ensure we pass valid DataFrames
+                    result_table_safe = empty_like(result_table)
+                    true_table_safe   = empty_like(true_table)
+
+                    # LLM fallback
+                    correctness = evaluator.ai_as_judge_comparation(
+                        user_query=function_input,
+                        generated_query=golden_sql,
+                        true_query=ground_truth_golden_sql,
+                        result_table=result_table_safe,
+                        true_table=true_table_safe,
+                        debug_mode=True,
+                        sample_size=5,
+                        random_state=42
+                    )
+                    state["retry_reason"] = "ai_judge_fallback"
+
+            except Exception:
+                # If we re-raised an execution error above, we land here; correctness already set to False.
+                # If something else unexpected happened before correctness assignment, fail closed.
+                correctness = locals().get("correctness", False)
+                state.setdefault("retry_reason", "unknown_error")
         else:
             correctness = False
         
@@ -513,11 +562,15 @@ class EvaluatorNodes:
 
         print(
             f"[AI as JUDGE] Comparing intention between queries '{function_input}' and '{intention}' using AI as Judge method.")
-        input = HumanMessage(content=prompt)
+        
+        if function_input=="feedback":
+            result = "false"  # Se a função de input for "feedback", assumimos que não está alinhado com a intenção original, pois o usuário está pedindo para corrigir o erro.
+        else:
+            input = HumanMessage(content=prompt)
 
-        chain = self.llm | StrOutputParser()
+            chain = self.llm | StrOutputParser()
 
-        result = chain.invoke([input])
+            result = chain.invoke([input])
         print(f"[AI as JUDGE] Result: {result}.")
 
         return "true" in result.lower()
@@ -610,7 +663,7 @@ class EvaluatorNodes:
             
             state["experiment_eval"].append(new_interaction)
 
-    def text_to_sql_agent(self, nl_query: str, memory_config: dict) -> str:
+    def conversational_agent(self, nl_query: str, memory_config: dict) -> str:
         """
         This function calls a text-to-sql agent that use a natural language question (nl_query) and process it to a SQL query. The agent will return the SQL query executed and some observations about it.
         Args:
@@ -619,6 +672,6 @@ class EvaluatorNodes:
         """
 
         messages = [HumanMessage(content=nl_query)]
-        return self.AGENT.invoke({"messages": messages}, memory_config)
+        return self.conversational_agent_graph.invoke({"messages": messages}, memory_config)
 
 

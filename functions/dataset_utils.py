@@ -593,7 +593,25 @@ class DatasetEvaluator:
                                 user_query,
                                 generated_query: str, true_query: str,
                                 result_table: pd.DataFrame, true_table: pd.DataFrame,
-                                debug_mode=False):
+                                debug_mode=True,
+                                sample_size: int=5,
+                                random_state: int=42):
+        
+        # # ---------- Sampling helper ----------
+        def sample_df(df: pd.DataFrame) -> pd.DataFrame:
+            if df is None or df.empty:
+                return df
+
+            return df.sample(sample_size, random_state=random_state)
+        
+        # ---------- Apply sampling ----------
+        result_sample = sample_df(result_table)
+        true_sample = sample_df(true_table)
+
+        # # Convert to compact string
+        # result_str = result_sample.to_markdown(index=False)
+        # true_str = true_sample.to_markdown(index=False)
+        
         prompt = f"""
 # User Question Context:
 The original user question is:
@@ -605,7 +623,7 @@ The SQL query produced by the text-to-SQL agent is:
 
 # Generated Query Result:
 The execution of the generated query returned the following data:
-{result_table}
+{result_sample}
 
 # Ground Truth SQL Query:
 The ground truth (correct) SQL query is:
@@ -613,9 +631,10 @@ The ground truth (correct) SQL query is:
 
 # Ground Truth Query Result:
 The execution of the ground truth query returned the following data:
-{true_table}
+{true_sample}
 
 # Evaluation Question:
+BE AWARE that the tables provided are only samples of the full query results, and may not contain all rows.
 Based on the information provided above, do both SQL queries answer the user question? 
 Even if the resulting dataframes have minor differences in ordering, formatting, or other formal aspects, do they produce equivalent responses to the original question?
 
@@ -623,9 +642,11 @@ Even if the resulting dataframes have minor differences in ordering, formatting,
 If both the generated SQL query/Query Result have more information than the user question, please consider it as correct.
 If both return empty dataframes, please consider it as correct, but the columns should be the same (consider also True if the ordering is different, or have more than expected).
 
-Please just answer True or False, don't explain!!!
+Answer with a single character only, don't include any explanation or justification:
+T = True
+F = False
 
-# Evaluation Answer:
+
 """
         llm = get_llm(logprobs=True)
 
@@ -633,8 +654,8 @@ Please just answer True or False, don't explain!!!
 
         confidence = math.exp(result.response_metadata['logprobs']['content'][0]['logprob'])
 
-        if debug_mode: print(f"[AI as JUDGE sql query correctness] Result: {result.content} with {confidence} of confidence.")
-        return result.content.strip().lower() == "true" and confidence >= 0.98
+        if debug_mode: print(f"[AI as JUDGE sql query correctness] Result: {result.content} with {confidence} of confidence. And result metadata: {result.response_metadata}")
+        return result.content.strip().lower() == "t" and confidence >= 0.90
 
     def evaluate_query_batch(self,
                              queries: list[dict],
