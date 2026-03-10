@@ -215,3 +215,6 @@ connections/opensearch_kaggle_db_connection.json
 /eval_agent/text2sql_agent/text_to_sql/synthetic_dataset/*.csv
 /eval_agent/text2sql_agent/text_to_sql/synthetic_dataset/*.npy
 /eval_agent/dataset_generation/experiments_datasets/*.py
+connections/bird_db_connection.json
+eval_agent/conversational_agent/text_to_sql_tool/synthetic_dataset/mondial_dataset_GPT35_and_4_20240317-200242-relational_schema.csv
+eval_agent/conversational_agent/text_to_sql_tool/synthetic_dataset/mondial_embeddings_GPT35_and_4_20240317-200242-relational_schema.npy
