@@ -9,7 +9,7 @@ Stick only to the information requested in the original question, \
 not generating questions with information that does not exist in the original.\
 
 If there are acronyms or words you are not familiar with, do not try to rephrase them.
-Attention: Generate sub questions in natural language and brazilian portuguese! Do not generate SQL queries.
+Attention: Generate sub questions in natural language! Do not generate SQL queries.
 
 Generate the response as a json list containing only the list of subqueries necessary to answer the user's original question. For example:
 human: {question}

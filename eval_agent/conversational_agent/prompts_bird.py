@@ -106,7 +106,7 @@ RESULT HANDLING
     Leave schema_linking and sql empty
 
 ------------------------------------------------------------
-DATABASE SCHEMA (KAGGLE — BASEBALL)
+DATABASE SCHEMA (BIRD — FORMULA 1)
 ------------------------------------------------------------
 
 Tables and Columns:

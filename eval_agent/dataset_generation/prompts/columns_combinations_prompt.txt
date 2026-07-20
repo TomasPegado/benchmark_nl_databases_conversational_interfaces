@@ -2,7 +2,7 @@ You are generating candidate column combinations that can produce meaningful SQL
 for synthetic Text-to-SQL dialogue generation.
 
 Rules:
-- Prefer SINGLE-TABLE queries unless there are explicit foreign keys (none provided here).
+- Prefer SINGLE-TABLE queries unless there are explicit foreign keys.
 - Each combo should be a realistic query idea.
 - Avoid trivial combos (e.g., selecting only one column, or only numeric columns).
 - Use these common query patterns when possible:
@@ -10,7 +10,7 @@ Rules:
   (B) filtering: WHERE <dim/time> <op> <value>
   (C) ordering + top-k: ORDER BY AGG(<measure>) DESC (or by a numeric column)
   (D) time slicing when time columns exist (between, year filter)
-- Keep each combo small: 2–5 total referenced columns (including group/filter/agg columns).
+- Keep each combo with 2–5 total referenced columns (including group/filter/agg columns).
 - Output 3 to 5 combos for the target table.
 
 Filtering operators:
