@@ -613,41 +613,39 @@ class DatasetEvaluator:
         # true_str = true_sample.to_markdown(index=False)
         
         prompt = f"""
-# User Question Context:
-The original user question is:
-{user_query}
-        
-# Generated SQL Query:
-The SQL query produced by the text-to-SQL agent is:
-{generated_query}
+            # User Question Context:
+            The original user question is:
+            {user_query}
+                    
+            # Generated SQL Query:
+            The SQL query produced by the text-to-SQL agent is:
+            {generated_query}
 
-# Generated Query Result:
-The execution of the generated query returned the following data:
-{result_sample}
+            # Generated Query Result:
+            The execution of the generated query returned the following data:
+            {result_sample}
 
-# Ground Truth SQL Query:
-The ground truth (correct) SQL query is:
-{true_query}
+            # Ground Truth SQL Query:
+            The ground truth (correct) SQL query is:
+            {true_query}
 
-# Ground Truth Query Result:
-The execution of the ground truth query returned the following data:
-{true_sample}
+            # Ground Truth Query Result:
+            The execution of the ground truth query returned the following data:
+            {true_sample}
 
-# Evaluation Question:
-BE AWARE that the tables provided are only samples of the full query results, and may not contain all rows.
-Based on the information provided above, do both SQL queries answer the user question? 
-Even if the resulting dataframes have minor differences in ordering, formatting, or other formal aspects, do they produce equivalent responses to the original question?
+            # Evaluation Question:
+            BE AWARE that the tables provided are only samples of the full query results, and may not contain all rows.
+            Based on the information provided above, do both SQL queries answer the user question? 
+            Even if the resulting dataframes have minor differences in ordering, formatting, or other formal aspects, do they produce equivalent responses to the original question?
 
-# Tips:
-If both the generated SQL query/Query Result have more information than the user question, please consider it as correct.
-If both return empty dataframes, please consider it as correct, but the columns should be the same (consider also True if the ordering is different, or have more than expected).
+            # Tips:
+            If both the generated SQL query/Query Result have more information than the user question, please consider it as correct.
+            If both return empty dataframes, please consider it as correct, but the columns should be the same (consider also True if the ordering is different, or have more than expected).
 
-Answer with a single character only, don't include any explanation or justification:
-T = True
-F = False
-
-
-"""
+            Answer with a single character only, don't include any explanation or justification:
+            T = True
+            F = False
+            """
         llm = get_llm(logprobs=True)
 
         result = llm.invoke(prompt)

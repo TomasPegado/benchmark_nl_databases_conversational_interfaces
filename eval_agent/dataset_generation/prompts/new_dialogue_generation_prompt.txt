@@ -82,8 +82,8 @@ You must output a single JSON object with the structure of the EXAMPLE below and
     {{
       "interaction_id": "3",
       "speaker": "User",
-      "utterance": "And tell me also in wich continent it is?",
-      "intention": "In wich continent is <city retrieved in the previous interaction>?",
+      "utterance": "And tell me also in which continent it is?",
+      "intention": "In which continent is <city retrieved in the previous interaction>?",
       "ground_truths": {{
          "tables_from_schema_linking": [ ... ],
          "golden_sql": "<Valid SQL query for the additional question>"
