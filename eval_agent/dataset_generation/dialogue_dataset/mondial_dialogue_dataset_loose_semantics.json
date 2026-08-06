@@ -1,0 +1,2227 @@
+{
+  "dataset": [
+    {
+      "experiment_id": "1",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which organizations are associated with Albania?",
+          "intention": "What organizations are linked with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ISMEMBER"
+            ],
+            "golden_sql": "SELECT O.NAME FROM MONDIAL_COUNTRY C JOIN MONDIAL_ISMEMBER M ON C.CODE = M.COUNTRY JOIN MONDIAL_ORGANIZATION O ON M.ORGANIZATION = O.ABBREVIATION WHERE C.NAME = 'Albania'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What type of membership does Albania have with these organizations?",
+          "intention": "What is Albania's membership type in those organizations?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ISMEMBER"
+            ],
+            "golden_sql": "SELECT M.TYPE FROM MONDIAL_COUNTRY C JOIN MONDIAL_ISMEMBER M ON C.CODE = M.COUNTRY WHERE C.NAME = 'Albania' AND M.ORGANIZATION IN (SELECT O.ABBREVIATION FROM MONDIAL_COUNTRY C JOIN MONDIAL_ISMEMBER M ON C.CODE = M.COUNTRY JOIN MONDIAL_ORGANIZATION O ON M.ORGANIZATION = O.ABBREVIATION WHERE C.NAME = 'Albania')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Where are these organizations located?",
+          "intention": "What cities are these organizations located in?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ISMEMBER",
+              "MONDIAL_ORGANIZATION"
+            ],
+            "golden_sql": "SELECT O.CITY FROM MONDIAL_COUNTRY C JOIN MONDIAL_ISMEMBER M ON C.CODE = M.COUNTRY JOIN MONDIAL_ORGANIZATION O ON M.ORGANIZATION = O.ABBREVIATION WHERE C.NAME = 'Albania' AND O.ABBREVIATION IN (SELECT M.ORGANIZATION FROM MONDIAL_COUNTRY C JOIN MONDIAL_ISMEMBER M ON C.CODE = M.COUNTRY WHERE C.NAME = 'Albania')"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "2",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Can you show me all the seas located in Japan?",
+          "intention": "What seas are located in Japan?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA"
+            ],
+            "golden_sql": "SELECT SEA FROM MONDIAL_GEO_SEA WHERE COUNTRY = 'J'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which provinces in Japan have these seas?",
+          "intention": "Which provinces in Japan have those seas?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA"
+            ],
+            "golden_sql": "SELECT PROVINCE FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY) IN (SELECT SEA, COUNTRY FROM MONDIAL_GEO_SEA WHERE COUNTRY = 'J')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What other seas are connected to these seas?",
+          "intention": "What other seas are connected to those seas?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA",
+              "MONDIAL_MERGESWITH",
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT M.SEA2 FROM MONDIAL_MERGESWITH M JOIN MONDIAL_SEA S ON M.SEA1 = S.NAME WHERE M.SEA1 IN (SELECT SEA FROM MONDIAL_GEO_SEA WHERE COUNTRY = 'J')"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "3",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which airports are located in cities with a population greater than 200,000?",
+          "intention": "Find airports located in cities with a population above 200,000.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT A.NAME, A.IATACODE, A.CITY FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME AND A.COUNTRY = C.COUNTRY AND A.PROVINCE = C.PROVINCE WHERE C.POPULATION > 200000"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the elevation levels of these airports?",
+          "intention": "Find the elevation levels of the airports identified earlier.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT A.NAME, A.ELEVATION FROM MONDIAL_AIRPORT A WHERE (A.NAME, A.CITY, A.COUNTRY, A.PROVINCE) IN (SELECT A.NAME, A.CITY, A.COUNTRY, A.PROVINCE FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME AND A.COUNTRY = C.COUNTRY AND A.PROVINCE = C.PROVINCE WHERE C.POPULATION > 200000)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Are these airports located on an island?",
+          "intention": "Determine if the airports identified earlier are located on an island.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_GEO_ISLAND",
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT A.NAME, A.ISLAND FROM MONDIAL_AIRPORT A JOIN MONDIAL_GEO_ISLAND G ON A.ISLAND = G.ISLAND AND A.COUNTRY = G.COUNTRY AND A.PROVINCE = G.PROVINCE WHERE (A.NAME, A.CITY, A.COUNTRY, A.PROVINCE) IN (SELECT A.NAME, A.CITY, A.COUNTRY, A.PROVINCE FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME AND A.COUNTRY = C.COUNTRY AND A.PROVINCE = C.PROVINCE WHERE C.POPULATION > 200000)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "4",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the population of cities in Germany for the year 1987?",
+          "intention": "Find the population of cities in Germany for 1987.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS"
+            ],
+            "golden_sql": "SELECT CITY, POPULATION FROM MONDIAL_CITYPOPS WHERE COUNTRY = 'D' AND YEAR = 1987"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the provinces and countries of these cities?",
+          "intention": "Find the provinces and countries of the previously selected cities.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS",
+              "MONDIAL_PROVPOPS"
+            ],
+            "golden_sql": "SELECT C.CITY, C.PROVINCE, C.COUNTRY FROM MONDIAL_CITYPOPS C JOIN MONDIAL_PROVPOPS P ON C.PROVINCE = P.PROVINCE AND C.COUNTRY = P.COUNTRY WHERE (C.CITY, C.COUNTRY, C.YEAR) IN (SELECT CITY, COUNTRY, YEAR FROM MONDIAL_CITYPOPS WHERE COUNTRY = 'D' AND YEAR = 1987)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which rivers are located in these cities?",
+          "intention": "Find the rivers located in the previously selected cities.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS",
+              "MONDIAL_LOCATED"
+            ],
+            "golden_sql": "SELECT L.CITY, L.RIVER FROM MONDIAL_LOCATED L JOIN MONDIAL_CITYPOPS C ON L.CITY = C.CITY AND L.COUNTRY = C.COUNTRY AND L.PROVINCE = C.PROVINCE WHERE (C.CITY, C.COUNTRY, C.YEAR) IN (SELECT CITY, COUNTRY, YEAR FROM MONDIAL_CITYPOPS WHERE COUNTRY = 'D' AND YEAR = 1987)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "5",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the area of each continent?",
+          "intention": "What is the area of every continent?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT"
+            ],
+            "golden_sql": "SELECT NAME, AREA FROM MONDIAL_CONTINENT ORDER BY NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which continents have countries with populations recorded in the year 2002?",
+          "intention": "Which continents contain countries with population data from 2002?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT",
+              "MONDIAL_COUNTRYPOPS",
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT DISTINCT MC.NAME FROM MONDIAL_CONTINENT MC JOIN MONDIAL_ENCOMPASSES ME ON MC.NAME = ME.CONTINENT JOIN MONDIAL_COUNTRYPOPS MCP ON ME.COUNTRY = MCP.COUNTRY WHERE MCP.YEAR = 2002 ORDER BY MC.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the total area of these continents?",
+          "intention": "What is the combined area of those continents?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT"
+            ],
+            "golden_sql": "SELECT SUM(AREA) AS TOTAL_AREA FROM MONDIAL_CONTINENT WHERE NAME IN (SELECT DISTINCT MC.NAME FROM MONDIAL_CONTINENT MC JOIN MONDIAL_ENCOMPASSES ME ON MC.NAME = ME.CONTINENT JOIN MONDIAL_COUNTRYPOPS MCP ON ME.COUNTRY = MCP.COUNTRY WHERE MCP.YEAR = 2002)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "6",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What are the names and areas of the deserts in the database?",
+          "intention": "What are the names and areas of the deserts?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT NAME, AREA FROM MONDIAL_DESERT ORDER BY AREA DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which ethnic groups belong to the countries associated with these deserts?",
+          "intention": "Which ethnic groups belong to the countries of those deserts?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ETHNICGROUP",
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT EG.NAME, EG.PERCENTAGE FROM MONDIAL_ETHNICGROUP EG JOIN MONDIAL_GEO_DESERT GD ON EG.COUNTRY = GD.COUNTRY JOIN MONDIAL_DESERT D ON GD.DESERT = D.NAME WHERE D.NAME IN (SELECT NAME FROM MONDIAL_DESERT) ORDER BY EG.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the percentage of these ethnic groups?",
+          "intention": "What is the percentage of those ethnic groups?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ETHNICGROUP",
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT EG.NAME, EG.PERCENTAGE FROM MONDIAL_ETHNICGROUP EG JOIN MONDIAL_GEO_DESERT GD ON EG.COUNTRY = GD.COUNTRY JOIN MONDIAL_DESERT D ON GD.DESERT = D.NAME WHERE EG.NAME IN (SELECT EG.NAME FROM MONDIAL_ETHNICGROUP EG JOIN MONDIAL_GEO_DESERT GD ON EG.COUNTRY = GD.COUNTRY JOIN MONDIAL_DESERT D ON GD.DESERT = D.NAME WHERE D.NAME IN (SELECT NAME FROM MONDIAL_DESERT)) ORDER BY EG.PERCENTAGE DESC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "7",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers have matching entries in both estuary and river tables?",
+          "intention": "Which rivers exist in both the estuary and river tables?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY",
+              "MONDIAL_GEO_RIVER"
+            ],
+            "golden_sql": "SELECT E.RIVER, E.COUNTRY, E.PROVINCE FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_GEO_RIVER R ON E.RIVER = R.RIVER AND E.COUNTRY = R.COUNTRY AND E.PROVINCE = R.PROVINCE"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What metadata is associated with these estuaries?",
+          "intention": "What metadata is associated with the estuaries identified earlier?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY"
+            ],
+            "golden_sql": "SELECT E.META_REPCOL FROM MONDIAL_GEO_ESTUARY E WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT E.RIVER, E.COUNTRY, E.PROVINCE FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_GEO_RIVER R ON E.RIVER = R.RIVER AND E.COUNTRY = R.COUNTRY AND E.PROVINCE = R.PROVINCE)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the metadata from the source table for these estuaries?",
+          "intention": "What metadata does the source table provide for the estuaries identified earlier?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY",
+              "MONDIAL_GEO_SOURCE"
+            ],
+            "golden_sql": "SELECT E.RIVER, E.COUNTRY, E.PROVINCE, S.META_REPCOL AS SOURCE_METADATA FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_GEO_SOURCE S ON E.RIVER = S.RIVER AND E.COUNTRY = S.COUNTRY AND E.PROVINCE = S.PROVINCE WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT E.RIVER, E.COUNTRY, E.PROVINCE FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_GEO_RIVER R ON E.RIVER = R.RIVER AND E.COUNTRY = R.COUNTRY AND E.PROVINCE = R.PROVINCE)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "8",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What are the names and countries of lakes located in provinces?",
+          "intention": "Which lakes have their provinces specified?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT LAKE, COUNTRY FROM MONDIAL_GEO_LAKE WHERE PROVINCE != NULL"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which islands are found in the lakes from the previous result?",
+          "intention": "Which islands are located in those lakes?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_ISLANDIN"
+            ],
+            "golden_sql": "SELECT ISLAND FROM MONDIAL_ISLANDIN WHERE LAKE IN (SELECT LAKE FROM MONDIAL_GEO_LAKE WHERE PROVINCE != NULL)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the provinces of these lakes?",
+          "intention": "What provinces are these lakes located in?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT LAKE, PROVINCE FROM MONDIAL_GEO_LAKE WHERE LAKE IN (SELECT LAKE FROM MONDIAL_GEO_LAKE WHERE PROVINCE != NULL)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "9",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "List the mountains along with their elevation that are present in the mondial_geo_mountain table.",
+          "intention": "Which mountains and their elevations are listed in the mondial_geo_mountain table?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_mountain"
+            ],
+            "golden_sql": "SELECT G.MOUNTAIN, M.ELEVATION FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which islands do these mountains belong to?",
+          "intention": "Which islands do those mountains belong to?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_mountain",
+              "mondial_mountainonisland"
+            ],
+            "golden_sql": "SELECT I.ISLAND FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME JOIN MONDIAL_MOUNTAINONISLAND I ON M.NAME = I.MOUNTAIN WHERE (G.MOUNTAIN, M.ELEVATION) IN (SELECT G.MOUNTAIN, M.ELEVATION FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which countries are these mountains located in?",
+          "intention": "Which countries are those mountains located in?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_mountain",
+              "mondial_mountainonisland"
+            ],
+            "golden_sql": "SELECT G.COUNTRY FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME JOIN MONDIAL_MOUNTAINONISLAND I ON M.NAME = I.MOUNTAIN WHERE (G.MOUNTAIN, M.ELEVATION) IN (SELECT G.MOUNTAIN, M.ELEVATION FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "10",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which pairs of bordering countries have the longest border?",
+          "intention": "Which pairs of bordering countries share the longest border?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT COUNTRY1, COUNTRY2, MAX(LENGTH) AS MAX_BORDER_LENGTH FROM MONDIAL_BORDERS GROUP BY COUNTRY1, COUNTRY2 ORDER BY MAX_BORDER_LENGTH DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Can you show me the borders longer than 300 kilometers?",
+          "intention": "Which borders are longer than 300 kilometers?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT COUNTRY1, COUNTRY2, LENGTH FROM MONDIAL_BORDERS WHERE LENGTH > 300 ORDER BY LENGTH DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which countries are involved in these borders?",
+          "intention": "Which countries share the borders mentioned?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_COUNTRY"
+            ],
+            "golden_sql": "SELECT C1.NAME AS COUNTRY1_NAME, C2.NAME AS COUNTRY2_NAME FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C1 ON B.COUNTRY1 = C1.CODE JOIN MONDIAL_COUNTRY C2 ON B.COUNTRY2 = C2.CODE WHERE (COUNTRY1, COUNTRY2) IN (SELECT COUNTRY1, COUNTRY2 FROM MONDIAL_BORDERS WHERE LENGTH > 300)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "11",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which organizations are located in cities from Russia?",
+          "intention": "Find organizations located in cities from Russia.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_ORGANIZATION"
+            ],
+            "golden_sql": "SELECT MO.NAME, MO.ABBREVIATION FROM MONDIAL_ORGANIZATION MO JOIN MONDIAL_CITY MC ON MO.CITY = MC.NAME AND MO.COUNTRY = MC.COUNTRY AND MO.PROVINCE = MC.PROVINCE WHERE MC.COUNTRY = 'R'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which cities have organizations established after 1950?",
+          "intention": "Find cities with organizations established after 1950.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_ORGANIZATION"
+            ],
+            "golden_sql": "SELECT MC.NAME, MC.COUNTRY, MC.PROVINCE FROM MONDIAL_CITY MC JOIN MONDIAL_ORGANIZATION MO ON MO.CITY = MC.NAME AND MO.COUNTRY = MC.COUNTRY AND MO.PROVINCE = MC.PROVINCE WHERE (MO.NAME, MO.CITY, MO.COUNTRY, MO.PROVINCE) IN (SELECT NAME, CITY, COUNTRY, PROVINCE FROM MONDIAL_ORGANIZATION WHERE ESTABLISHED > TO_DATE('1950-01-01','YYYY-MM-DD'))"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the names of other cities in the same province as the cities with organizations established after 1950?",
+          "intention": "Find other cities in provinces of cities with organizations established after 1950.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_ORGANIZATION",
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT MC_OTHER.CITY, MC_OTHER.PROVINCE FROM MONDIAL_CITYOTHERNAME MC_OTHER JOIN MONDIAL_CITY MC ON MC_OTHER.PROVINCE = MC.PROVINCE WHERE (MC.NAME, MC.COUNTRY, MC.PROVINCE) IN (SELECT MC.NAME, MC.COUNTRY, MC.PROVINCE FROM MONDIAL_CITY MC JOIN MONDIAL_ORGANIZATION MO ON MO.CITY = MC.NAME AND MO.COUNTRY = MC.COUNTRY AND MO.PROVINCE = MC.PROVINCE WHERE MO.ESTABLISHED > TO_DATE('1950-01-01','YYYY-MM-DD'))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "12",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers flow into lakes within China?",
+          "intention": "Which rivers flow into lakes located in China?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_RIVERTHROUGH",
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT R.RIVER FROM MONDIAL_RIVERTHROUGH R JOIN MONDIAL_LAKE L ON R.LAKE = L.NAME JOIN MONDIAL_GEO_LAKE G ON L.NAME = G.LAKE WHERE G.COUNTRY = 'CN'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the provinces of these lakes?",
+          "intention": "Which provinces are associated with the lakes from the previous query?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_RIVERTHROUGH",
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT DISTINCT G.PROVINCE FROM MONDIAL_GEO_LAKE G WHERE G.LAKE IN (SELECT L.NAME FROM MONDIAL_RIVERTHROUGH R JOIN MONDIAL_LAKE L ON R.LAKE = L.NAME JOIN MONDIAL_GEO_LAKE G ON L.NAME = G.LAKE WHERE G.COUNTRY = 'CN')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "How many lakes are there in each country?",
+          "intention": "Count the number of lakes in each country.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT G.COUNTRY, COUNT(G.LAKE) FROM MONDIAL_GEO_LAKE G GROUP BY G.COUNTRY ORDER BY G.COUNTRY ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "13",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the area of deserts listed in the database?",
+          "intention": "What is the area of all deserts?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT NAME, AREA FROM MONDIAL_DESERT ORDER BY AREA DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Can you tell me which desert has the smallest area?",
+          "intention": "Which desert has the smallest area?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT NAME, AREA FROM MONDIAL_DESERT ORDER BY AREA ASC FETCH FIRST 1 ROWS ONLY"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which provinces and countries contain this desert?",
+          "intention": "Which provinces and countries contain that desert?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT",
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_PROVINCEOTHERNAME"
+            ],
+            "golden_sql": "SELECT G.PROVINCE, G.COUNTRY FROM MONDIAL_GEO_DESERT G JOIN MONDIAL_DESERT D ON G.DESERT = D.NAME JOIN MONDIAL_PROVINCEOTHERNAME P ON G.COUNTRY = P.COUNTRY AND G.PROVINCE = P.PROVINCE WHERE (D.NAME, D.AREA) IN (SELECT NAME, AREA FROM MONDIAL_DESERT ORDER BY AREA ASC FETCH FIRST 1 ROWS ONLY)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "14",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What are the names of the two seas that merge with each other?",
+          "intention": "What are the names of the seas that merge with each other?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MERGESWITH"
+            ],
+            "golden_sql": "SELECT SEA1, SEA2 FROM MONDIAL_MERGESWITH"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Can you provide additional information about the seas that merge with each other?",
+          "intention": "What additional details are available about the seas that merge with each other?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MERGESWITH"
+            ],
+            "golden_sql": "SELECT SEA1, SEA2, META_REPCOL FROM MONDIAL_MERGESWITH WHERE (SEA1, SEA2) IN (SELECT SEA1, SEA2 FROM MONDIAL_MERGESWITH)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the areas and depths of these seas?",
+          "intention": "What are the area and depth of the seas that merge with each other?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MERGESWITH",
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT MS.SEA1, MS.SEA2, S.AREA, S.DEPTH FROM MONDIAL_MERGESWITH MS JOIN MONDIAL_SEA S ON MS.SEA1 = S.NAME OR MS.SEA2 = S.NAME WHERE (MS.SEA1, MS.SEA2) IN (SELECT SEA1, SEA2 FROM MONDIAL_MERGESWITH)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "15",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which cities have a population greater than 200,000?",
+          "intention": "Which cities have a population greater than two hundred thousand?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT NAME, POPULATION FROM MONDIAL_CITY WHERE POPULATION > 200000 ORDER BY NAME ASC, COUNTRY ASC, PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which islands are these cities located on?",
+          "intention": "Which islands are those cities located on?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_LOCATEDON"
+            ],
+            "golden_sql": "SELECT L.ISLAND FROM MONDIAL_LOCATEDON L JOIN MONDIAL_CITY C ON C.NAME = L.CITY AND C.COUNTRY = L.COUNTRY AND C.PROVINCE = L.PROVINCE WHERE (C.NAME, C.COUNTRY, C.PROVINCE) IN (SELECT NAME, COUNTRY, PROVINCE FROM MONDIAL_CITY WHERE POPULATION > 200000)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What other names do these cities have?",
+          "intention": "What other names do these cities go by?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT CN.OTHERNAME FROM MONDIAL_CITYOTHERNAME CN JOIN MONDIAL_CITY C ON C.NAME = CN.CITY AND C.COUNTRY = CN.COUNTRY AND C.PROVINCE = CN.PROVINCE WHERE (C.NAME, C.COUNTRY, C.PROVINCE) IN (SELECT NAME, COUNTRY, PROVINCE FROM MONDIAL_CITY WHERE POPULATION > 200000)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "16",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which airports are located in provinces with a population larger than 1,000,000?",
+          "intention": "Which airports are in provinces with a population larger than one million?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT A.NAME, A.CITY, A.PROVINCE FROM MONDIAL_AIRPORT A JOIN MONDIAL_PROVINCE P ON A.PROVINCE = P.NAME AND A.COUNTRY = P.COUNTRY WHERE P.POPULATION > 1000000"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What organizations are located in the same provinces as those airports?",
+          "intention": "What organizations are located in the same provinces as those airports?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ORGANIZATION",
+              "MONDIAL_PROVINCE",
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT O.NAME, O.PROVINCE FROM MONDIAL_ORGANIZATION O JOIN MONDIAL_PROVINCE P ON O.PROVINCE = P.NAME AND O.COUNTRY = P.COUNTRY WHERE P.NAME IN (SELECT P.NAME FROM MONDIAL_AIRPORT A JOIN MONDIAL_PROVINCE P ON A.PROVINCE = P.NAME AND A.COUNTRY = P.COUNTRY WHERE P.POPULATION > 1000000)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the countries of these organizations?",
+          "intention": "Which countries are these organizations located in?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ORGANIZATION",
+              "MONDIAL_PROVINCE",
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT DISTINCT O.COUNTRY FROM MONDIAL_ORGANIZATION O JOIN MONDIAL_PROVINCE P ON O.PROVINCE = P.NAME AND O.COUNTRY = P.COUNTRY WHERE P.NAME IN (SELECT P.NAME FROM MONDIAL_AIRPORT A JOIN MONDIAL_PROVINCE P ON A.PROVINCE = P.NAME AND A.COUNTRY = P.COUNTRY WHERE P.POPULATION > 1000000)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "17",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries have deserts and what are their names?",
+          "intention": "List the countries that have deserts and their names.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_desert",
+              "mondial_geo_desert"
+            ],
+            "golden_sql": "SELECT DISTINCT MONDIAL_GEO_DESERT.COUNTRY, MONDIAL_DESERT.NAME FROM MONDIAL_DESERT JOIN MONDIAL_GEO_DESERT ON MONDIAL_GEO_DESERT.DESERT = MONDIAL_DESERT.NAME"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the area of these deserts?",
+          "intention": "Find out the area of those deserts.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_desert"
+            ],
+            "golden_sql": "SELECT NAME, AREA FROM MONDIAL_DESERT WHERE NAME IN (SELECT DISTINCT MONDIAL_DESERT.NAME FROM MONDIAL_DESERT JOIN MONDIAL_GEO_DESERT ON MONDIAL_GEO_DESERT.DESERT = MONDIAL_DESERT.NAME)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the population growth of the countries that have these deserts?",
+          "intention": "Find the population growth for the countries that have those deserts.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_desert",
+              "mondial_geo_desert",
+              "mondial_population"
+            ],
+            "golden_sql": "SELECT MONDIAL_POPULATION.COUNTRY, MONDIAL_POPULATION.POPULATION_GROWTH FROM MONDIAL_POPULATION WHERE COUNTRY IN (SELECT DISTINCT MONDIAL_GEO_DESERT.COUNTRY FROM MONDIAL_GEO_DESERT JOIN MONDIAL_DESERT ON MONDIAL_GEO_DESERT.DESERT = MONDIAL_DESERT.NAME)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "18",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers flow into lakes and what are their names?",
+          "intention": "Which rivers flow into lakes and what are their names?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVERTHROUGH",
+              "MONDIAL_RIVER",
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT RIVERTHROUGH.RIVER, RIVERTHROUGH.LAKE FROM MONDIAL_RIVERTHROUGH RIVERTHROUGH JOIN MONDIAL_RIVER RIVER ON RIVERTHROUGH.RIVER = RIVER.NAME JOIN MONDIAL_LAKE LAKE ON RIVERTHROUGH.LAKE = LAKE.NAME"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the elevations of the mountains that feed these rivers?",
+          "intention": "What are the elevations of the mountains feeding those rivers?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER",
+              "MONDIAL_MOUNTAIN"
+            ],
+            "golden_sql": "SELECT MOUNTAIN.NAME, MOUNTAIN.ELEVATION FROM MONDIAL_MOUNTAIN MOUNTAIN JOIN MONDIAL_RIVER RIVER ON MOUNTAIN.NAME = RIVER.MOUNTAINS WHERE RIVER.NAME IN (SELECT RIVERTHROUGH.RIVER FROM MONDIAL_RIVERTHROUGH RIVERTHROUGH JOIN MONDIAL_RIVER RIVER ON RIVERTHROUGH.RIVER = RIVER.NAME JOIN MONDIAL_LAKE LAKE ON RIVERTHROUGH.LAKE = LAKE.NAME)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the types of lakes associated with these rivers?",
+          "intention": "What are the types of lakes connected to those rivers?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT LAKE.NAME, LAKE.TYPE FROM MONDIAL_LAKE LAKE WHERE LAKE.NAME IN (SELECT RIVERTHROUGH.LAKE FROM MONDIAL_RIVERTHROUGH RIVERTHROUGH JOIN MONDIAL_RIVER RIVER ON RIVERTHROUGH.RIVER = RIVER.NAME JOIN MONDIAL_LAKE LAKE ON RIVERTHROUGH.LAKE = LAKE.NAME)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "19",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which airports are located in the same cities as the cities in the mondial_city table?",
+          "intention": "Find airports located in the same cities as those listed in the mondial_city table.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT A.NAME, A.CITY FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Can you provide me with the provinces of these airports?",
+          "intention": "Provide the provinces of the airports from the previous query.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT A.NAME, A.PROVINCE FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME WHERE (A.NAME, A.CITY) IN (SELECT A.NAME, A.CITY FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which countries are these airports located in?",
+          "intention": "Find the countries where the airports from the previous query are located.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT A.NAME, A.COUNTRY FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME WHERE (A.NAME, A.CITY) IN (SELECT A.NAME, A.CITY FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "20",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which cities are located on islands?",
+          "intention": "Which cities are situated on islands?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_citypops",
+              "mondial_locatedon"
+            ],
+            "golden_sql": "SELECT C.CITY FROM MONDIAL_CITYPOPS C JOIN MONDIAL_LOCATEDON L ON C.CITY = L.CITY AND C.PROVINCE = L.PROVINCE AND C.COUNTRY = L.COUNTRY"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the provinces of those cities?",
+          "intention": "What provinces do those cities belong to?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_citypops",
+              "mondial_locatedon"
+            ],
+            "golden_sql": "SELECT C.PROVINCE FROM MONDIAL_CITYPOPS C JOIN MONDIAL_LOCATEDON L ON C.CITY = L.CITY AND C.PROVINCE = L.PROVINCE AND C.COUNTRY = L.COUNTRY WHERE (C.CITY, C.PROVINCE, C.COUNTRY) IN (SELECT C.CITY, C.PROVINCE, C.COUNTRY FROM MONDIAL_CITYPOPS C JOIN MONDIAL_LOCATEDON L ON C.CITY = L.CITY AND C.PROVINCE = L.PROVINCE AND C.COUNTRY = L.COUNTRY)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the population of these provinces in 2011?",
+          "intention": "What is the population of those provinces in 2011?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_citypops",
+              "mondial_locatedon",
+              "mondial_provpops"
+            ],
+            "golden_sql": "SELECT P.POPULATION FROM MONDIAL_PROVPOPS P JOIN MONDIAL_CITYPOPS C ON C.PROVINCE = P.PROVINCE AND C.COUNTRY = P.COUNTRY JOIN MONDIAL_LOCATEDON L ON C.CITY = L.CITY AND C.PROVINCE = L.PROVINCE AND C.COUNTRY = L.COUNTRY WHERE P.YEAR = 2011 AND (C.CITY, C.PROVINCE, C.COUNTRY) IN (SELECT C.CITY, C.PROVINCE, C.COUNTRY FROM MONDIAL_CITYPOPS C JOIN MONDIAL_LOCATEDON L ON C.CITY = L.CITY AND C.PROVINCE = L.PROVINCE AND C.COUNTRY = L.COUNTRY)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "21",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the area of Asia?",
+          "intention": "What is the area of Asia?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT"
+            ],
+            "golden_sql": "SELECT AREA FROM MONDIAL_CONTINENT WHERE NAME = 'Asia'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Can you tell me the area of Europe as well?",
+          "intention": "What is the area of Europe?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT"
+            ],
+            "golden_sql": "SELECT AREA FROM MONDIAL_CONTINENT WHERE NAME = 'Europe'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the countries in Europe?",
+          "intention": "Which countries are in Europe?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT",
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_ENCOMPASSES WHERE CONTINENT = 'Europe'"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "22",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which deserts are located in countries with a high unemployment rate?",
+          "intention": "Which deserts are in countries with high unemployment rates?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT",
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_ETHNICGROUP",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT MD.NAME FROM MONDIAL_DESERT MD JOIN MONDIAL_GEO_DESERT MGD ON MGD.DESERT = MD.NAME JOIN MONDIAL_ETHNICGROUP MEG ON MEG.COUNTRY = MGD.COUNTRY JOIN MONDIAL_ECONOMY ME ON ME.COUNTRY = MEG.COUNTRY WHERE ME.UNEMPLOYMENT > 20"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the GDP of the countries that have these deserts?",
+          "intention": "What is the GDP of countries with these deserts?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT",
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_ETHNICGROUP",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT ME.COUNTRY, ME.GDP FROM MONDIAL_ECONOMY ME WHERE ME.COUNTRY IN (SELECT MGD.COUNTRY FROM MONDIAL_GEO_DESERT MGD JOIN MONDIAL_DESERT MD ON MGD.DESERT = MD.NAME JOIN MONDIAL_ETHNICGROUP MEG ON MEG.COUNTRY = MGD.COUNTRY JOIN MONDIAL_ECONOMY ME ON ME.COUNTRY = MEG.COUNTRY WHERE ME.UNEMPLOYMENT > 20)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the areas of these deserts?",
+          "intention": "What are the areas of the previously selected deserts?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT MD.NAME, MD.AREA FROM MONDIAL_DESERT MD WHERE MD.NAME IN (SELECT MD.NAME FROM MONDIAL_DESERT MD JOIN MONDIAL_GEO_DESERT MGD ON MGD.DESERT = MD.NAME JOIN MONDIAL_ETHNICGROUP MEG ON MEG.COUNTRY = MGD.COUNTRY JOIN MONDIAL_ECONOMY ME ON ME.COUNTRY = MEG.COUNTRY WHERE ME.UNEMPLOYMENT > 20)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "23",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Can you list all the rivers in the estuary table?",
+          "intention": "List all the rivers in the estuary dataset.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY"
+            ],
+            "golden_sql": "SELECT RIVER FROM MONDIAL_GEO_ESTUARY ORDER BY RIVER ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which provinces do these rivers belong to?",
+          "intention": "Find out which provinces these rivers belong to.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY"
+            ],
+            "golden_sql": "SELECT RIVER, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE RIVER IN (SELECT RIVER FROM MONDIAL_GEO_ESTUARY) ORDER BY RIVER ASC, PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which country does each river and province combination belong to?",
+          "intention": "Find out the country for each river and province combination.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY",
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT E.RIVER, E.PROVINCE, P.COUNTRY FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_PROVINCE P ON E.PROVINCE = P.NAME AND E.COUNTRY = P.COUNTRY WHERE (E.RIVER, E.PROVINCE) IN (SELECT RIVER, PROVINCE FROM MONDIAL_GEO_ESTUARY) ORDER BY E.RIVER ASC, E.PROVINCE ASC, P.COUNTRY ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "24",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which lakes are located in China and have a province specified?",
+          "intention": "Which lakes in China have a province specified?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT LAKE, COUNTRY FROM MONDIAL_GEO_LAKE WHERE COUNTRY = 'CN' AND PROVINCE != NULL"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Can you give me the names and provinces of those lakes?",
+          "intention": "What are the names and provinces of those lakes?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT LAKE, PROVINCE FROM MONDIAL_GEO_LAKE WHERE (LAKE, COUNTRY) IN (SELECT LAKE, COUNTRY FROM MONDIAL_GEO_LAKE WHERE COUNTRY = 'CN' AND PROVINCE != NULL)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which islands are located in the same lakes as those lakes?",
+          "intention": "Which islands are in the same lakes as those lakes?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_ISLANDIN",
+              "MONDIAL_ISLAND"
+            ],
+            "golden_sql": "SELECT I.NAME FROM MONDIAL_ISLAND I JOIN MONDIAL_ISLANDIN II ON II.ISLAND = I.NAME JOIN MONDIAL_GEO_LAKE GL ON GL.LAKE = II.LAKE WHERE (GL.LAKE, GL.COUNTRY) IN (SELECT LAKE, COUNTRY FROM MONDIAL_GEO_LAKE WHERE COUNTRY = 'CN' AND PROVINCE != NULL)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "25",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which seas are associated with countries and their population growth rates?",
+          "intention": "Which seas are linked to countries and their population growth rates?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA",
+              "MONDIAL_POPULATION"
+            ],
+            "golden_sql": "SELECT G.SEA, G.COUNTRY, P.POPULATION_GROWTH FROM MONDIAL_GEO_SEA G JOIN MONDIAL_POPULATION P ON G.COUNTRY = P.COUNTRY"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the names and depths of these seas?",
+          "intention": "What are the names and depths of those seas?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA",
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT S.NAME, S.DEPTH FROM MONDIAL_SEA S WHERE S.NAME IN (SELECT G.SEA FROM MONDIAL_GEO_SEA G JOIN MONDIAL_POPULATION P ON G.COUNTRY = P.COUNTRY)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which countries are connected to these seas?",
+          "intention": "Which countries are linked to those seas?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA",
+              "MONDIAL_POPULATION"
+            ],
+            "golden_sql": "SELECT DISTINCT G.COUNTRY FROM MONDIAL_GEO_SEA G WHERE G.SEA IN (SELECT S.NAME FROM MONDIAL_SEA S WHERE S.NAME IN (SELECT G.SEA FROM MONDIAL_GEO_SEA G JOIN MONDIAL_POPULATION P ON G.COUNTRY = P.COUNTRY))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "26",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What provinces are associated with the mountains listed in the database?",
+          "intention": "Which provinces are associated with the mountains?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_MOUNTAIN"
+            ],
+            "golden_sql": "SELECT PROVINCE FROM MONDIAL_GEO_MOUNTAIN ORDER BY PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Can you tell me the countries where these provinces are located?",
+          "intention": "Which countries are associated with the previously selected provinces?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_MOUNTAIN"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_GEO_MOUNTAIN WHERE PROVINCE IN (SELECT PROVINCE FROM MONDIAL_GEO_MOUNTAIN) ORDER BY COUNTRY ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the elevation of the mountains in those countries?",
+          "intention": "What is the elevation of the mountains in these countries?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_MOUNTAIN",
+              "MONDIAL_MOUNTAIN",
+              "MONDIAL_POLITICS"
+            ],
+            "golden_sql": "SELECT MM.NAME, MM.ELEVATION FROM MONDIAL_MOUNTAIN MM JOIN MONDIAL_GEO_MOUNTAIN MGM ON MM.MOUNTAINS = MGM.MOUNTAIN JOIN MONDIAL_POLITICS MP ON MGM.COUNTRY = MP.COUNTRY WHERE MP.COUNTRY IN (SELECT COUNTRY FROM MONDIAL_GEO_MOUNTAIN WHERE PROVINCE IN (SELECT PROVINCE FROM MONDIAL_GEO_MOUNTAIN)) ORDER BY MM.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "27",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What was the population of a country in the year 2002?",
+          "intention": "What was the population of a country in the year 2002?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRYPOPS"
+            ],
+            "golden_sql": "SELECT POPULATION FROM MONDIAL_COUNTRYPOPS WHERE YEAR = 2002"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which organizations is the country associated with?",
+          "intention": "Which organizations is the country associated with?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRYPOPS",
+              "MONDIAL_ISMEMBER"
+            ],
+            "golden_sql": "SELECT ORGANIZATION FROM MONDIAL_ISMEMBER WHERE COUNTRY IN (SELECT COUNTRY FROM MONDIAL_COUNTRYPOPS WHERE YEAR = 2002)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What was the population of the country in 2012?",
+          "intention": "What was the population of the country in 2012?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRYPOPS"
+            ],
+            "golden_sql": "SELECT POPULATION FROM MONDIAL_COUNTRYPOPS WHERE COUNTRY IN (SELECT COUNTRY FROM MONDIAL_COUNTRYPOPS WHERE YEAR = 2002) AND YEAR = 2012"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "28",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What provinces are associated with the Sea of Japan?",
+          "intention": "Which provinces are associated with the Sea of Japan?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA"
+            ],
+            "golden_sql": "SELECT PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which countries are connected to these provinces?",
+          "intention": "Which countries are connected to the previously selected provinces?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA"
+            ],
+            "golden_sql": "SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_SEA WHERE PROVINCE IN (SELECT PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What other seas are connected to these countries?",
+          "intention": "Which other seas are connected to the previously selected countries?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA",
+              "MONDIAL_SEA",
+              "MONDIAL_MERGESWITH"
+            ],
+            "golden_sql": "SELECT DISTINCT M.SEA2 FROM MONDIAL_MERGESWITH M JOIN MONDIAL_SEA S ON M.SEA1 = S.NAME JOIN MONDIAL_GEO_SEA G ON G.SEA = S.NAME WHERE G.COUNTRY IN (SELECT COUNTRY FROM MONDIAL_GEO_SEA WHERE PROVINCE IN (SELECT PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan'))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "29",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the population of cities in Baden-Württemberg for the year 1987?",
+          "intention": "Find the population of cities in Baden-Württemberg for the year 1987.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS"
+            ],
+            "golden_sql": "SELECT CITY, POPULATION FROM MONDIAL_CITYPOPS WHERE PROVINCE = 'Baden-Württemberg' AND YEAR = 1987"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which rivers are located in the same province as those cities?",
+          "intention": "Find the rivers located in the same province as the cities in Baden-Württemberg for the year 1987.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS",
+              "MONDIAL_LOCATED",
+              "MONDIAL_GEO_RIVER"
+            ],
+            "golden_sql": "SELECT DISTINCT RIVER FROM MONDIAL_GEO_RIVER WHERE (PROVINCE) IN (SELECT PROVINCE FROM MONDIAL_CITYPOPS WHERE PROVINCE = 'Baden-Württemberg' AND YEAR = 1987)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which countries do these rivers flow through?",
+          "intention": "Determine the countries through which these rivers flow.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LOCATED",
+              "MONDIAL_GEO_RIVER"
+            ],
+            "golden_sql": "SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_RIVER WHERE (RIVER) IN (SELECT DISTINCT RIVER FROM MONDIAL_GEO_RIVER WHERE (PROVINCE) IN (SELECT PROVINCE FROM MONDIAL_CITYPOPS WHERE PROVINCE = 'Baden-Württemberg' AND YEAR = 1987))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "30",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What are the names and areas of all islands?",
+          "intention": "Find the names and areas of all islands.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLAND"
+            ],
+            "golden_sql": "SELECT NAME, AREA FROM MONDIAL_ISLAND"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which mountains are located on these islands?",
+          "intention": "Find the mountains that are located on the islands selected earlier.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLAND",
+              "MONDIAL_MOUNTAINONISLAND"
+            ],
+            "golden_sql": "SELECT MOUNTAIN FROM MONDIAL_MOUNTAINONISLAND WHERE ISLAND IN (SELECT NAME FROM MONDIAL_ISLAND)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the elevation of those islands?",
+          "intention": "Find the elevation of the islands selected earlier.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLAND"
+            ],
+            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_ISLAND WHERE NAME IN (SELECT NAME FROM MONDIAL_ISLAND)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "31",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries share borders with Albania?",
+          "intention": "Which countries share borders with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_COUNTRY"
+            ],
+            "golden_sql": "SELECT C.NAME FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C ON B.COUNTRY2 = C.CODE WHERE B.COUNTRY1 = 'AL' UNION SELECT C.NAME FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C ON B.COUNTRY1 = C.CODE WHERE B.COUNTRY2 = 'AL'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the total length of the borders Albania shares with these countries?",
+          "intention": "What is the total length of Albania's borders with these countries?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_COUNTRY"
+            ],
+            "golden_sql": "SELECT SUM(B.LENGTH) AS TOTAL_LENGTH FROM MONDIAL_BORDERS B WHERE (B.COUNTRY1, B.COUNTRY2) IN (SELECT B.COUNTRY1, B.COUNTRY2 FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C ON B.COUNTRY2 = C.CODE WHERE B.COUNTRY1 = 'AL' UNION SELECT B.COUNTRY1, B.COUNTRY2 FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C ON B.COUNTRY1 = C.CODE WHERE B.COUNTRY2 = 'AL')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which border has the maximum length among them?",
+          "intention": "Which border has the maximum length among those?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT B.COUNTRY1, B.COUNTRY2, MAX(B.LENGTH) AS MAX_LENGTH FROM MONDIAL_BORDERS B WHERE (B.COUNTRY1, B.COUNTRY2) IN (SELECT B.COUNTRY1, B.COUNTRY2 FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C ON B.COUNTRY2 = C.CODE WHERE B.COUNTRY1 = 'AL' UNION SELECT B.COUNTRY1, B.COUNTRY2 FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C ON B.COUNTRY1 = C.CODE WHERE B.COUNTRY2 = 'AL') GROUP BY B.COUNTRY1, B.COUNTRY2 ORDER BY MAX_LENGTH DESC FETCH FIRST ROW ONLY"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "32",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries have provinces with populations recorded in 2010?",
+          "intention": "Find countries with provinces that have population data for the year 2010.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRYPOPS",
+              "MONDIAL_PROVPOPS"
+            ],
+            "golden_sql": "SELECT DISTINCT CP.COUNTRY FROM MONDIAL_COUNTRYPOPS CP JOIN MONDIAL_PROVPOPS PP ON CP.COUNTRY = PP.COUNTRY WHERE PP.YEAR = 2010"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What were the total populations of those countries in 2012?",
+          "intention": "Find the total populations of those countries in 2012.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRYPOPS"
+            ],
+            "golden_sql": "SELECT COUNTRY, SUM(POPULATION) AS TOTAL_POPULATION FROM MONDIAL_COUNTRYPOPS WHERE YEAR = 2012 AND COUNTRY IN (SELECT DISTINCT CP.COUNTRY FROM MONDIAL_COUNTRYPOPS CP JOIN MONDIAL_PROVPOPS PP ON CP.COUNTRY = PP.COUNTRY WHERE PP.YEAR = 2010) GROUP BY COUNTRY"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which organizations are these countries members of?",
+          "intention": "Find organizations that these countries are members of.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISMEMBER"
+            ],
+            "golden_sql": "SELECT COUNTRY, ORGANIZATION FROM MONDIAL_ISMEMBER WHERE COUNTRY IN (SELECT COUNTRY FROM MONDIAL_COUNTRYPOPS WHERE YEAR = 2012 AND COUNTRY IN (SELECT DISTINCT CP.COUNTRY FROM MONDIAL_COUNTRYPOPS CP JOIN MONDIAL_PROVPOPS PP ON CP.COUNTRY = PP.COUNTRY WHERE PP.YEAR = 2010))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "33",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the GDP and unemployment rate of each country?",
+          "intention": "What are the GDP and unemployment rates of countries?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT COUNTRY, GDP, UNEMPLOYMENT FROM MONDIAL_ECONOMY"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which continents have countries with GDP greater than 50,000?",
+          "intention": "Which continents contain countries with GDP above fifty thousand?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY",
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT DISTINCT E.CONTINENT FROM MONDIAL_ECONOMY ME JOIN MONDIAL_ENCOMPASSES E ON ME.COUNTRY = E.COUNTRY WHERE ME.GDP > 50000"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the inflation rate of countries in those continents?",
+          "intention": "What is the inflation rate in countries from those continents?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY",
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT ME.COUNTRY, ME.INFLATION FROM MONDIAL_ECONOMY ME WHERE ME.COUNTRY IN (SELECT E.COUNTRY FROM MONDIAL_ENCOMPASSES E WHERE E.CONTINENT IN (SELECT DISTINCT E.CONTINENT FROM MONDIAL_ECONOMY ME JOIN MONDIAL_ENCOMPASSES E ON ME.COUNTRY = E.COUNTRY WHERE ME.GDP > 50000))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "34",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which provinces are listed in the table?",
+          "intention": "Which provinces are mentioned in the table?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ISLAND"
+            ],
+            "golden_sql": "SELECT DISTINCT PROVINCE FROM MONDIAL_GEO_ISLAND ORDER BY PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which countries have these provinces?",
+          "intention": "Which countries are associated with these provinces?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ISLAND"
+            ],
+            "golden_sql": "SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_ISLAND WHERE PROVINCE IN (SELECT DISTINCT PROVINCE FROM MONDIAL_GEO_ISLAND) ORDER BY COUNTRY ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What types of islands are found in these countries?",
+          "intention": "What types of islands exist in those countries?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLAND",
+              "MONDIAL_GEO_ISLAND"
+            ],
+            "golden_sql": "SELECT DISTINCT MI.TYPE FROM MONDIAL_ISLAND MI JOIN MONDIAL_GEO_ISLAND MGI ON MGI.ISLAND = MI.NAME WHERE MGI.COUNTRY IN (SELECT DISTINCT COUNTRY FROM MONDIAL_GEO_ISLAND WHERE PROVINCE IN (SELECT DISTINCT PROVINCE FROM MONDIAL_GEO_ISLAND))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "35",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which airports are located in provinces with a population greater than 1,000,000?",
+          "intention": "Which airports are located in provinces with a population greater than one million?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT A.NAME FROM MONDIAL_AIRPORT A JOIN MONDIAL_PROVINCE P ON A.PROVINCE = P.NAME WHERE P.POPULATION > 1000000"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the countries of these airports?",
+          "intention": "What are the countries of those airports?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT A.NAME, C.NAME AS COUNTRY_NAME FROM MONDIAL_AIRPORT A JOIN MONDIAL_COUNTRY C ON A.COUNTRY = C.CODE WHERE A.PROVINCE IN (SELECT P.NAME FROM MONDIAL_PROVINCE P WHERE P.POPULATION > 1000000)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the elevation levels of these airports?",
+          "intention": "What are the elevation levels of those airports?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_AIRPORT WHERE PROVINCE IN (SELECT P.NAME FROM MONDIAL_PROVINCE P WHERE P.POPULATION > 1000000)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "36",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Can you list all cities along with their provinces and countries where the population is greater than 100,000?",
+          "intention": "List cities with population greater than 100,000 including their province and country.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS",
+              "MONDIAL_PROVPOPS"
+            ],
+            "golden_sql": "SELECT C.CITY, C.PROVINCE, C.COUNTRY FROM MONDIAL_CITYPOPS C JOIN MONDIAL_PROVPOPS P ON C.PROVINCE = P.PROVINCE AND C.COUNTRY = P.COUNTRY WHERE C.POPULATION > 100000"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which rivers do these cities belong to?",
+          "intention": "Find the rivers associated with those cities.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS",
+              "MONDIAL_LOCATED"
+            ],
+            "golden_sql": "SELECT L.CITY, L.RIVER FROM MONDIAL_LOCATED L JOIN MONDIAL_CITYPOPS C ON L.CITY = C.CITY AND L.PROVINCE = C.PROVINCE AND L.COUNTRY = C.COUNTRY WHERE (C.CITY, C.PROVINCE, C.COUNTRY) IN (SELECT C.CITY, C.PROVINCE, C.COUNTRY FROM MONDIAL_CITYPOPS C JOIN MONDIAL_PROVPOPS P ON C.PROVINCE = P.PROVINCE AND C.COUNTRY = P.COUNTRY WHERE C.POPULATION > 100000)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the total population of these cities in the year 2011?",
+          "intention": "Find the total population of the previously selected cities in the year 2011.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS"
+            ],
+            "golden_sql": "SELECT SUM(C.POPULATION) AS TOTAL_POPULATION FROM MONDIAL_CITYPOPS C WHERE C.YEAR = 2011 AND (C.CITY, C.PROVINCE, C.COUNTRY) IN (SELECT C.CITY, C.PROVINCE, C.COUNTRY FROM MONDIAL_CITYPOPS C JOIN MONDIAL_PROVPOPS P ON C.PROVINCE = P.PROVINCE AND C.COUNTRY = P.COUNTRY WHERE C.POPULATION > 100000)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "37",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Can you show me the continents sorted by their area in descending order?",
+          "intention": "List the continents ordered by their area in descending order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT"
+            ],
+            "golden_sql": "SELECT NAME, AREA FROM MONDIAL_CONTINENT ORDER BY AREA DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the name of the smallest continent?",
+          "intention": "What is the name of the continent with the smallest area?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT"
+            ],
+            "golden_sql": "SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA = (SELECT MIN(AREA) FROM MONDIAL_CONTINENT)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which countries are part of the smallest continent?",
+          "intention": "Which countries belong to the smallest continent?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT",
+              "MONDIAL_ENCOMPASSES"
+            ],
+            "golden_sql": "SELECT COUNTRY FROM MONDIAL_ENCOMPASSES WHERE CONTINENT = (SELECT NAME FROM MONDIAL_CONTINENT WHERE AREA = (SELECT MIN(AREA) FROM MONDIAL_CONTINENT))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "38",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the GDP of countries with agriculture contribution above 10%?",
+          "intention": "What is the GDP of countries where agriculture contributes more than 10%?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT COUNTRY, GDP FROM MONDIAL_ECONOMY WHERE AGRICULTURE > 10"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the unemployment rate in those countries?",
+          "intention": "What is the unemployment rate in the countries with agriculture contribution above 10%?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT COUNTRY, UNEMPLOYMENT FROM MONDIAL_ECONOMY WHERE COUNTRY IN (SELECT COUNTRY FROM MONDIAL_ECONOMY WHERE AGRICULTURE > 10)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which religions are practiced in these countries?",
+          "intention": "What religions are practiced in the countries with agriculture contribution above 10%?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ECONOMY",
+              "MONDIAL_RELIGION"
+            ],
+            "golden_sql": "SELECT R.NAME, R.PERCENTAGE FROM MONDIAL_RELIGION R JOIN MONDIAL_ECONOMY E ON R.COUNTRY = E.COUNTRY WHERE E.COUNTRY IN (SELECT COUNTRY FROM MONDIAL_ECONOMY WHERE AGRICULTURE > 10)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "39",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers in Germany flow through provinces also containing lakes?",
+          "intention": "Which rivers in Germany flow through provinces that also contain lakes?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY",
+              "MONDIAL_GEO_RIVER",
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT E.RIVER FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_GEO_RIVER R ON E.RIVER = R.RIVER AND E.COUNTRY = R.COUNTRY AND E.PROVINCE = R.PROVINCE JOIN MONDIAL_GEO_LAKE L ON R.PROVINCE = L.PROVINCE AND R.COUNTRY = L.COUNTRY WHERE E.COUNTRY = 'D'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the names of the sources of these rivers?",
+          "intention": "What are the names of the sources of the previously selected rivers?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY",
+              "MONDIAL_GEO_RIVER",
+              "MONDIAL_GEO_SOURCE",
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT S.RIVER FROM MONDIAL_GEO_SOURCE S JOIN MONDIAL_GEO_RIVER R ON S.RIVER = R.RIVER AND S.COUNTRY = R.COUNTRY AND S.PROVINCE = R.PROVINCE WHERE (R.RIVER, R.COUNTRY, R.PROVINCE) IN (SELECT E.RIVER, E.COUNTRY, E.PROVINCE FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_GEO_RIVER R ON E.RIVER = R.RIVER AND E.COUNTRY = R.COUNTRY AND E.PROVINCE = R.PROVINCE JOIN MONDIAL_GEO_LAKE L ON R.PROVINCE = L.PROVINCE AND R.COUNTRY = L.COUNTRY WHERE E.COUNTRY = 'D')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the elevation of the estuaries of these rivers?",
+          "intention": "What is the elevation of the estuaries of the previously selected rivers?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY",
+              "MONDIAL_GEO_RIVER",
+              "MONDIAL_GEO_SOURCE",
+              "MONDIAL_RIVER",
+              "MONDIAL_GEO_LAKE"
+            ],
+            "golden_sql": "SELECT R.ESTUARYELEVATION FROM MONDIAL_RIVER R WHERE R.NAME IN (SELECT S.RIVER FROM MONDIAL_GEO_SOURCE S JOIN MONDIAL_GEO_RIVER RR ON S.RIVER = RR.RIVER AND S.COUNTRY = RR.COUNTRY AND S.PROVINCE = RR.PROVINCE WHERE (RR.RIVER, RR.COUNTRY, RR.PROVINCE) IN (SELECT E.RIVER, E.COUNTRY, E.PROVINCE FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_GEO_RIVER R ON E.RIVER = R.RIVER AND E.COUNTRY = R.COUNTRY AND E.PROVINCE = R.PROVINCE JOIN MONDIAL_GEO_LAKE L ON R.PROVINCE = L.PROVINCE AND R.COUNTRY = L.COUNTRY WHERE E.COUNTRY = 'D'))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "40",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which seas have islands with mountains?",
+          "intention": "Which seas have islands that contain mountains?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA",
+              "MONDIAL_ISLANDIN",
+              "MONDIAL_MOUNTAINONISLAND"
+            ],
+            "golden_sql": "SELECT DISTINCT G.SEA FROM MONDIAL_GEO_SEA G JOIN MONDIAL_ISLANDIN I ON G.SEA = I.SEA JOIN MONDIAL_MOUNTAINONISLAND M ON I.ISLAND = M.ISLAND"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the names of the islands in those seas?",
+          "intention": "What are the names of the islands in these seas?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLANDIN",
+              "MONDIAL_GEO_SEA"
+            ],
+            "golden_sql": "SELECT DISTINCT I.ISLAND FROM MONDIAL_ISLANDIN I WHERE I.SEA IN (SELECT DISTINCT G.SEA FROM MONDIAL_GEO_SEA G JOIN MONDIAL_ISLANDIN I ON G.SEA = I.SEA JOIN MONDIAL_MOUNTAINONISLAND M ON I.ISLAND = M.ISLAND)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What types of seas are these?",
+          "intention": "What types of seas are these?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA"
+            ],
+            "golden_sql": "SELECT DISTINCT META_REPCOL FROM MONDIAL_GEO_SEA WHERE SEA IN (SELECT DISTINCT G.SEA FROM MONDIAL_GEO_SEA G JOIN MONDIAL_ISLANDIN I ON G.SEA = I.SEA JOIN MONDIAL_MOUNTAINONISLAND M ON I.ISLAND = M.ISLAND)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "41",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which mountains are located in countries that share borders with Albania?",
+          "intention": "Which mountains are in countries that share borders with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_GEO_MOUNTAIN"
+            ],
+            "golden_sql": "SELECT MOUNTAIN FROM MONDIAL_GEO_MOUNTAIN WHERE COUNTRY IN (SELECT COUNTRY2 FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL')"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the total length of borders Albania shares with its neighboring countries?",
+          "intention": "What is the total length of Albania's borders with neighboring countries?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT SUM(LENGTH) AS TOTAL_LENGTH FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which neighboring country of Albania has the longest shared border?",
+          "intention": "Which neighboring country of Albania has the longest border shared with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT COUNTRY2, MAX(LENGTH) AS MAX_LENGTH FROM MONDIAL_BORDERS WHERE COUNTRY1 = 'AL' GROUP BY COUNTRY2"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "42",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which mountains are located on the islands listed in the database?",
+          "intention": "Which mountains are located on the islands in the database?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLAND",
+              "MONDIAL_MOUNTAINONISLAND"
+            ],
+            "golden_sql": "SELECT MOUNTAIN FROM MONDIAL_MOUNTAINONISLAND WHERE ISLAND IN (SELECT NAME FROM MONDIAL_ISLAND)"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the areas of these islands?",
+          "intention": "What are the areas of these islands?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLAND"
+            ],
+            "golden_sql": "SELECT NAME, AREA FROM MONDIAL_ISLAND WHERE NAME IN (SELECT ISLAND FROM MONDIAL_MOUNTAINONISLAND WHERE MOUNTAIN IN (SELECT MOUNTAIN FROM MONDIAL_MOUNTAINONISLAND WHERE ISLAND IN (SELECT NAME FROM MONDIAL_ISLAND)))"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the elevation of these islands?",
+          "intention": "What is the elevation of these islands?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLAND"
+            ],
+            "golden_sql": "SELECT NAME, ELEVATION FROM MONDIAL_ISLAND WHERE NAME IN (SELECT NAME FROM MONDIAL_ISLAND WHERE NAME IN (SELECT ISLAND FROM MONDIAL_MOUNTAINONISLAND WHERE MOUNTAIN IN (SELECT MOUNTAIN FROM MONDIAL_MOUNTAINONISLAND WHERE ISLAND IN (SELECT NAME FROM MONDIAL_ISLAND))))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "43",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What types of organizations are associated with various countries?",
+          "intention": "What types of organizations are associated with countries?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISMEMBER"
+            ],
+            "golden_sql": "SELECT DISTINCT TYPE FROM MONDIAL_ISMEMBER ORDER BY TYPE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which countries with a parliamentary democracy are part of an organization?",
+          "intention": "Which countries with a parliamentary democracy are members of an organization?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_POLITICS",
+              "MONDIAL_ISMEMBER"
+            ],
+            "golden_sql": "SELECT DISTINCT MP.COUNTRY FROM MONDIAL_POLITICS MP JOIN MONDIAL_ISMEMBER MI ON MP.COUNTRY = MI.COUNTRY WHERE MP.GOVERNMENT = 'parliamentary democracy'"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which types of organizations are these countries part of?",
+          "intention": "Which types of organizations are these countries members of?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISMEMBER"
+            ],
+            "golden_sql": "SELECT DISTINCT TYPE FROM MONDIAL_ISMEMBER WHERE COUNTRY IN (SELECT DISTINCT MP.COUNTRY FROM MONDIAL_POLITICS MP JOIN MONDIAL_ISMEMBER MI ON MP.COUNTRY = MI.COUNTRY WHERE MP.GOVERNMENT = 'parliamentary democracy') ORDER BY TYPE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "44",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Can you list all rivers and their corresponding countries and provinces?",
+          "intention": "List all rivers along with their countries and provinces.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary"
+            ],
+            "golden_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the lengths of these rivers?",
+          "intention": "Find the length of the previously listed rivers.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary",
+              "mondial_river"
+            ],
+            "golden_sql": "SELECT R.NAME, R.LENGTH FROM MONDIAL_RIVER R JOIN MONDIAL_GEO_ESTUARY G ON R.RIVER = G.RIVER WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which lakes do these rivers pass through?",
+          "intention": "Identify the lakes that the previously listed rivers pass through.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary",
+              "mondial_river",
+              "mondial_riverthrough"
+            ],
+            "golden_sql": "SELECT RT.RIVER, RT.LAKE FROM MONDIAL_RIVERTHROUGH RT JOIN MONDIAL_RIVER R ON RT.RIVER = R.NAME WHERE (R.NAME, R.LENGTH) IN (SELECT NAME, LENGTH FROM MONDIAL_RIVER R JOIN MONDIAL_GEO_ESTUARY G ON R.RIVER = G.RIVER WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "45",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries border Albania and what are their GDPs?",
+          "intention": "Which countries border Albania and their GDPs?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT B.COUNTRY2, E.GDP FROM MONDIAL_BORDERS B JOIN MONDIAL_ECONOMY E ON B.COUNTRY2 = E.COUNTRY WHERE B.COUNTRY1 = 'AL'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What is the total border length of these countries with Albania?",
+          "intention": "What is the total border length of these countries with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT B.COUNTRY1, B.COUNTRY2, SUM(B.LENGTH) FROM MONDIAL_BORDERS B WHERE (B.COUNTRY1, B.COUNTRY2) IN (SELECT B.COUNTRY1, B.COUNTRY2 FROM MONDIAL_BORDERS B JOIN MONDIAL_ECONOMY E ON B.COUNTRY2 = E.COUNTRY WHERE B.COUNTRY1 = 'AL') GROUP BY B.COUNTRY1, B.COUNTRY2"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which of these countries has the longest border with Albania?",
+          "intention": "Which of these countries has the longest border with Albania?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT B.COUNTRY1, B.COUNTRY2, MAX(B.LENGTH) FROM MONDIAL_BORDERS B WHERE (B.COUNTRY1, B.COUNTRY2) IN (SELECT B.COUNTRY1, B.COUNTRY2 FROM MONDIAL_BORDERS B JOIN MONDIAL_ECONOMY E ON B.COUNTRY2 = E.COUNTRY WHERE B.COUNTRY1 = 'AL') GROUP BY B.COUNTRY1, B.COUNTRY2"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "46",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What are the names and locations of airports in the Czech Republic?",
+          "intention": "What are the names and locations of airports in the Czech Republic?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, CITY, PROVINCE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which islands are these airports located on?",
+          "intention": "Which islands are those airports located on?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_GEO_ISLAND"
+            ],
+            "golden_sql": "SELECT G.ISLAND FROM MONDIAL_AIRPORT A JOIN MONDIAL_GEO_ISLAND G ON A.ISLAND = G.ISLAND AND A.COUNTRY = G.COUNTRY AND A.PROVINCE = G.PROVINCE WHERE (A.NAME, A.CITY, A.PROVINCE) IN (SELECT NAME, CITY, PROVINCE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the elevation levels of these airports?",
+          "intention": "What are the elevation levels of those airports?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT ELEVATION FROM MONDIAL_AIRPORT WHERE (NAME, CITY, PROVINCE) IN (SELECT NAME, CITY, PROVINCE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ')"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "47",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which mountains are located in countries with a population growth greater than 0.2?",
+          "intention": "Find mountains located in countries with a population growth greater than 0.2.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_MOUNTAIN",
+              "MONDIAL_POPULATION"
+            ],
+            "golden_sql": "SELECT MG.MOUNTAIN FROM MONDIAL_GEO_MOUNTAIN MG JOIN MONDIAL_POPULATION MP ON MG.COUNTRY = MP.COUNTRY WHERE MP.POPULATION_GROWTH > 0.2"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What type of government do these countries have?",
+          "intention": "Find the type of government in countries where those mountains are located.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_MOUNTAIN",
+              "MONDIAL_POPULATION",
+              "MONDIAL_POLITICS"
+            ],
+            "golden_sql": "SELECT MP.GOVERNMENT FROM MONDIAL_POLITICS MP WHERE MP.COUNTRY IN (SELECT MG.COUNTRY FROM MONDIAL_GEO_MOUNTAIN MG JOIN MONDIAL_POPULATION MP ON MG.COUNTRY = MP.COUNTRY WHERE MP.POPULATION_GROWTH > 0.2)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the names of the provinces these mountains are located in?",
+          "intention": "Find the provinces where those mountains are located.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_MOUNTAIN"
+            ],
+            "golden_sql": "SELECT MG.PROVINCE FROM MONDIAL_GEO_MOUNTAIN MG WHERE MG.COUNTRY IN (SELECT MG.COUNTRY FROM MONDIAL_GEO_MOUNTAIN MG JOIN MONDIAL_POPULATION MP ON MG.COUNTRY = MP.COUNTRY WHERE MP.POPULATION_GROWTH > 0.2)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "48",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Can you list all rivers along with the countries they flow through?",
+          "intention": "List all rivers with the countries they flow through.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_source",
+              "mondial_river"
+            ],
+            "golden_sql": "SELECT G.RIVER, G.COUNTRY FROM MONDIAL_GEO_SOURCE G JOIN MONDIAL_RIVER R ON R.NAME = G.RIVER"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which provinces are associated with the rivers listed above?",
+          "intention": "Retrieve provinces for the listed rivers.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_source",
+              "mondial_river"
+            ],
+            "golden_sql": "SELECT G.PROVINCE FROM MONDIAL_GEO_SOURCE G WHERE (G.RIVER) IN (SELECT G.RIVER FROM MONDIAL_GEO_SOURCE G JOIN MONDIAL_RIVER R ON R.NAME = G.RIVER)"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Where do these rivers connect to lakes?",
+          "intention": "Find lakes connected to these rivers.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_source",
+              "mondial_river",
+              "mondial_riverthrough"
+            ],
+            "golden_sql": "SELECT RT.LAKE FROM MONDIAL_RIVERTHROUGH RT WHERE (RT.RIVER) IN (SELECT G.RIVER FROM MONDIAL_GEO_SOURCE G JOIN MONDIAL_RIVER R ON R.NAME = G.RIVER)"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "49",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers flow through countries that have Pacific Islanders as an ethnic group?",
+          "intention": "Which rivers flow through countries with Pacific Islanders?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_ethnicgroup",
+              "mondial_geo_river"
+            ],
+            "golden_sql": "SELECT R.RIVER FROM MONDIAL_GEO_RIVER R JOIN MONDIAL_ETHNICGROUP E ON R.COUNTRY = E.COUNTRY WHERE E.NAME = 'Pacific Islander'"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What provinces do these rivers flow through?",
+          "intention": "Which provinces do those rivers flow through?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_river"
+            ],
+            "golden_sql": "SELECT DISTINCT R.PROVINCE FROM MONDIAL_GEO_RIVER R WHERE R.RIVER IN (SELECT R.RIVER FROM MONDIAL_GEO_RIVER R JOIN MONDIAL_ETHNICGROUP E ON R.COUNTRY = E.COUNTRY WHERE E.NAME = 'Pacific Islander')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Are there any estuaries located in these provinces?",
+          "intention": "Are there estuaries in those provinces?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary"
+            ],
+            "golden_sql": "SELECT DISTINCT E.RIVER FROM MONDIAL_GEO_ESTUARY E WHERE E.PROVINCE IN (SELECT DISTINCT R.PROVINCE FROM MONDIAL_GEO_RIVER R WHERE R.RIVER IN (SELECT R.RIVER FROM MONDIAL_GEO_RIVER R JOIN MONDIAL_ETHNICGROUP E ON R.COUNTRY = E.COUNTRY WHERE E.NAME = 'Pacific Islander'))"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "50",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "What is the population of cities in the year 2011?",
+          "intention": "What was the population of cities in 2011?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS"
+            ],
+            "golden_sql": "SELECT CITY, POPULATION FROM MONDIAL_CITYPOPS WHERE YEAR = 2011"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which provinces are the cities in with population data for the year 2011?",
+          "intention": "Which provinces have cities with population data for 2011?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS"
+            ],
+            "golden_sql": "SELECT DISTINCT PROVINCE FROM MONDIAL_CITYPOPS WHERE YEAR = 2011"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the countries and provinces of these cities?",
+          "intention": "What are the countries and provinces associated with these cities?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITYPOPS",
+              "MONDIAL_PROVPOPS"
+            ],
+            "golden_sql": "SELECT C.COUNTRY, C.PROVINCE FROM MONDIAL_CITYPOPS C JOIN MONDIAL_PROVPOPS P ON C.PROVINCE = P.PROVINCE AND C.COUNTRY = P.COUNTRY WHERE (C.PROVINCE) IN (SELECT DISTINCT PROVINCE FROM MONDIAL_CITYPOPS WHERE YEAR = 2011)"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1308 @@
+[
+    {
+        "experiment_id": "1",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T11:20:59.038890",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the circuits whose circuit identifiers are between 1 and 10, inclusive.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which circuits have circuit IDs from 1 through 10?",
+                        "agent_reply": "Circuits with IDs 1 through 10 are: 1 \u2014 Albert Park Grand Circuit; 2 \u2014 Sepang International Circuit; 3 \u2014 Bahrain International Circuit; 4 \u2014 Circuit de Barcelona-Catalunya; 5 \u2014 Istanbul Park; 6 \u2014 Circuit de Monaco; 7 \u2014 Circuit Gilles Villeneuve; 8 \u2014 Circuit de Nevers Magny-Cours; 9 \u2014 Silverstone Circuit; 10 \u2014 Hockenheimring.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which Formula 1 circuits have CIRCUITID values from 1 through 10 inclusive? Return CIRCUITID and NAME, ordered by CIRCUITID.",
+                            "user_intention": "List the circuits whose circuit identifiers are between 1 and 10, inclusive.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.CIRCUITID BETWEEN 1 AND 10 ORDER BY FORMULA_1_CIRCUITS.CIRCUITID ASC",
+                            "generated_sql": "SELECT circuitid, name FROM formula_1_circuits WHERE circuitid BETWEEN 1 AND 10 ORDER BY circuitid;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.074045181274414,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Among the circuits with identifiers from 1 through 10, list those that hosted at least one race with a constructor result.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Of those circuits, which ones hosted races that have constructor results?",
+                        "agent_reply": "All 10 circuits qualify: 1 \u2014 Albert Park Grand Circuit; 2 \u2014 Sepang International Circuit; 3 \u2014 Bahrain International Circuit; 4 \u2014 Circuit de Barcelona-Catalunya; 5 \u2014 Istanbul Park; 6 \u2014 Circuit de Monaco; 7 \u2014 Circuit Gilles Villeneuve; 8 \u2014 Circuit de Nevers Magny-Cours; 9 \u2014 Silverstone Circuit; 10 \u2014 Hockenheimring.",
+                        "evaluation": {
+                            "text_to_sql_input": "List each circuit exactly once for circuits whose CIRCUITID is between 1 and 10 inclusive and for which at least one related race, linked by CIRCUITID, has at least one related constructor result, linked by RACEID. Return unique CIRCUITID and circuit NAME in ascending CIRCUITID order; do not return duplicate circuits.",
+                            "user_intention": "Among the circuits with identifiers from 1 through 10, list those that hosted at least one race with a constructor result.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_CONSTRUCTORRESULTS ON FORMULA_1_CONSTRUCTORRESULTS.RACEID = FORMULA_1_RACES.RACEID WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.CIRCUITID BETWEEN 1 AND 10) ORDER BY FORMULA_1_CIRCUITS.CIRCUITID ASC",
+                            "generated_sql": "SELECT c.circuitid, c.name FROM formula_1_circuits c JOIN formula_1_races r ON c.circuitid = r.circuitid JOIN formula_1_constructorresults cr ON r.raceid = cr.raceid WHERE c.circuitid BETWEEN 1 AND 10 ORDER BY c.circuitid ASC;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 22.696437120437622,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For exactly the previously identified circuits that hosted races with constructor results, count their constructor-result records and rank the circuits from the highest count to the lowest.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those circuits, how many constructor-result records are associated with each one, ordered from most to fewest?",
+                        "agent_reply": "1. Circuit de Monaco (ID 6): 724\n2. Silverstone Circuit (ID 9): 555\n3. Circuit Gilles Villeneuve (ID 7): 495\n4. Hockenheimring (ID 10): 468\n5. Circuit de Barcelona-Catalunya (ID 4): 312\n6. Albert Park Grand Circuit (ID 1): 239\n7. Circuit de Nevers Magny-Cours (ID 8): 211\n8. Sepang International Circuit (ID 2): 196\n9. Bahrain International Circuit (ID 3): 140\n10. Istanbul Park (ID 5): 76",
+                        "evaluation": {
+                            "text_to_sql_input": "For each Formula 1 circuit with CIRCUITID from 1 through 10 inclusive that hosted at least one race with constructor results, count all associated records in FORMULA_1_CONSTRUCTORRESULTS by linking FORMULA_1_CIRCUITS to FORMULA_1_RACES on CIRCUITID and then to FORMULA_1_CONSTRUCTORRESULTS on RACEID. Return CIRCUITID, circuit NAME, and the constructor-result record count, ordered from highest count to lowest count, with CIRCUITID ascending as a tie-breaker.",
+                            "user_intention": "For exactly the previously identified circuits that hosted races with constructor results, count their constructor-result records and rank the circuits from the highest count to the lowest.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CIRCUITS.CIRCUITID, COUNT(*) AS RESULT_COUNT FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_CONSTRUCTORRESULTS ON FORMULA_1_CONSTRUCTORRESULTS.RACEID = FORMULA_1_RACES.RACEID WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT DISTINCT C2.CIRCUITID FROM FORMULA_1_CIRCUITS C2 JOIN FORMULA_1_RACES R2 ON R2.CIRCUITID = C2.CIRCUITID JOIN FORMULA_1_CONSTRUCTORRESULTS CR2 ON CR2.RACEID = R2.RACEID WHERE (C2.CIRCUITID) IN (SELECT C3.CIRCUITID FROM FORMULA_1_CIRCUITS C3 WHERE C3.CIRCUITID BETWEEN 1 AND 10)) GROUP BY FORMULA_1_CIRCUITS.CIRCUITID ORDER BY RESULT_COUNT DESC, FORMULA_1_CIRCUITS.CIRCUITID ASC",
+                            "generated_sql": "SELECT c.circuitid, c.name AS circuit_name, COUNT(cr.constructorresultsid) AS constructor_result_count FROM formula_1_circuits c JOIN formula_1_races r ON c.circuitid = r.circuitid JOIN formula_1_constructorresults cr ON r.raceid = cr.raceid WHERE c.circuitid BETWEEN 1 AND 10 GROUP BY c.circuitid, c.name ORDER BY constructor_result_count DESC, c.circuitid ASC;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 15.283714771270752,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "2",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T11:21:54.141963",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the constructor identifiers from the results that are between 1 and 10, inclusive.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which constructor IDs in the constructor results are between 1 and 10?",
+                        "agent_reply": "The constructor IDs are 1, 2, 3, 4, 5, 6, 7, 8, 9, and 10.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which distinct CONSTRUCTORID values in FORMULA_1_CONSTRUCTORRESULTS are between 1 and 10 inclusive?",
+                            "user_intention": "List the constructor identifiers from the results that are between 1 and 10, inclusive.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS WHERE FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID BETWEEN 1 AND 10 ORDER BY FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT constructorid FROM formula_1_constructorresults WHERE constructorid BETWEEN 1 AND 10",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.049338817596436,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "From the previously identified constructor identifiers between 1 and 10, list only those greater than 5.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Of those, which constructor IDs are greater than 5?",
+                        "agent_reply": "The constructor IDs greater than 5 are 6, 7, 8, 9, and 10.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which distinct CONSTRUCTORID values in FORMULA_1_CONSTRUCTORRESULTS are between 1 and 10 inclusive and greater than 5?",
+                            "user_intention": "From the previously identified constructor identifiers between 1 and 10, list only those greater than 5.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS WHERE (FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID) IN (SELECT DISTINCT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS WHERE FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID BETWEEN 1 AND 10) AND FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID > 5 ORDER BY FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID DESC",
+                            "generated_sql": "SELECT constructorid FROM formula_1_constructorresults WHERE constructorid BETWEEN 1 AND 10 AND constructorid > 5",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.136775016784668,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "From the previously narrowed set of constructor identifiers greater than 5 and no more than 10, list those represented in both the constructor records and the constructor standings.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which of those constructor IDs also have matching constructor and constructor-standing records?",
+                        "agent_reply": "Constructor IDs 6, 7, 8, 9, and 10 all have matching records in both the constructors and constructor standings tables.",
+                        "evaluation": {
+                            "text_to_sql_input": "Among constructor IDs 6, 7, 8, 9, and 10 from FORMULA_1_CONSTRUCTORRESULTS, which distinct CONSTRUCTORID values also have matching records in both FORMULA_1_CONSTRUCTORS and FORMULA_1_CONSTRUCTORSTANDINGS?",
+                            "user_intention": "From the previously narrowed set of constructor identifiers greater than 5 and no more than 10, list those represented in both the constructor records and the constructor standings.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS JOIN FORMULA_1_CONSTRUCTORS ON FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID JOIN FORMULA_1_CONSTRUCTORSTANDINGS ON FORMULA_1_CONSTRUCTORSTANDINGS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID WHERE (FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID) IN (SELECT DISTINCT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS WHERE (FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID) IN (SELECT DISTINCT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS WHERE FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID BETWEEN 1 AND 10) AND FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID > 5) ORDER BY FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT cr.constructorid FROM formula_1_constructorresults cr JOIN formula_1_constructors c ON cr.constructorid = c.constructorid JOIN formula_1_constructorstandings cs ON cr.constructorid = cs.constructorid WHERE cr.constructorid IN (6, 7, 8, 9, 10);",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 78.01111698150635,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "3",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T11:25:06.159307",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Identify the drivers who have at least one corresponding driver-standings entry.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which drivers have entries in the driver standings?",
+                        "agent_reply": "The query returned 31,578 driver-standing entry rows rather than a deduplicated driver list. Examples include Lewis Hamilton, Nick Heidfeld, Nico Rosberg, Fernando Alonso, Heikki Kovalainen, Jolyon Palmer, Romain Grosjean, Pascal Wehrlein, Jenson Button, and Paul di Resta. The tool did not apply the requested deduplication.",
+                        "evaluation": {
+                            "text_to_sql_input": "List every unique driver who appears at least once in FORMULA_1_DRIVERSTANDINGS. Deduplicate by DRIVERID so each driver is returned exactly once, with DRIVERID, FORENAME, and SURNAME.",
+                            "user_intention": "Identify the drivers who have at least one corresponding driver-standings entry.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT D.DRIVERID FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS S ON S.DRIVERID = D.DRIVERID",
+                            "generated_sql": "SELECT d.driverid, d.forename, d.surname FROM formula_1_driverstandings ds JOIN formula_1_drivers d ON ds.driverid = d.driverid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 28.77336812019348,
+                            "query_complexity": "simples"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "For each driver identified as having a driver-standings entry, count the corresponding lap-time records.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For each of those drivers, how many lap-time records are linked to them?",
+                        "agent_reply": "Sorry, the corrected query failed with ORA-00936: missing expression. The initial result was invalid because joining raw standings and lap-time rows multiplied the lap-time counts.",
+                        "evaluation": {
+                            "text_to_sql_input": "First create a unique set of DRIVERID values from FORMULA_1_DRIVERSTANDINGS. Separately count FORMULA_1_LAPTIMES rows grouped by DRIVERID. Then return one row per driver in that unique standings-driver set, joined to FORMULA_1_DRIVERS for FORENAME and SURNAME and to the separately aggregated lap-time counts. Use zero when a driver has no lap-time rows. Do not join raw driver-standing rows to raw lap-time rows because that multiplies the counts.",
+                            "user_intention": "For each driver identified as having a driver-standings entry, count the corresponding lap-time records.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT D.DRIVERID, COUNT(*) AS LAPTIME_RECORD_COUNT FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_LAPTIMES L ON L.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS S1 ON S1.DRIVERID = D1.DRIVERID) GROUP BY D.DRIVERID",
+                            "generated_sql": "SELECT WITH unique_driver_standings AS (     SELECT driverid     FROM formula_1_driverstandings ), lap_time_counts AS (     SELECT driverid, COUNT(*) AS lap_count     FROM formula_1_laptimes     GROUP BY driverid ) SELECT uds.driverid, d.forename, d.surname, NVL(lt.lap_count, 0) AS lap_count FROM unique_driver_standings uds JOIN formula_1_drivers d ON uds.driverid = d.driverid LEFT JOIN lap_time_counts lt ON uds.driverid = lt.driverid",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 22.799090147018433,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 22.79911994934082
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For exactly the drivers from the preceding result, count the combinations formed by each driver's corresponding standings entries and lap-time records.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For exactly that set of drivers, how many matched standings-and-lap-time combinations does each one have?",
+                        "agent_reply": "There are 833 drivers in the set. Each count represents all standings-row \u00d7 lap-time-row combinations for that driver. Examples: Nico Rosberg has 2,299,166 combinations; Alexander Wurz 308,919; Narain Karthikeyan 127,908; S\u00e9bastien Bourdais 44,660; and Anthony Davidson 37,135. Some drivers, including Brian Naylor, Phil Cade, Niki Lauda, Prince Bira, and Brian Henton, have 0.",
+                        "evaluation": {
+                            "text_to_sql_input": "For exactly the set of unique drivers who have at least one entry in FORMULA_1_DRIVERSTANDINGS, return one row per driver with DRIVERID, FORENAME, SURNAME, and the number of matched standings-and-lap-time row combinations produced by joining every FORMULA_1_DRIVERSTANDINGS row to every FORMULA_1_LAPTIMES row for the same DRIVERID. Include drivers with no matching lap-time row with a count of zero.",
+                            "user_intention": "For exactly the drivers from the preceding result, count the combinations formed by each driver's corresponding standings entries and lap-time records.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT D.DRIVERID, COUNT(*) AS MATCHED_COMBINATION_COUNT FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS S ON S.DRIVERID = D.DRIVERID JOIN FORMULA_1_LAPTIMES L ON L.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 JOIN FORMULA_1_LAPTIMES L2 ON L2.DRIVERID = D2.DRIVERID WHERE (D2.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS S1 ON S1.DRIVERID = D1.DRIVERID) GROUP BY D2.DRIVERID) GROUP BY D.DRIVERID",
+                            "generated_sql": "SELECT d.driverid, d.forename, d.surname, COUNT(l.raceid) AS matched_count FROM formula_1_drivers d LEFT JOIN formula_1_driverstandings ds ON d.driverid = ds.driverid LEFT JOIN formula_1_laptimes l ON d.driverid = l.driverid WHERE ds.driverid IS NOT NULL GROUP BY d.driverid, d.forename, d.surname",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 16.218586683273315,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "4",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T11:26:25.621433",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the constructors that have at least one recorded result.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which constructors are represented in the results?",
+                        "agent_reply": "Sorry, I couldn\u2019t retrieve a unique constructor list. The query returned 23,657 duplicated result entries instead of removing duplicates; visible examples include AFM, BMW Sauber, BRM, Cooper-Climax, Ferrari, McLaren, Renault, Team Lotus, Williams, and Zakspeed.",
+                        "evaluation": {
+                            "text_to_sql_input": "List each Formula 1 constructor represented in FORMULA_1_RESULTS exactly once, with duplicate constructor names removed, ordered alphabetically by constructor name.",
+                            "user_intention": "List the constructors that have at least one recorded result.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ORDER BY FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT c.name FROM formula_1_constructors c JOIN formula_1_results r ON c.constructorid = r.constructorid ORDER BY c.name",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 26.754455089569092,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 26.754481315612793
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "From the constructors with recorded results, list those that have at least one result assigned status ID 1.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Of those constructors, which ones have a result with status ID 1?",
+                        "agent_reply": "There are 91 constructors with at least one result having status ID 1. The returned names are alphabetized; examples include ATS, Alfa Romeo, Arrows, BAR, BMW Sauber, Tyrrell, Vanwall, Watson, Williams, and Wolf.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which constructor names occur among results whose STATUSID is 1? Group the matching FORMULA_1_RESULTS records by FORMULA_1_CONSTRUCTORS.NAME so that there is one output row per constructor name, and sort the names alphabetically.",
+                            "user_intention": "From the constructors with recorded results, list those that have at least one result assigned status ID 1.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID WHERE FORMULA_1_STATUS.STATUSID = 1 AND (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) ORDER BY FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT c.name AS constructor_name FROM formula_1_results r JOIN formula_1_constructors c ON r.constructorid = c.constructorid WHERE r.statusid = 1 GROUP BY c.name ORDER BY c.name;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 20.4369637966156,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For exactly the previously identified constructors that have status ID 1 results, count those results per constructor and rank the constructors from the highest count to the lowest.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those constructors, how many status-ID-1 results does each have, ordered from most to fewest?",
+                        "agent_reply": "There are 91 qualifying constructors. The top five are Ferrari (1,073), McLaren (801), Williams (648), Red Bull (316), and Renault (261). Constructors at the bottom with one such result include Onyx, Schroeder, Sherman, Spyker, and Talbot-Lago.",
+                        "evaluation": {
+                            "text_to_sql_input": "For each Formula 1 constructor that has at least one record in FORMULA_1_RESULTS with STATUSID equal to 1, count its STATUSID-1 result records. Return the constructor name and count, ordered from the highest count to the lowest, with constructor name alphabetically as a tie-breaker.",
+                            "user_intention": "For exactly the previously identified constructors that have status ID 1 results, count those results per constructor and rank the constructors from the highest count to the lowest.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID, COUNT(*) AS RESULT_COUNT FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID WHERE FORMULA_1_STATUS.STATUSID = 1 AND (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID WHERE FORMULA_1_STATUS.STATUSID = 1 AND (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID)) GROUP BY FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ORDER BY RESULT_COUNT DESC, FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT c.name AS constructor_name, COUNT(r.statusid) AS statusid_count FROM formula_1_results r JOIN formula_1_constructors c ON r.constructorid = c.constructorid WHERE r.statusid = 1 GROUP BY c.name ORDER BY COUNT(r.statusid) DESC, c.name ASC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.500969886779785,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "6",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T11:44:29.231501",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the Formula 1 constructors whose identifiers are no greater than 10.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which Formula 1 constructor IDs are 10 or lower?",
+                        "agent_reply": "The constructor IDs are 1, 2, 3, 4, 5, 6, 7, 8, 9, and 10.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which Formula 1 constructor IDs are 10 or lower?",
+                            "user_intention": "List the Formula 1 constructors whose identifiers are no greater than 10.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE CONSTRUCTORID <= 10 ORDER BY CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT constructorid FROM formula_1_constructors WHERE constructorid <= 10",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 11.774665117263794,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "From the constructors with identifiers no greater than 10, list those that have at least one recorded constructor standing.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which of those constructors have at least one constructor standings record?",
+                        "agent_reply": "Sorry, the query tool failed twice to return a distinct constructor list; it returned 3,622 duplicate standings rows instead.",
+                        "evaluation": {
+                            "text_to_sql_input": "List each distinct Formula 1 constructor exactly once where CONSTRUCTORID is 10 or lower and that constructor has at least one matching FORMULA_1_CONSTRUCTORSTANDINGS record. Return CONSTRUCTORID and constructor NAME, ordered by CONSTRUCTORID.",
+                            "user_intention": "From the constructors with identifiers no greater than 10, list those that have at least one recorded constructor standing.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT C.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_CONSTRUCTORSTANDINGS S ON S.CONSTRUCTORID = C.CONSTRUCTORID WHERE (C.CONSTRUCTORID) IN (SELECT CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE CONSTRUCTORID <= 10) ORDER BY C.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT c.constructorid, c.name FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid WHERE c.constructorid <= 10 ORDER BY c.constructorid",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 22.97047209739685,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 22.970502138137817
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "From the constructors with identifiers no greater than 10 that have at least one constructor standing, list those that also have at least one qualifying record.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "And which constructors in that subset also appear in qualifying records?",
+                        "agent_reply": "Sorry, the query tool failed twice to produce the requested unique list. It returned 2,069,730 duplicate joined rows instead.",
+                        "evaluation": {
+                            "text_to_sql_input": "Return only the unique constructor IDs and names, with no duplicate rows, for Formula 1 constructors whose CONSTRUCTORID is 10 or lower and whose CONSTRUCTORID occurs in both FORMULA_1_CONSTRUCTORSTANDINGS and FORMULA_1_QUALIFYING. Order by CONSTRUCTORID.",
+                            "user_intention": "From the constructors with identifiers no greater than 10 that have at least one constructor standing, list those that also have at least one qualifying record.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT C.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_QUALIFYING Q ON Q.CONSTRUCTORID = C.CONSTRUCTORID WHERE (C.CONSTRUCTORID) IN (SELECT DISTINCT C2.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS C2 JOIN FORMULA_1_CONSTRUCTORSTANDINGS S ON S.CONSTRUCTORID = C2.CONSTRUCTORID WHERE (C2.CONSTRUCTORID) IN (SELECT CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE CONSTRUCTORID <= 10)) ORDER BY C.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT c.constructorid, c.name FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid JOIN formula_1_qualifying q ON c.constructorid = q.constructorid WHERE c.constructorid <= 10 ORDER BY c.constructorid;",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 450.2569499015808,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 450.25697088241577
+            }
+        ]
+    },
+    {
+        "experiment_id": "7",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T11:56:03.090193",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the Formula 1 drivers whose identifiers are greater than 100.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which Formula 1 driver IDs are greater than 100?",
+                        "agent_reply": "There are 740 driver IDs greater than 100. They span from 101 to 841.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which DRIVERID values in FORMULA_1_DRIVERS are greater than 100? Return the driver IDs.",
+                            "user_intention": "List the Formula 1 drivers whose identifiers are greater than 100.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DRIVERID FROM FORMULA_1_DRIVERS WHERE DRIVERID > 100 ORDER BY DRIVERID ASC",
+                            "generated_sql": "SELECT driverid FROM formula_1_drivers WHERE driverid > 100",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 15.682286977767944,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "From the Formula 1 drivers whose identifiers are greater than 100, list those whose identifiers are at least 150.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Of those drivers, which ones have IDs of at least 150?",
+                        "agent_reply": "There are 691 driver IDs of at least 150, ranging from 150 through 841.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which DRIVERID values in FORMULA_1_DRIVERS are at least 150? Return the driver IDs.",
+                            "user_intention": "From the Formula 1 drivers whose identifiers are greater than 100, list those whose identifiers are at least 150.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DRIVERID FROM FORMULA_1_DRIVERS WHERE (DRIVERID) IN (SELECT DRIVERID FROM FORMULA_1_DRIVERS WHERE DRIVERID > 100) AND DRIVERID >= 150 ORDER BY DRIVERID ASC",
+                            "generated_sql": "SELECT driverid FROM formula_1_drivers WHERE driverid >= 150",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 16.6962890625,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Identify which Formula 1 drivers with identifiers of at least 150 from the previously selected group have recorded pit stops.",
+                "total_retries_needed": 4,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "Which of those drivers have recorded pit stops?",
+                        "agent_reply": "The query found 3,392 pit-stop records for drivers with IDs of at least 150, but the tool did not remove duplicate driver IDs as requested, so a reliable unique list could not be produced.",
+                        "evaluation": {
+                            "text_to_sql_input": "List the unique DRIVERID values (no duplicates) from FORMULA_1_PITSTOPS where DRIVERID is at least 150. Return one row per DRIVERID.",
+                            "user_intention": "Identify which Formula 1 drivers with identifiers of at least 150 from the previously selected group have recorded pit stops.",
+                            "recall": 0.5,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT D.DRIVERID FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_PITSTOPS P ON P.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT DRIVERID FROM FORMULA_1_DRIVERS WHERE (DRIVERID) IN (SELECT DRIVERID FROM FORMULA_1_DRIVERS WHERE DRIVERID > 100) AND DRIVERID >= 150) ORDER BY D.DRIVERID ASC",
+                            "generated_sql": "SELECT driverid FROM formula_1_pitstops WHERE driverid >= 150",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 28.375245094299316,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "It seems the tool provided an incorrect result by not generating a unique list of driver IDs with recorded pit stops. My intention is to identify which Formula 1 drivers, with IDs of at least 150, have recorded pit stops, ensuring there are no duplicate entries in the result. Could you clarify this and generate a unique list of such driver IDs?",
+                        "agent_reply": "Sorry, the tool failed twice to apply duplicate elimination, so I cannot provide a reliable unique list. It returned 3,392 pit-stop records containing repeated driver IDs rather than one row per driver.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the set of distinct DRIVERID values in FORMULA_1_PITSTOPS that are greater than or equal to 150. The result must contain exactly one row for each DRIVERID even if that driver has many pit-stop records; use duplicate elimination (DISTINCT), and sort by DRIVERID ascending.",
+                            "user_intention": "Identify which Formula 1 drivers with identifiers of at least 150 from the previously selected group have recorded pit stops.",
+                            "recall": 0.5,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT D.DRIVERID FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_PITSTOPS P ON P.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT DRIVERID FROM FORMULA_1_DRIVERS WHERE (DRIVERID) IN (SELECT DRIVERID FROM FORMULA_1_DRIVERS WHERE DRIVERID > 100) AND DRIVERID >= 150) ORDER BY D.DRIVERID ASC",
+                            "generated_sql": "SELECT driverid FROM formula_1_pitstops WHERE driverid >= 150 ORDER BY driverid ASC;",
+                            "needs_feedback": true,
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 53.94393610954285,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    },
+                    {
+                        "user_query": "It seems the tool has not successfully provided a unique list of driver IDs with recorded pit stops, as per my intention. My query is: Could you generate a distinct list of Formula 1 driver IDs, those with identifiers of at least 150, who have recorded pit stops? Please ensure there are no duplicate entries in the result.",
+                        "agent_reply": "The 35 distinct driver IDs are: 153, 154, 155, 807, 808, 811, 812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824, 825, 826, 828, 829, 830, 831, 832, 833, 834, 835, 836, 837, 838, 839, 840, and 841.",
+                        "evaluation": {
+                            "text_to_sql_input": "For every DRIVERID in FORMULA_1_PITSTOPS that is at least 150, return the DRIVERID and the total number of pit-stop records for that DRIVERID. Produce one grouped summary row per DRIVERID and order by DRIVERID ascending.",
+                            "user_intention": "Identify which Formula 1 drivers with identifiers of at least 150 from the previously selected group have recorded pit stops.",
+                            "recall": 0.5,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT D.DRIVERID FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_PITSTOPS P ON P.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT DRIVERID FROM FORMULA_1_DRIVERS WHERE (DRIVERID) IN (SELECT DRIVERID FROM FORMULA_1_DRIVERS WHERE DRIVERID > 100) AND DRIVERID >= 150) ORDER BY D.DRIVERID ASC",
+                            "generated_sql": "SELECT driverid, COUNT(*) AS total_pitstops FROM formula_1_pitstops WHERE driverid >= 150 GROUP BY driverid ORDER BY driverid ASC;",
+                            "is_retry": true,
+                            "retry_count": 2,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 71.31204032897949,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 3
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "8",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T11:57:47.649548",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the ten lowest constructor identifiers represented in the constructor results.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the first ten constructor IDs in the constructor results, ordered from lowest to highest?",
+                        "agent_reply": "The first ten constructor IDs are: 1, 1, 1, 1, 1, 1, 1, 1, 1, and 1.",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the first ten constructor IDs in FORMULA_1_CONSTRUCTORRESULTS, ordered from lowest to highest?",
+                            "user_intention": "List the ten lowest constructor identifiers represented in the constructor results.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS GROUP BY FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID ORDER BY FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID ASC FETCH FIRST 10 ROWS ONLY",
+                            "generated_sql": "SELECT constructorid FROM formula_1_constructorresults ORDER BY constructorid FETCH FIRST 10 ROWS ONLY",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 18.267815828323364,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "From the ten lowest constructor identifiers represented in the constructor results, list those that also have qualifying records.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which of those constructors also have qualifying records?",
+                        "agent_reply": "McLaren (constructor ID 1) has qualifying records.",
+                        "evaluation": {
+                            "text_to_sql_input": "Among the first ten CONSTRUCTORID values from FORMULA_1_CONSTRUCTORRESULTS ordered from lowest to highest (which are all CONSTRUCTORID 1), which distinct constructors also have records in FORMULA_1_QUALIFYING? Return the CONSTRUCTORID and constructor NAME.",
+                            "user_intention": "From the ten lowest constructor identifiers represented in the constructor results, list those that also have qualifying records.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT CR.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_QUALIFYING Q ON Q.CONSTRUCTORID = C.CONSTRUCTORID WHERE (CR.CONSTRUCTORID) IN (SELECT CR1.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 GROUP BY CR1.CONSTRUCTORID ORDER BY CR1.CONSTRUCTORID ASC FETCH FIRST 10 ROWS ONLY) ORDER BY CR.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT q.constructorid, c.name FROM formula_1_qualifying q JOIN formula_1_constructors c ON q.constructorid = c.constructorid WHERE q.constructorid IN (SELECT constructorid FROM formula_1_constructorresults ORDER BY constructorid ASC FETCH FIRST 10 ROWS ONLY)",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 14.51255989074707,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For the previously identified constructors that have qualifying records, count their constructor-result records and order them by decreasing count.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those constructor IDs, how many constructor-result rows does each have, ordered from the highest count to the lowest?",
+                        "agent_reply": "McLaren (constructor ID 1) has 774 constructor-result rows.",
+                        "evaluation": {
+                            "text_to_sql_input": "Constructor ID 1 (McLaren) was the only distinct constructor ID in the prior set and it has qualifying records. Count only its rows in FORMULA_1_CONSTRUCTORRESULTS. Return its CONSTRUCTORID, constructor NAME, and constructor-result row count, ordered by the count descending.",
+                            "user_intention": "For the previously identified constructors that have qualifying records, count their constructor-result records and order them by decreasing count.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT CR.CONSTRUCTORID, COUNT(*) AS RESULT_COUNT FROM FORMULA_1_CONSTRUCTORRESULTS CR WHERE (CR.CONSTRUCTORID) IN (SELECT DISTINCT CR2.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS CR2 JOIN FORMULA_1_CONSTRUCTORS C2 ON CR2.CONSTRUCTORID = C2.CONSTRUCTORID JOIN FORMULA_1_QUALIFYING Q2 ON Q2.CONSTRUCTORID = C2.CONSTRUCTORID WHERE (CR2.CONSTRUCTORID) IN (SELECT CR1.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 GROUP BY CR1.CONSTRUCTORID ORDER BY CR1.CONSTRUCTORID ASC FETCH FIRST 10 ROWS ONLY)) GROUP BY CR.CONSTRUCTORID ORDER BY RESULT_COUNT DESC, CR.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT c.constructorid, c.name, COUNT(cr.constructorresultsid) AS row_count FROM formula_1_constructors c JOIN formula_1_constructorresults cr ON c.constructorid = cr.constructorid WHERE c.constructorid = 1 GROUP BY c.constructorid, c.name ORDER BY row_count DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 19.760550022125244,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "9",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T11:58:53.126355",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Identify the drivers who have at least one result assigned status ID 1 and whose status is represented in the available status records.",
+                "total_retries_needed": 2,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "Which drivers have at least one result with status ID 1 that also has a matching status record?",
+                        "agent_reply": "Sorry, the query could not produce the requested distinct driver list after two attempts. It returned 5,966 result-level rows with duplicate drivers instead. Example matching drivers include Lewis Hamilton, Nick Heidfeld, Nico Rosberg, Fernando Alonso, and Heikki Kovalainen. Error: the generated query did not deduplicate drivers, and the retry also omitted the required matching-status join.",
+                        "evaluation": {
+                            "text_to_sql_input": "List each driver only once (deduplicate repeated race results) if the driver has one or more records in FORMULA_1_RESULTS with STATUSID equal to 1 and STATUSID 1 exists in FORMULA_1_STATUS. Return unique DRIVERID, FORENAME, and SURNAME.",
+                            "user_intention": "Identify the drivers who have at least one result assigned status ID 1 and whose status is represented in the available status records.",
+                            "recall": 1.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID WHERE FORMULA_1_RESULTS.STATUSID = 1",
+                            "generated_sql": "SELECT d.driverid, d.forename, d.surname FROM formula_1_drivers d JOIN formula_1_results r ON d.driverid = r.driverid WHERE r.statusid = 1;",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 26.414531230926514,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "It seems the query didn't properly address my intention. I want to identify the drivers who have at least one result assigned status ID 1, and ensure that this status ID 1 is represented within the available status records in the `FORMULA_1_STATUS` table. Could you please refine the query to include a proper join between `FORMULA_1_RESULTS` and `FORMULA_1_STATUS` to confirm the existence of status ID 1 in the status records?",
+                        "agent_reply": "310 distinct drivers have at least one result with status ID 1, with that status confirmed by a matching record in FORMULA_1_STATUS. Examples include Nico Rosberg, S\u00e9bastien Bourdais, Alexander Wurz, Anthony Davidson, and Ricardo Zonta.",
+                        "evaluation": {
+                            "text_to_sql_input": "Return each matching driver exactly once. A driver qualifies if they have at least one row in FORMULA_1_RESULTS whose STATUSID is 1, and that result must be inner-joined to FORMULA_1_STATUS on FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID, thereby confirming that status ID 1 exists in FORMULA_1_STATUS. Deduplicate the output by grouping on the driver's DRIVERID, FORENAME, and SURNAME. Return DRIVERID, FORENAME, and SURNAME.",
+                            "user_intention": "Identify the drivers who have at least one result assigned status ID 1 and whose status is represented in the available status records.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID WHERE FORMULA_1_RESULTS.STATUSID = 1",
+                            "generated_sql": "SELECT d.driverid, d.forename, d.surname FROM formula_1_results r JOIN formula_1_status s ON r.statusid = s.statusid JOIN formula_1_drivers d ON r.driverid = d.driverid WHERE s.statusid = 1 GROUP BY d.driverid, d.forename, d.surname",
+                            "needs_feedback": true,
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 43.18221426010132,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    }
+                ],
+                "execution_time": 43.18222904205322
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "List, in descending numerical order, the identifiers of the drivers who have at least one result assigned status ID 1 and whose status is represented in the available status records.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Can you list those driver IDs from highest to lowest?",
+                        "agent_reply": "There are 310 distinct driver IDs, ordered from highest to lowest. The sequence begins 840, 839, 838, 836, 835 and ends 5, 4, 3, 2, 1.",
+                        "evaluation": {
+                            "text_to_sql_input": "Using FORMULA_1_RESULTS inner-joined with FORMULA_1_STATUS on matching STATUSID, find results where STATUSID = 1. Group by FORMULA_1_RESULTS.DRIVERID so each driver ID appears exactly once, and order the grouped DRIVERID values in descending order (highest to lowest). Return only DRIVERID.",
+                            "user_intention": "List, in descending numerical order, the identifiers of the drivers who have at least one result assigned status ID 1 and whose status is represented in the available status records.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT DISTINCT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID WHERE FORMULA_1_RESULTS.STATUSID = 1) ORDER BY FORMULA_1_DRIVERS.DRIVERID DESC",
+                            "generated_sql": "SELECT r.driverid FROM formula_1_results r INNER JOIN formula_1_status s ON r.statusid = s.statusid WHERE r.statusid = 1 GROUP BY r.driverid ORDER BY r.driverid DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 21.537947177886963,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Count the drivers in the previously produced descending list of identifiers for drivers who have at least one result assigned status ID 1 and whose status is represented in the available status records.",
+                "total_retries_needed": 2,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "How many driver IDs are in that ordered list?",
+                        "agent_reply": "There are 310 distinct driver IDs in the ordered list.",
+                        "evaluation": {
+                            "text_to_sql_input": "response",
+                            "user_intention": "Count the drivers in the previously produced descending list of identifiers for drivers who have at least one result assigned status ID 1 and whose status is represented in the available status records.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT COUNT(FORMULA_1_DRIVERS.DRIVERID) FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT DISTINCT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID WHERE FORMULA_1_RESULTS.STATUSID = 1))",
+                            "generated_sql": "",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 88.65729880332947,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "I want to confirm the count of drivers in the descending list of identifiers, ensuring these are drivers who have at least one result with status ID 1 and whose status is properly represented in the status records. Could you verify the count based on the query?",
+                        "agent_reply": "The verified descending list contains 310 distinct driver IDs. The first counting attempt returned 5,966 because it counted result rows rather than unique drivers; the corrective execution then failed with ORA-00911. However, the preceding successfully executed grouped query produced exactly 310 rows, one per driver ID.",
+                        "evaluation": {
+                            "text_to_sql_input": "First group FORMULA_1_RESULTS rows by DRIVERID after inner-joining FORMULA_1_STATUS on FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID and filtering FORMULA_1_RESULTS.STATUSID = 1. Then count the number of grouped DRIVERID values. This must count each DRIVERID exactly once, not count result rows. Return one value named DISTINCT_DRIVER_COUNT.",
+                            "user_intention": "Count the drivers in the previously produced descending list of identifiers for drivers who have at least one result assigned status ID 1 and whose status is represented in the available status records.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT COUNT(FORMULA_1_DRIVERS.DRIVERID) FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT DISTINCT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID WHERE FORMULA_1_RESULTS.STATUSID = 1))",
+                            "generated_sql": "SELECT COUNT(r.driverid) AS _DRIVER_COUNT FROM formula_1_results r JOIN formula_1_status s ON r.statusid = s.statusid WHERE r.statusid = 1;",
+                            "needs_feedback": true,
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 113.44289875030518,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    }
+                ],
+                "execution_time": 113.44293284416199
+            }
+        ]
+    },
+    {
+        "experiment_id": "10",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T12:01:51.510280",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Which constructor identifiers from 1 through 10 have constructor results?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which constructor IDs from 1 through 10 appear in the constructor results?",
+                        "agent_reply": "All constructor IDs from 1 through 10 appear: 1, 2, 3, 4, 5, 6, 7, 8, 9, and 10.",
+                        "evaluation": {
+                            "text_to_sql_input": "List each CONSTRUCTORID exactly once from FORMULA_1_CONSTRUCTORRESULTS where CONSTRUCTORID is at least 1 and at most 10, sorted from smallest to largest. Group the rows by CONSTRUCTORID so there are no duplicate IDs.",
+                            "user_intention": "Which constructor identifiers from 1 through 10 have constructor results?",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS WHERE FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID BETWEEN 1 AND 10 ORDER BY FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT constructorid FROM formula_1_constructorresults WHERE constructorid BETWEEN 1 AND 10 GROUP BY constructorid ORDER BY constructorid ASC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 18.931569814682007,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Among the constructor identifiers from 1 through 10 that have constructor results, which have more than one result, and what is each one's result count?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Of those constructors, which ones have more than one result, and how many results does each have?",
+                        "agent_reply": "All 10 constructors have more than one result: ID 1: 774; ID 2: 71; ID 3: 689; ID 4: 338; ID 5: 220; ID 6: 891; ID 7: 141; ID 8: 39; ID 9: 239; ID 10: 185.",
+                        "evaluation": {
+                            "text_to_sql_input": "For each CONSTRUCTORID from 1 through 10 in FORMULA_1_CONSTRUCTORRESULTS, count its constructor result records. Return only constructor IDs with more than one record, along with the result count, sorted by CONSTRUCTORID ascending.",
+                            "user_intention": "Among the constructor identifiers from 1 through 10 that have constructor results, which have more than one result, and what is each one's result count?",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID, COUNT(*) AS RESULT_COUNT FROM FORMULA_1_CONSTRUCTORRESULTS WHERE FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID IN (SELECT DISTINCT CR1.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 WHERE CR1.CONSTRUCTORID BETWEEN 1 AND 10) GROUP BY FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID HAVING COUNT(*) > 1 ORDER BY RESULT_COUNT DESC, FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT constructorid, COUNT(*) AS result_count FROM formula_1_constructorresults WHERE constructorid BETWEEN 1 AND 10 GROUP BY constructorid HAVING COUNT(*) > 1 ORDER BY constructorid ASC;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 15.61127495765686,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Which constructor identifiers among those from 1 through 10 with more than one result also have a corresponding constructor record?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which of those constructor IDs also exist in the constructors list?",
+                        "agent_reply": "All of them also exist in the constructors list: 1, 2, 3, 4, 5, 6, 7, 8, 9, and 10.",
+                        "evaluation": {
+                            "text_to_sql_input": "Among CONSTRUCTORID values 1 through 10 that have more than one record in FORMULA_1_CONSTRUCTORRESULTS, which CONSTRUCTORID values also exist in FORMULA_1_CONSTRUCTORS? Return each matching CONSTRUCTORID once, sorted ascending.",
+                            "user_intention": "Which constructor identifiers among those from 1 through 10 with more than one result also have a corresponding constructor record?",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS JOIN FORMULA_1_CONSTRUCTORS ON FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID WHERE FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID IN (SELECT CR2.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS CR2 WHERE CR2.CONSTRUCTORID IN (SELECT DISTINCT CR1.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 WHERE CR1.CONSTRUCTORID BETWEEN 1 AND 10) GROUP BY CR2.CONSTRUCTORID HAVING COUNT(*) > 1) ORDER BY FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT cr.constructorid FROM formula_1_constructorresults cr JOIN formula_1_constructors c ON cr.constructorid = c.constructorid WHERE cr.constructorid BETWEEN 1 AND 10 GROUP BY cr.constructorid HAVING COUNT(*) > 1 ORDER BY cr.constructorid ASC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.954296112060547,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "11",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T12:02:40.281345",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the Formula 1 constructors identified by numbers from 1 through 20.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which Formula 1 constructors have constructor IDs from 1 through 20?",
+                        "agent_reply": "The constructors are: 1 \u2014 McLaren; 2 \u2014 BMW Sauber; 3 \u2014 Williams; 4 \u2014 Renault; 5 \u2014 Toro Rosso; 6 \u2014 Ferrari; 7 \u2014 Toyota; 8 \u2014 Super Aguri; 9 \u2014 Red Bull; 10 \u2014 Force India; 11 \u2014 Honda; 12 \u2014 Spyker; 13 \u2014 MF1; 14 \u2014 Spyker MF1; 15 \u2014 Sauber; 16 \u2014 BAR; 17 \u2014 Jordan; 18 \u2014 Minardi; 19 \u2014 Jaguar; 20 \u2014 Prost.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which Formula 1 constructors have CONSTRUCTORID values from 1 through 20, inclusive? Return each CONSTRUCTORID and constructor NAME, ordered by CONSTRUCTORID.",
+                            "user_intention": "List the Formula 1 constructors identified by numbers from 1 through 20.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.CONSTRUCTORID BETWEEN 1 AND 20 ORDER BY FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT constructorid, name FROM formula_1_constructors WHERE constructorid BETWEEN 1 AND 20 ORDER BY constructorid",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.351033210754395,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "From the Formula 1 constructors identified by numbers from 1 through 20, list only those whose identifying numbers are even.",
+                "total_retries_needed": 4,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "Of those constructors, which ones have even-numbered IDs?",
+                        "agent_reply": "The constructors with even-numbered IDs are: 2 \u2014 BMW Sauber; 4 \u2014 Renault; 6 \u2014 Ferrari; 8 \u2014 Super Aguri; 10 \u2014 Force India; 12 \u2014 Spyker; 14 \u2014 Spyker MF1; 16 \u2014 BAR; 18 \u2014 Minardi; 20 \u2014 Prost.",
+                        "evaluation": {
+                            "text_to_sql_input": "response",
+                            "user_intention": "From the Formula 1 constructors identified by numbers from 1 through 20, list only those whose identifying numbers are even.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.CONSTRUCTORID BETWEEN 1 AND 20) AND MOD(FORMULA_1_CONSTRUCTORS.CONSTRUCTORID, 2) = 0 ORDER BY FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ASC",
+                            "generated_sql": "",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.340298175811768,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "The answer provided is correct and aligns with my real intention. The Formula 1 constructors with even-numbered IDs are: 2 \u2014 BMW Sauber; 4 \u2014 Renault; 6 \u2014 Ferrari; 8 \u2014 Super Aguri; 10 \u2014 Force India; 12 \u2014 Spyker; 14 \u2014 Spyker MF1; 16 \u2014 BAR; 18 \u2014 Minardi; 20 \u2014 Prost.",
+                        "agent_reply": "Thank you for confirming that the answer matches your intention.",
+                        "evaluation": {
+                            "text_to_sql_input": "feedback",
+                            "user_intention": "From the Formula 1 constructors identified by numbers from 1 through 20, list only those whose identifying numbers are even.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.CONSTRUCTORID BETWEEN 1 AND 20) AND MOD(FORMULA_1_CONSTRUCTORS.CONSTRUCTORID, 2) = 0 ORDER BY FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ASC",
+                            "generated_sql": "",
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "alignment_and_correctness_failure",
+                            "execution_time": 12.630831241607666,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    },
+                    {
+                        "user_query": "The answer provided already matches my real intention. The Formula 1 constructors with even-numbered IDs are: 2 \u2014 BMW Sauber; 4 \u2014 Renault; 6 \u2014 Ferrari; 8 \u2014 Super Aguri; 10 \u2014 Force India; 12 \u2014 Spyker; 14 \u2014 Spyker MF1; 16 \u2014 BAR; 18 \u2014 Minardi; 20 \u2014 Prost.",
+                        "agent_reply": "Understood. The provided answer already matches your intended result.",
+                        "evaluation": {
+                            "text_to_sql_input": "feedback",
+                            "user_intention": "From the Formula 1 constructors identified by numbers from 1 through 20, list only those whose identifying numbers are even.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.CONSTRUCTORID BETWEEN 1 AND 20) AND MOD(FORMULA_1_CONSTRUCTORS.CONSTRUCTORID, 2) = 0 ORDER BY FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ASC",
+                            "generated_sql": "",
+                            "is_retry": true,
+                            "retry_count": 2,
+                            "retry_reason": "alignment_and_correctness_failure",
+                            "execution_time": 18.10582399368286,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 3
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Among the previously selected Formula 1 constructors with even identifying numbers from 1 through 20, list those represented in both constructor standings and race results.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which of those even-numbered constructors appear in both the constructor standings and the race results?",
+                        "agent_reply": "Sorry, the query could not be completed because the tool lost its database connection. Error: DPY-1001: not connected to database; unable to rollback.",
+                        "evaluation": {
+                            "text_to_sql_input": "List the distinct constructors whose CONSTRUCTORID is one of 2, 4, 6, 8, 10, 12, 14, 16, 18, or 20 and whose CONSTRUCTORID occurs at least once in both FORMULA_1_CONSTRUCTORSTANDINGS and FORMULA_1_RESULTS. Return CONSTRUCTORID and NAME ordered by CONSTRUCTORID.",
+                            "user_intention": "Among the previously selected Formula 1 constructors with even identifying numbers from 1 through 20, list those represented in both constructor standings and race results.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_CONSTRUCTORSTANDINGS ON FORMULA_1_CONSTRUCTORSTANDINGS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.CONSTRUCTORID BETWEEN 1 AND 20) AND MOD(FORMULA_1_CONSTRUCTORS.CONSTRUCTORID, 2) = 0) ORDER BY FORMULA_1_CONSTRUCTORS.CONSTRUCTORID ASC",
+                            "generated_sql": "SELECT c.constructorid, c.name FROM formula_1_constructors c JOIN formula_1_constructorstandings cs ON c.constructorid = cs.constructorid JOIN formula_1_results r ON c.constructorid = r.constructorid WHERE c.constructorid IN (2, 4, 6, 8, 10, 12, 14, 16, 18, 20) ORDER BY c.constructorid;",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 345.41693902015686,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 345.41700291633606
+            }
+        ]
+    },
+    {
+        "experiment_id": "12",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T12:08:56.247694",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Identify the drivers who have at least one recorded lap time.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which drivers have recorded lap times?",
+                        "agent_reply": "Sorry, I couldn\u2019t retrieve the drivers because the database connection failed twice: DPY-1001: not connected to database; unable to rollback.",
+                        "evaluation": {
+                            "text_to_sql_input": "Return each driver only once if their DRIVERID appears in FORMULA_1_LAPTIMES. Show DRIVERID, FORENAME, and SURNAME from FORMULA_1_DRIVERS.",
+                            "user_intention": "Identify the drivers who have at least one recorded lap time.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT D.DRIVERID FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_LAPTIMES L ON L.DRIVERID = D.DRIVERID ORDER BY D.DRIVERID ASC",
+                            "generated_sql": "SELECT d.driverid, d.forename, d.surname FROM formula_1_drivers d JOIN formula_1_laptimes lt ON d.driverid = lt.driverid",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 18.649319887161255,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 18.649333000183105
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "From the drivers who have recorded lap times, identify those who also have at least one qualifying record.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Among those drivers, which ones also have qualifying records?",
+                        "agent_reply": "Sorry, I couldn\u2019t retrieve the drivers because the database connection failed twice: DPY-1001: not connected to database; unable to rollback.",
+                        "evaluation": {
+                            "text_to_sql_input": "Return each driver only once when the driver's DRIVERID occurs in both FORMULA_1_LAPTIMES and FORMULA_1_QUALIFYING. Include DRIVERID, FORENAME, and SURNAME from FORMULA_1_DRIVERS.",
+                            "user_intention": "From the drivers who have recorded lap times, identify those who also have at least one qualifying record.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT D.DRIVERID FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON Q.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_LAPTIMES L1 ON L1.DRIVERID = D1.DRIVERID) ORDER BY D.DRIVERID ASC",
+                            "generated_sql": "SELECT d.driverid, d.forename, d.surname FROM formula_1_drivers d JOIN formula_1_laptimes l ON d.driverid = l.driverid JOIN formula_1_qualifying q ON d.driverid = q.driverid",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 19.201283931732178,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 19.201297998428345
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "List in descending identifier order the drivers who have both recorded lap times and qualifying records.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "List the driver IDs from that group in descending order.",
+                        "agent_reply": "Sorry, I couldn\u2019t retrieve the driver IDs because the database connection failed twice: DPY-1001: not connected to database; unable to rollback.",
+                        "evaluation": {
+                            "text_to_sql_input": "Return each DRIVERID only once, sorted from highest to lowest, where the DRIVERID has at least one row in FORMULA_1_LAPTIMES and at least one row in FORMULA_1_QUALIFYING.",
+                            "user_intention": "List in descending identifier order the drivers who have both recorded lap times and qualifying records.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT D.DRIVERID FROM FORMULA_1_DRIVERS D WHERE (D.DRIVERID) IN (SELECT DISTINCT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 JOIN FORMULA_1_QUALIFYING Q2 ON Q2.DRIVERID = D2.DRIVERID WHERE (D2.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_LAPTIMES L1 ON L1.DRIVERID = D1.DRIVERID)) ORDER BY D.DRIVERID DESC",
+                            "generated_sql": "SELECT l.driverid FROM formula_1_laptimes l JOIN formula_1_qualifying q ON l.driverid = q.driverid ORDER BY l.driverid DESC",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 18.834781885147095,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 18.83480191230774
+            }
+        ]
+    },
+    {
+        "experiment_id": "13",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-07-29T12:09:52.939849",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Determine whether driver 1 has at least one driver standings record.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Is driver 1 represented in the driver standings?",
+                        "agent_reply": "Sorry, I could not verify this because the database connection failed twice: DPY-1001: not connected to database; unable to rollback.",
+                        "evaluation": {
+                            "text_to_sql_input": "Check whether DRIVERID 1 occurs in the DRIVERID column of FORMULA_1_DRIVERSTANDINGS, and return whether it exists plus the count of matching rows.",
+                            "user_intention": "Determine whether driver 1 has at least one driver standings record.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT D.DRIVERID FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS DS ON DS.DRIVERID = D.DRIVERID WHERE D.DRIVERID = 1",
+                            "generated_sql": "SELECT CASE WHEN COUNT(*) > 0 THEN 'Exists' ELSE 'Does not exist' END AS existence, COUNT(*) AS match_count FROM formula_1_driverstandings WHERE driverid = 1",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 17.170675039291382,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 17.17069101333618
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Determine whether driver 1, previously found in the driver standings, also has at least one qualifying record.",
+                "total_retries_needed": 2,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "Does that driver also have any qualifying records?",
+                        "agent_reply": "Sorry, I could not verify whether driver 1 has qualifying records because the database connection failed twice: DPY-1001: not connected to database; unable to rollback.",
+                        "evaluation": {
+                            "text_to_sql_input": "Check whether DRIVERID 1 occurs in the DRIVERID column of FORMULA_1_QUALIFYING, and return whether it exists plus the count of matching rows.",
+                            "user_intention": "Determine whether driver 1, previously found in the driver standings, also has at least one qualifying record.",
+                            "recall": 0.3333333333333333,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT D.DRIVERID FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON Q.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS1 ON DS1.DRIVERID = D1.DRIVERID WHERE D1.DRIVERID = 1)",
+                            "generated_sql": "SELECT COUNT(*) AS match_count, CASE WHEN COUNT(*) > 0 THEN 'Exists' ELSE 'Does not exist' END AS existence_status FROM formula_1_qualifying WHERE driverid = 1",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 21.78552484512329,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "It seems the database connection issue is preventing the query from being executed successfully. However, my intention is to determine whether driver 1, who is listed in the driver standings, also has at least one qualifying record. Could you try reformulating the query or checking the database connection to ensure it can execute properly?",
+                        "agent_reply": "Sorry, the reformulated query also failed after two attempts because the tool is still not connected to the database: DPY-1001: not connected to database; unable to rollback. I cannot check or repair the external database connection from here.",
+                        "evaluation": {
+                            "text_to_sql_input": "For DRIVERID 1, independently check existence in FORMULA_1_DRIVERSTANDINGS and existence in FORMULA_1_QUALIFYING without joining individual records. Return whether the driver appears at least once in each table and whether both conditions are true.",
+                            "user_intention": "Determine whether driver 1, previously found in the driver standings, also has at least one qualifying record.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT D.DRIVERID FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON Q.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS1 ON DS1.DRIVERID = D1.DRIVERID WHERE D1.DRIVERID = 1)",
+                            "generated_sql": "SELECT EXISTS (SELECT 1 FROM formula_1_driverstandings WHERE driverid = 1) AS exists_in_driverstandings, EXISTS (SELECT 1 FROM formula_1_qualifying WHERE driverid = 1) AS exists_in_qualifying FROM dual",
+                            "needs_feedback": true,
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 43.79279613494873,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    }
+                ],
+                "execution_time": 43.79281187057495
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Count the qualifying records for driver 1, restricted to the driver previously confirmed as having both standings and qualifying records.",
+                "total_retries_needed": 5,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "How many qualifying records does that driver have?",
+                        "agent_reply": "Sorry, I could not determine the count because both execution attempts failed: DPY-1001: not connected to database; unable to rollback.",
+                        "evaluation": {
+                            "text_to_sql_input": "Count all qualifying rows for the driver whose DRIVERID equals 1 in FORMULA_1_QUALIFYING, and return the count.",
+                            "user_intention": "Count the qualifying records for driver 1, restricted to the driver previously confirmed as having both standings and qualifying records.",
+                            "recall": 0.3333333333333333,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT D.DRIVERID, COUNT(*) FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON Q.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 JOIN FORMULA_1_QUALIFYING Q2 ON Q2.DRIVERID = D2.DRIVERID WHERE (D2.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS1 ON DS1.DRIVERID = D1.DRIVERID WHERE D1.DRIVERID = 1)) GROUP BY D.DRIVERID ORDER BY D.DRIVERID",
+                            "generated_sql": "SELECT COUNT(*) AS qualifying_count FROM formula_1_qualifying WHERE driverid = 1",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 18.13284206390381,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "Since the database connection issue persists, I intend to count the qualifying records for driver 1 but only if the driver has both standings and qualifying records. Could you confirm whether driver 1 has both standings and qualifying records first, and then proceed to count the qualifying records for this driver?",
+                        "agent_reply": "Sorry, I could not confirm whether driver 1 has both record types or count the qualifying records. Both execution attempts failed because the database remains disconnected: DPY-1001: not connected to database; unable to rollback.",
+                        "evaluation": {
+                            "text_to_sql_input": "Return a single summary for DRIVERID 1 containing: the count of matching rows in FORMULA_1_DRIVERSTANDINGS, the count of matching rows in FORMULA_1_QUALIFYING, whether both counts are greater than zero, and the qualifying count only when both are greater than zero. Compute the two counts independently to avoid multiplying rows through a join.",
+                            "user_intention": "Count the qualifying records for driver 1, restricted to the driver previously confirmed as having both standings and qualifying records.",
+                            "recall": 0.6666666666666666,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT D.DRIVERID, COUNT(*) FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON Q.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 JOIN FORMULA_1_QUALIFYING Q2 ON Q2.DRIVERID = D2.DRIVERID WHERE (D2.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS1 ON DS1.DRIVERID = D1.DRIVERID WHERE D1.DRIVERID = 1)) GROUP BY D.DRIVERID ORDER BY D.DRIVERID",
+                            "generated_sql": "SELECT (SELECT COUNT(*) FROM formula_1_driverstandings ds WHERE ds.driverid = 1) AS driverstandings_count, (SELECT COUNT(*) FROM formula_1_qualifying q WHERE q.driverid = 1) AS qualifying_count, CASE WHEN (SELECT COUNT(*) FROM formula_1_driverstandings ds WHERE ds.driverid = 1) > 0 AND (SELECT COUNT(*) FROM formula_1_qualifying q WHERE q.driverid = 1) > 0 THEN 'YES' ELSE 'NO' END AS both_counts_greater_than_zero, CASE WHEN (SELECT COUNT(*) FROM formula_1_driverstandings ds WHERE ds.driverid = 1) > 0 AND (SELECT COUNT(*) FROM formula_1_qualifying q WHERE q.driverid = 1) > 0 THEN (SELECT COUNT(*) FROM formula_1_qualifying q WHERE q.driverid = 1) ELSE NULL END AS qualifying_count_if_both_greater_than_zero FROM dual",
+                            "needs_feedback": true,
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 41.64052605628967,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    },
+                    {
+                        "user_query": "Since my intention is to count qualifying records for driver 1 but only if the driver has both standings and qualifying records, could you first confirm whether driver 1 has both standings and qualifying records? If both exist, then proceed to count the qualifying records for this driver.",
+                        "agent_reply": "I could not confirm whether driver 1 has both standings and qualifying records, so I also could not conditionally report the qualifying count. Both attempts failed because the database is not connected: DPY-1001: not connected to database; unable to rollback.",
+                        "evaluation": {
+                            "text_to_sql_input": "Check DRIVERID 1 in FORMULA_1_DRIVERSTANDINGS and FORMULA_1_QUALIFYING using independent scalar counts. Return the standings count, qualifying count, YES if both counts exceed zero otherwise NO, and return the qualifying count only when both exceed zero.",
+                            "user_intention": "Count the qualifying records for driver 1, restricted to the driver previously confirmed as having both standings and qualifying records.",
+                            "recall": 0.6666666666666666,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT D.DRIVERID, COUNT(*) FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON Q.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 JOIN FORMULA_1_QUALIFYING Q2 ON Q2.DRIVERID = D2.DRIVERID WHERE (D2.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS1 ON DS1.DRIVERID = D1.DRIVERID WHERE D1.DRIVERID = 1)) GROUP BY D.DRIVERID ORDER BY D.DRIVERID",
+                            "generated_sql": "SELECT (SELECT COUNT(*) FROM formula_1_driverstandings ds WHERE ds.driverid = 1) AS standings_count, (SELECT COUNT(*) FROM formula_1_qualifying q WHERE q.driverid = 1) AS qualifying_count, CASE WHEN (SELECT COUNT(*) FROM formula_1_driverstandings ds WHERE ds.driverid = 1) > 0 AND (SELECT COUNT(*) FROM formula_1_qualifying q WHERE q.driverid = 1) > 0 THEN 'YES' ELSE 'NO' END AS result, CASE WHEN (SELECT COUNT(*) FROM formula_1_driverstandings ds WHERE ds.driverid = 1) > 0 AND (SELECT COUNT(*) FROM formula_1_qualifying q WHERE q.driverid = 1) > 0 THEN (SELECT COUNT(*) FROM formula_1_qualifying q WHERE q.driverid = 1) ELSE NULL END AS qualifying_count_if_both_exceed_zero FROM dual",
+                            "needs_feedback": true,
+                            "is_retry": true,
+                            "retry_count": 2,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 67.70252013206482,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 3
+                    }
+                ]
+            }
+        ]
+    }
+]

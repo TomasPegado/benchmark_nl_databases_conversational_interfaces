@@ -20,14 +20,14 @@ import paths as paths
 
 experiment = os.getenv("EXPERIMENT_NAME")
 
-GPT4O = LLMConfig(provider="azure").get_llm(model="gpt-4o")
+LLM = LLMConfig(provider="azure").get_llm(model=os.getenv("TEXT_TO_SQL_MODEL"))
 
 prompt_path = paths.EXTENDED_SCHEMA_PROMPT
 DATASET_SYNTHETIC_PATH = paths.DATASET_SYNTHETIC_PATH
 EMBEDDINGS_PATH = paths.EMBEDDINGS_PATH
 
 decomposer = QueryDecomposer(
-    GPT4O,
+    LLM,
     paths.PROMPT_DECOMPOSER_FILE,
     False
 )
@@ -48,7 +48,7 @@ else:
     retriever.remove_duplicates()
 
 
-text_to_sql =  TextToSQLExtendedSchema(GPT4O, decomposer, retriever, prompt_path, debug=False)
+text_to_sql =  TextToSQLExtendedSchema(LLM, decomposer, retriever, prompt_path, debug=False)
 
 def execute_sql_query(sql_query):
     try:

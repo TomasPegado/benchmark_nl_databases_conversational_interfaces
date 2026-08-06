@@ -16,7 +16,8 @@ from pandas.api.types import is_datetime64_any_dtype as is_datetime
 from pandas.api.types import is_numeric_dtype
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage
-from functions.langchain_utils import get_llm
+from functions.llm_config import LLMConfig
+
 
 def clean_sql(sql_query):
     sql_query = sql_query.strip()
@@ -521,6 +522,9 @@ class DatasetEvaluator:
     
 
     def compare_sql_query(self,
+                          user_intention: str,
+                          agent_reply: str,
+                          text_to_sql_input: str,
                           generated_query: str,
                           result_table: pd.DataFrame,
                           true_query: str,
@@ -554,6 +558,8 @@ class DatasetEvaluator:
 
         generated_query = generated_query.strip()
         if generated_query == "":
+            if text_to_sql_input == "response":
+                return self.ai_judge_response_correctness(user_intention, agent_reply, true_query, true_table)
             return False, -1, -1
 
         if generated_query == true_query.strip():
@@ -568,6 +574,8 @@ class DatasetEvaluator:
         return query_correct, similarity, column_matching_index
 
     def compare_sql_query_similarity_and_semantic(self,
+                          user_intention: str,
+                          agent_reply: str,
                           user_query: str,
                           generated_query: str,
                           result_table: pd.DataFrame,
@@ -579,12 +587,15 @@ class DatasetEvaluator:
                           debug_mode: bool=False) -> bool:
 
         query_correct, similarity, column_matching_index = self.compare_sql_query(
+            user_intention,
+            agent_reply, user_query,
             generated_query, result_table,
             true_query, true_table,
             similarity_threshold, column_matching_threshold, similarity_metric
         )
 
-        if query_correct == False:
+        is_response_only = user_query == "response" and generated_query.strip() == ""
+        if query_correct == False and not is_response_only:
             query_correct = self.ai_as_judge_comparation(user_query, generated_query, true_query, result_table, true_table, debug_mode=debug_mode)
 
         return query_correct, similarity, column_matching_index
@@ -594,19 +605,19 @@ class DatasetEvaluator:
                                 generated_query: str, true_query: str,
                                 result_table: pd.DataFrame, true_table: pd.DataFrame,
                                 debug_mode=True,
-                                sample_size: int=5,
+                                sample_size: int=100,
                                 random_state: int=42):
         
         # # ---------- Sampling helper ----------
-        def sample_df(df: pd.DataFrame) -> pd.DataFrame:
-            if df is None or df.empty:
-                return df
+        # def sample_df(df: pd.DataFrame) -> pd.DataFrame:
+        #     if df is None or df.empty:
+        #         return df
 
-            return df.sample(sample_size, random_state=random_state)
+        #     return df.sample(sample_size, random_state=random_state)
         
-        # ---------- Apply sampling ----------
-        result_sample = sample_df(result_table)
-        true_sample = sample_df(true_table)
+        # # ---------- Apply sampling ----------
+        # result_sample = sample_df(result_table)
+        # true_sample = sample_df(true_table)
 
         # # Convert to compact string
         # result_str = result_sample.to_markdown(index=False)
@@ -623,7 +634,7 @@ class DatasetEvaluator:
 
             # Generated Query Result:
             The execution of the generated query returned the following data:
-            {result_sample}
+            {result_table}
 
             # Ground Truth SQL Query:
             The ground truth (correct) SQL query is:
@@ -631,10 +642,11 @@ class DatasetEvaluator:
 
             # Ground Truth Query Result:
             The execution of the ground truth query returned the following data:
-            {true_sample}
+            {true_table}
 
             # Evaluation Question:
-            BE AWARE that the tables provided are only samples of the full query results, and may not contain all rows.
+            Consider only the same columns that appear in both tables.
+            Check if most of the rows that appear in the predicted query result also appear in the ground truth query result.
             Based on the information provided above, do both SQL queries answer the user question? 
             Even if the resulting dataframes have minor differences in ordering, formatting, or other formal aspects, do they produce equivalent responses to the original question?
 
@@ -646,14 +658,71 @@ class DatasetEvaluator:
             T = True
             F = False
             """
-        llm = get_llm(logprobs=True)
+        
+        llm = LLMConfig(provider="azure", environment="tec").get_llm(model=os.getenv("EVALUATOR_MODEL"))
 
         result = llm.invoke(prompt)
 
-        confidence = math.exp(result.response_metadata['logprobs']['content'][0]['logprob'])
+        if "4o" in os.getenv("EVALUATOR_MODEL"):
+            confidence = math.exp(result.response_metadata['logprobs']['content'][0]['logprob'])
 
-        if debug_mode: print(f"[AI as JUDGE sql query correctness] Result: {result.content} with {confidence} of confidence. And result metadata: {result.response_metadata}")
-        return result.content.strip().lower() == "t" and confidence >= 0.90
+            if debug_mode: print(f"[AI as JUDGE sql query correctness] Result: {result.content} with {confidence} of confidence. And result metadata: {result.response_metadata}")
+            return result.content.strip().lower() == "t"  and confidence >= 0.90
+        else:
+            if debug_mode: print(f"[AI as JUDGE sql query correctness] Result: {result.content}")
+            return result.content.strip().lower() == "t"
+
+    def ai_judge_response_correctness(self,
+                                     user_intention: str,
+                                     agent_reply: str,
+                                     true_query: str,
+                                     true_table: pd.DataFrame,
+                                     debug_mode: bool=True
+    ) -> Tuple[bool, float, float]:
+        """Judge a response-only answer against the ground-truth query result."""
+        true_table_text = true_table.to_string(index=False)
+        prompt = f"""
+            # User Intention:
+            The information requested by the user is:
+            {user_intention}
+
+            # Agent Reply:
+            The text-to-SQL agent answered without running a new SQL query:
+            {agent_reply}
+
+            # Ground Truth SQL Query:
+            The SQL query that defines the correct result is:
+            {true_query}
+
+            # Ground Truth Query Result:
+            The execution of the ground truth query returned:
+            {true_table_text}
+
+            # Evaluation:
+            Decide whether the agent reply correctly answers the user intention
+            using the information in the ground truth result.
+
+            Ignore differences in wording, formatting, and row ordering.
+            The reply is correct only if its relevant records and values match
+            the ground truth, it includes all information required by the user
+            intention, and it contains no contradictory or unsupported factual
+            claims. Missing expected records or values, an empty reply, or a
+            non-answering reply is incorrect.
+
+            Answer with a single character only, without explanation:
+            T = True
+            F = False
+            """
+        llm = LLMConfig(provider="azure").get_llm(model=os.getenv("EVALUATOR_MODEL"))
+
+        result = llm.invoke(prompt)
+        judge_output = result.content.strip().lower()
+
+        if debug_mode:
+            print(f"[AI as JUDGE response correctness] Result: {result.content}")
+
+        return judge_output == "t", -1, -1
+
 
     def evaluate_query_batch(self,
                              queries: list[dict],

@@ -23,16 +23,16 @@ def build_graph(conversational_agent_memory: bool = True, env: Literal["tec"] = 
 
     return graph_builder.compile()
 
-if __name__ == "__main__":
-    dataset = os.getenv("EXPERIMENT_DATASET_NAME")
-    with open(f"../dataset_generation/dialogue_dataset/{dataset}_dialogue_dataset.json", "r", encoding="utf-8") as f:
-      experiment = json.load(f)[0]
+# if __name__ == "__main__":
+#     dataset = os.getenv("EXPERIMENT_DATASET_NAME")
+#     with open(f"../dataset_generation/dialogue_dataset/{dataset}_dialogue_dataset.json", "r", encoding="utf-8") as f:
+#       experiment = json.load(f)[0]
 
-    eval_graph = build_graph(env="tec")
-    eval_result = eval_graph.invoke({
-      "experiment": experiment,
-      "max_retries": 1,
-      "debug_mode": True
-    })
+#     eval_graph = build_graph(env="tec")
+#     eval_result = eval_graph.invoke({
+#       "experiment": experiment,
+#       "max_retries": 1,
+#       "debug_mode": True
+#     })
 
-    print(eval_result["experiment_eval"])
+#     print(eval_result["experiment_eval"])

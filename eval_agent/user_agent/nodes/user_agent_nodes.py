@@ -16,7 +16,6 @@ import paths
 import pandas as pd
 # from functions.sqldatabase_langchain_utils import SQLDatabaseLangchainUtils
 import eval_agent.user_agent.prompts as prompts
-from functions.gptconfig import MODEL_4O
 
 import os
 from dotenv import load_dotenv
@@ -40,7 +39,7 @@ class EvaluatorNodes:
             self.EVALUATOR = None
   
         self.conversational_agent_graph = build_graph(have_memory=agent_memory, env=env)
-        self.llm = LLMConfig(provider="azure", environment=env).get_llm(model=MODEL_4O, max_tokens=2000)
+        self.llm = LLMConfig(provider="azure", environment=env).get_llm(model=os.getenv("USER_AGENT_MODEL"), max_tokens=2000)
 
     def classify_query_complexity(self, sql: Optional[str]) -> str:
         """Classifica a complexidade de uma query SQL baseada em heurísticas simples"""
@@ -95,14 +94,28 @@ class EvaluatorNodes:
 
         evaluator = state.get("evaluator", None)
         ground_truth_golden_sql = ground_truths.get("golden_sql", None)
-        if golden_sql == "":
-            correctness = False
-        else:
-            if evaluator and ground_truth_golden_sql and golden_sql:
-                try:
+        if evaluator and ground_truth_golden_sql:
+            try:
+                if function_input == "response" and golden_sql == "":
+                    true_table = evaluator.run_sql_query(ground_truth_golden_sql)
+                    correctness, sim, col_match = evaluator.compare_sql_query_similarity_and_semantic(
+                        agent_reply=answer,
+                        user_intention=intention,
+                        user_query=function_input,
+                        generated_query="",
+                        result_table=pd.DataFrame(),
+                        true_query=ground_truth_golden_sql,
+                        true_table=true_table,
+                        similarity_threshold=0.8,
+                        column_matching_threshold=0.5,
+                        debug_mode=True
+                    )
+                elif golden_sql:
                     result_table = evaluator.run_sql_query(golden_sql)
                     true_table = evaluator.run_sql_query(ground_truth_golden_sql)
                     correctness, sim, col_match = evaluator.compare_sql_query_similarity_and_semantic(
+                        agent_reply=answer,
+                        user_intention=intention,
                         user_query=function_input,
                         generated_query=golden_sql,
                         result_table=result_table,
@@ -112,12 +125,15 @@ class EvaluatorNodes:
                         column_matching_threshold=0.5,
                         debug_mode=True
                     )
-                except Exception as e:
-                    print(f"[ERROR] Erro ao executar a query: {e}")
+                else:
                     correctness = False
-            else:
-                
-                correctness = True
+            except Exception as e:
+                print(f"[ERROR] Erro ao avaliar a resposta: {e}")
+                correctness = False
+        elif golden_sql == "":
+            correctness = False
+        else:
+            correctness = True
 
         turn_eval = {
             "user_query": state["last_user_input"],
@@ -364,7 +380,26 @@ class EvaluatorNodes:
         evaluator = state.get("evaluator", None)
         correctness = True
         
-        if evaluator and ground_truth_golden_sql and golden_sql != "" and alignment != False:
+        if evaluator and ground_truth_golden_sql and function_input == "response" and golden_sql == "" and alignment != False:
+            try:
+                true_table = evaluator.run_sql_query(ground_truth_golden_sql)
+                correctness, sim, col_match = evaluator.compare_sql_query_similarity_and_semantic(
+                    agent_reply=answer,
+                    user_intention=intention,
+                    user_query=function_input,
+                    generated_query="",
+                    result_table=pd.DataFrame(),
+                    true_query=ground_truth_golden_sql,
+                    true_table=true_table,
+                    similarity_threshold=0.8,
+                    column_matching_threshold=0.5,
+                    debug_mode=True
+                )
+            except Exception as e:
+                print(f"[ERROR] Response correctness evaluation error: {e}")
+                correctness = False
+                state["retry_reason"] = "response_judge_error"
+        elif evaluator and ground_truth_golden_sql and golden_sql != "" and alignment != False:
             try:
                 # 1) Only execution here. If this fails, it's truly an execution error.
                 try:
@@ -379,7 +414,10 @@ class EvaluatorNodes:
                 # 2) Comparison logic here. If this fails (bugs, edge cases, pandas issues, etc),
                 #    fall back to AI-as-judge instead of silently marking execution error.
                 try:
+                    print(f"[INFO] Comparing SQL query similarity and semantic between '{function_input}''.")
                     correctness, sim, col_match = evaluator.compare_sql_query_similarity_and_semantic(
+                        agent_reply=answer,
+                        user_intention=intention,
                         user_query=function_input,
                         generated_query=golden_sql,
                         result_table=result_table,
@@ -443,7 +481,7 @@ class EvaluatorNodes:
 
         if state["debug_mode"]: print("[INFO] A avaliação para esse turno foi: ", state["experiment_eval"][-1])
 
-        # Se está alinhado com o que o usuário esperava e query está correta, podemos seguir para o próximo turno
+        # Se está alinhado com o que o usuário esperava, podemos seguir para o próximo turno
         if alignment:
             # Finalizar métricas da interação com sucesso
             if current_interaction_id in state["interaction_metrics"]:

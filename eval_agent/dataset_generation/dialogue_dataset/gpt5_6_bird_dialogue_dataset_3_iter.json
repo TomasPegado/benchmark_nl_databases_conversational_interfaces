@@ -1,0 +1,2297 @@
+{
+  "dataset": [
+    {
+      "experiment_id": "1",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits hosted races where a constructor scored exactly 14 points?",
+          "intention": "Identify the circuits that hosted races in which at least one constructor scored exactly 14 points.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT DISTINCT FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_CONSTRUCTORRESULTS ON FORMULA_1_CONSTRUCTORRESULTS.RACEID = FORMULA_1_RACES.RACEID WHERE FORMULA_1_CONSTRUCTORRESULTS.POINTS = 14 ORDER BY FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those circuits, which are at least 100 meters above sea level, and where are they located?",
+          "intention": "For the previously identified circuits, return those at an altitude of at least 100 meters, including each circuit's name, location, country, and altitude, ordered from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.LOCATION, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.ALT FROM FORMULA_1_CIRCUITS WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_CONSTRUCTORRESULTS ON FORMULA_1_CONSTRUCTORRESULTS.RACEID = FORMULA_1_RACES.RACEID WHERE FORMULA_1_CONSTRUCTORRESULTS.POINTS = 14) AND FORMULA_1_CIRCUITS.ALT >= 100 ORDER BY FORMULA_1_CIRCUITS.ALT DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those high-altitude circuits, summarize each country by the number of circuits and the highest recorded altitude.",
+          "intention": "Group the previously selected circuits at least 100 meters above sea level by country, showing the circuit count and maximum recorded altitude for each country in alphabetical order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.COUNTRY, COUNT(FORMULA_1_CIRCUITS.CIRCUITID) AS CIRCUIT_COUNT, MAX(FORMULA_1_CIRCUITS.ALT) AS MAX_ALTITUDE FROM FORMULA_1_CIRCUITS WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_CONSTRUCTORRESULTS ON FORMULA_1_CONSTRUCTORRESULTS.RACEID = FORMULA_1_RACES.RACEID WHERE FORMULA_1_CONSTRUCTORRESULTS.POINTS = 14) AND FORMULA_1_CIRCUITS.ALT >= 100) AND FORMULA_1_CIRCUITS.ALT IS NOT NULL GROUP BY FORMULA_1_CIRCUITS.COUNTRY ORDER BY FORMULA_1_CIRCUITS.COUNTRY ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "2",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which constructors scored points in race 18, and what are their nationalities?",
+          "intention": "Identify the constructors that scored more than zero points in race 18 and give each constructor's nationality.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT CR.CONSTRUCTORRESULTSID, C.NAME, C.NATIONALITY, CR.POINTS FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID WHERE CR.RACEID = 18 AND CR.POINTS > 0 ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those results, keep only the ones worth at least 9 points and list them from highest to lowest points.",
+          "intention": "Among the constructor results from race 18 that had more than zero points, return only those worth at least 9 points, ordered from the most points to the fewest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT CR.CONSTRUCTORRESULTSID, C.NAME, CR.POINTS, CR.STATUS FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID WHERE (CR.CONSTRUCTORRESULTSID) IN (SELECT CR1.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 JOIN FORMULA_1_CONSTRUCTORS C1 ON CR1.CONSTRUCTORID = C1.CONSTRUCTORID WHERE CR1.RACEID = 18 AND CR1.POINTS > 0) AND CR.POINTS >= 9 ORDER BY CR.POINTS DESC, CR.CONSTRUCTORRESULTSID ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those constructors, what were their championship positions and win totals after race 18?",
+          "intention": "For the constructors associated with the previously retained results worth at least 9 points, provide their championship positions and numbers of wins after race 18.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_constructorstandings"
+            ],
+            "golden_sql": "SELECT CR.CONSTRUCTORRESULTSID, C.NAME, CS.POSITION, CS.POSITIONTEXT, CS.WINS FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_CONSTRUCTORSTANDINGS CS ON C.CONSTRUCTORID = CS.CONSTRUCTORID WHERE (CR.CONSTRUCTORRESULTSID) IN (SELECT CR2.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR2 JOIN FORMULA_1_CONSTRUCTORS C2 ON CR2.CONSTRUCTORID = C2.CONSTRUCTORID WHERE (CR2.CONSTRUCTORRESULTSID) IN (SELECT CR1.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 JOIN FORMULA_1_CONSTRUCTORS C1 ON CR1.CONSTRUCTORID = C1.CONSTRUCTORID WHERE CR1.RACEID = 18 AND CR1.POINTS > 0) AND CR2.POINTS >= 9) AND CS.RACEID = 18 ORDER BY CS.POSITION ASC, C.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "3",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which drivers have both a championship standing recorded in first position and a lap completed in first position?",
+          "intention": "Identify the drivers who have at least one championship standing in first position and have also completed at least one lap in first position.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings",
+              "formula_1_laptimes"
+            ],
+            "golden_sql": "SELECT DISTINCT D.DRIVERID, D.FORENAME, D.SURNAME FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS DS ON DS.DRIVERID = D.DRIVERID JOIN FORMULA_1_LAPTIMES LT ON LT.DRIVERID = D.DRIVERID WHERE DS.POSITION = 1 AND LT.POSITION = 1 ORDER BY D.SURNAME ASC, D.FORENAME ASC, D.DRIVERID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those drivers, which ones were born between January 1, 1980 and December 31, 1989? List their names and birth dates from earliest to latest.",
+          "intention": "Among the previously identified drivers with both a first-place championship standing and a first-place lap, list those born from January 1, 1980 through December 31, 1989, ordered by birth date from earliest to latest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings",
+              "formula_1_laptimes"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, D.DOB FROM FORMULA_1_DRIVERS D WHERE (D.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS ON DS.DRIVERID = D1.DRIVERID JOIN FORMULA_1_LAPTIMES LT ON LT.DRIVERID = D1.DRIVERID WHERE DS.POSITION = 1 AND LT.POSITION = 1) AND D.DOB BETWEEN DATE '1980-01-01' AND DATE '1989-12-31' ORDER BY D.DOB ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Among those 1980s-born drivers, show me the British drivers' names, codes, and numbers, ordered by number.",
+          "intention": "From the previously narrowed group born during the 1980s, list the British drivers with their first names, surnames, codes, and racing numbers, ordered by racing number in ascending order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings",
+              "formula_1_laptimes"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, D.CODE, D.\"number\" FROM FORMULA_1_DRIVERS D WHERE (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 WHERE (D2.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS ON DS.DRIVERID = D1.DRIVERID JOIN FORMULA_1_LAPTIMES LT ON LT.DRIVERID = D1.DRIVERID WHERE DS.POSITION = 1 AND LT.POSITION = 1) AND D2.DOB BETWEEN DATE '1980-01-01' AND DATE '1989-12-31') AND D.NATIONALITY = 'British' ORDER BY D.\"number\" ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "4",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which constructors have at least one recorded result with a Finished status?",
+          "intention": "Identify the Formula 1 constructors that have at least one race result classified as Finished.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT DISTINCT C.CONSTRUCTORID, C.NAME FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_RESULTS R ON R.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_STATUS S ON R.STATUSID = S.STATUSID WHERE S.STATUS = 'Finished' ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those constructors, which ones are British? List their names and nationalities.",
+          "intention": "From the constructors that have at least one result classified as Finished, list only the British constructors with their names and nationalities.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT C.NAME, C.NATIONALITY FROM FORMULA_1_CONSTRUCTORS C WHERE (C.CONSTRUCTORID) IN (SELECT DISTINCT C1.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS C1 JOIN FORMULA_1_RESULTS R1 ON R1.CONSTRUCTORID = C1.CONSTRUCTORID JOIN FORMULA_1_STATUS S1 ON R1.STATUSID = S1.STATUSID WHERE S1.STATUS = 'Finished') AND C.NATIONALITY = 'British' ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those British constructors, how many recorded results do they have under each status?",
+          "intention": "For the British constructors previously identified among those with at least one Finished result, count their recorded race results for every result status.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT C.NAME, S.STATUS, COUNT(R.RESULTID) AS RESULT_COUNT FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_RESULTS R ON R.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_STATUS S ON R.STATUSID = S.STATUSID WHERE (C.CONSTRUCTORID) IN (SELECT C2.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS C2 WHERE (C2.CONSTRUCTORID) IN (SELECT DISTINCT C1.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS C1 JOIN FORMULA_1_RESULTS R1 ON R1.CONSTRUCTORID = C1.CONSTRUCTORID JOIN FORMULA_1_STATUS S1 ON R1.STATUSID = S1.STATUSID WHERE S1.STATUS = 'Finished') AND C2.NATIONALITY = 'British') GROUP BY C.NAME, S.STATUS ORDER BY C.NAME ASC, S.STATUS ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "5",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which German drivers have a recorded code and number, ordered by number?",
+          "intention": "List German drivers' first names, surnames, codes, and racing numbers in ascending order by racing number.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.CODE, FORMULA_1_DRIVERS.\"number\" FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY = 'German' ORDER BY FORMULA_1_DRIVERS.\"number\" ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those drivers, what are their dates of birth, from oldest to youngest?",
+          "intention": "For the previously selected German drivers, list their first names, surnames, and dates of birth from earliest to latest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.DOB FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY = 'German') ORDER BY FORMULA_1_DRIVERS.DOB ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which of those drivers have lap-time records, and how many recorded laps does each have?",
+          "intention": "Among the previously selected German drivers, identify those with lap-time records and give the number of recorded laps for each driver.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, COUNT(FORMULA_1_LAPTIMES.LAP) AS LAP_COUNT FROM FORMULA_1_DRIVERS JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY = 'German') GROUP BY FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME ORDER BY LAP_COUNT DESC, FORMULA_1_DRIVERS.SURNAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "6",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "How many British and German constructors are there, grouped by nationality?",
+          "intention": "Count the British and German Formula 1 constructors separately by nationality.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NATIONALITY, COUNT(FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) AS CONSTRUCTOR_COUNT FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.NATIONALITY IN ('British', 'German') GROUP BY FORMULA_1_CONSTRUCTORS.NATIONALITY ORDER BY FORMULA_1_CONSTRUCTORS.NATIONALITY ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For the constructors in those nationality groups, list their names and nationalities alphabetically by name.",
+          "intention": "List the names and nationalities of exactly the Formula 1 constructors counted in the British and German nationality groups, ordered alphabetically by constructor name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.NATIONALITY IN ('British', 'German')) ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For exactly those constructors, show each qualifying entry's race, car number, and qualifying position alongside the constructor name.",
+          "intention": "For exactly the previously listed British and German Formula 1 constructors, show the constructor name and every associated qualifying entry's race identifier, car number, and qualifying position.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_QUALIFYING.RACEID, FORMULA_1_QUALIFYING.\"number\", FORMULA_1_QUALIFYING.POSITION FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_QUALIFYING ON FORMULA_1_QUALIFYING.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.NATIONALITY IN ('British', 'German'))) ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC, FORMULA_1_QUALIFYING.RACEID ASC, FORMULA_1_QUALIFYING.POSITION ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "7",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which drivers have at least one standings record showing a win?",
+          "intention": "Find the drivers who have at least one championship standings record in which they recorded one or more wins.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings"
+            ],
+            "golden_sql": "SELECT DISTINCT D.DRIVERID, D.FORENAME, D.SURNAME FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS S ON S.DRIVERID = D.DRIVERID WHERE S.WINS > 0 ORDER BY D.SURNAME ASC, D.FORENAME ASC, D.DRIVERID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those drivers, show the British ones with their names, codes, and car numbers, ordered by number.",
+          "intention": "Among the drivers previously identified as having a standings record with one or more wins, list only the British drivers and show each driver's forename, surname, code, and car number in ascending car-number order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, D.CODE, D.\"number\" FROM FORMULA_1_DRIVERS D WHERE D.DRIVERID IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS S1 ON S1.DRIVERID = D1.DRIVERID WHERE S1.WINS > 0) AND D.NATIONALITY = 'British' ORDER BY D.\"number\" ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What pit stops were recorded for those British drivers? Show the race, stop number, lap, time, and duration.",
+          "intention": "For exactly the British drivers from the preceding result who had a standings record with at least one win, list their recorded pit stops with the driver's name, race, stop number, lap, time, and duration.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings",
+              "formula_1_pitstops"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, P.RACEID, P.STOP, P.LAP, P.TIME, P.DURATION FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_PITSTOPS P ON P.DRIVERID = D.DRIVERID WHERE D.DRIVERID IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 WHERE D2.DRIVERID IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS S1 ON S1.DRIVERID = D1.DRIVERID WHERE S1.WINS > 0) AND D2.NATIONALITY = 'British') ORDER BY D.SURNAME ASC, D.FORENAME ASC, P.RACEID ASC, P.STOP ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "8",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "For race 18, which constructor results belonged to British constructors, and how many points did each earn?",
+          "intention": "List the constructor results for British constructors in race 18, including each constructor's name and points earned.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT CR.CONSTRUCTORRESULTSID, C.NAME, CR.POINTS FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID WHERE CR.RACEID = 18 AND C.NATIONALITY = 'British' ORDER BY CR.POINTS DESC, CR.CONSTRUCTORRESULTSID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those exact results, show the qualifying entries from the same race for the matching constructors, including position and session times.",
+          "intention": "For exactly the British-constructor results identified in race 18, list the corresponding qualifying entries from that same race with constructor name, qualifying position, and Q1, Q2, and Q3 times.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT Q.QUALIFYID, CR.CONSTRUCTORRESULTSID, C.NAME, Q.POSITION, Q.Q1, Q.Q2, Q.Q3 FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_QUALIFYING Q ON Q.CONSTRUCTORID = C.CONSTRUCTORID WHERE Q.RACEID = CR.RACEID AND (CR.CONSTRUCTORRESULTSID) IN (SELECT CR1.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 JOIN FORMULA_1_CONSTRUCTORS C1 ON CR1.CONSTRUCTORID = C1.CONSTRUCTORID WHERE CR1.RACEID = 18 AND C1.NATIONALITY = 'British') ORDER BY Q.POSITION ASC, Q.QUALIFYID ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Among exactly those qualifying entries, group them by constructor-result status and report the entry count and average points, with the highest average first.",
+          "intention": "Using exactly the qualifying entries previously identified, group their associated constructor results by status and return the number of entries and average points for each status, ordered from highest to lowest average points.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT CR.STATUS, COUNT(*) AS ENTRY_COUNT, AVG(CR.POINTS) AS AVG_POINTS FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_QUALIFYING Q ON Q.CONSTRUCTORID = C.CONSTRUCTORID WHERE Q.RACEID = CR.RACEID AND (Q.QUALIFYID) IN (SELECT Q2.QUALIFYID FROM FORMULA_1_CONSTRUCTORRESULTS CR2 JOIN FORMULA_1_CONSTRUCTORS C2 ON CR2.CONSTRUCTORID = C2.CONSTRUCTORID JOIN FORMULA_1_QUALIFYING Q2 ON Q2.CONSTRUCTORID = C2.CONSTRUCTORID WHERE Q2.RACEID = CR2.RACEID AND (CR2.CONSTRUCTORRESULTSID) IN (SELECT CR1.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 JOIN FORMULA_1_CONSTRUCTORS C1 ON CR1.CONSTRUCTORID = C1.CONSTRUCTORID WHERE CR1.RACEID = 18 AND C1.NATIONALITY = 'British')) GROUP BY CR.STATUS ORDER BY AVG_POINTS DESC, CR.STATUS ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "9",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which British drivers have at least one race result recorded as Finished?",
+          "intention": "Identify the British drivers who have at least one recorded race result with a Finished status.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT DISTINCT D.DRIVERID, D.FORENAME, D.SURNAME FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_RESULTS R ON R.DRIVERID = D.DRIVERID JOIN FORMULA_1_STATUS S ON R.STATUSID = S.STATUSID WHERE D.NATIONALITY = 'British' AND S.STATUS = 'Finished' ORDER BY D.SURNAME ASC, D.FORENAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those drivers, show their first name, surname, code, and car number, ordered by car number.",
+          "intention": "For exactly the British drivers previously identified as having at least one Finished result, show each driver's first name, surname, code, and car number in ascending car-number order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, D.CODE, D.\"number\" FROM FORMULA_1_DRIVERS D WHERE D.NATIONALITY = 'British' AND (D.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_RESULTS R1 ON R1.DRIVERID = D1.DRIVERID JOIN FORMULA_1_STATUS S1 ON R1.STATUSID = S1.STATUSID WHERE D1.NATIONALITY = 'British' AND S1.STATUS = 'Finished') ORDER BY D.\"number\" ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Across that same set of drivers, how many results does each driver have for each recorded status?",
+          "intention": "For exactly the drivers shown previously, count each driver's race results separately for every recorded result status.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, S.STATUS, COUNT(R.RESULTID) AS RESULT_COUNT FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_RESULTS R ON R.DRIVERID = D.DRIVERID JOIN FORMULA_1_STATUS S ON R.STATUSID = S.STATUSID WHERE (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 WHERE D2.NATIONALITY = 'British' AND (D2.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_RESULTS R1 ON R1.DRIVERID = D1.DRIVERID JOIN FORMULA_1_STATUS S1 ON R1.STATUSID = S1.STATUSID WHERE D1.NATIONALITY = 'British' AND S1.STATUS = 'Finished')) GROUP BY D.DRIVERID, D.FORENAME, D.SURNAME, S.STATUS ORDER BY D.SURNAME ASC, D.FORENAME ASC, S.STATUS ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "10",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "For race 18, which constructors were awarded more constructor points than the total points scored by their drivers?",
+          "intention": "Identify the constructors in race 18 whose constructor points exceeded the combined points earned by their drivers in that race.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_results"
+            ],
+            "golden_sql": "SELECT CR.CONSTRUCTORRESULTSID, C.NAME, CR.POINTS FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_RESULTS R ON R.CONSTRUCTORID = C.CONSTRUCTORID WHERE CR.RACEID = 18 AND R.RACEID = 18 GROUP BY CR.CONSTRUCTORRESULTSID, C.NAME, CR.POINTS HAVING CR.POINTS > SUM(R.POINTS) ORDER BY CR.POINTS DESC, CR.CONSTRUCTORRESULTSID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those entries, which ones had at least 10 constructor points?",
+          "intention": "From the constructor results in race 18 where constructor points exceeded the drivers' combined points, return only those awarded at least 10 constructor points.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_results"
+            ],
+            "golden_sql": "SELECT CR.CONSTRUCTORRESULTSID, CR.CONSTRUCTORID, CR.POINTS, CR.STATUS FROM FORMULA_1_CONSTRUCTORRESULTS CR WHERE (CR.CONSTRUCTORRESULTSID) IN (SELECT CR1.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 JOIN FORMULA_1_CONSTRUCTORS C1 ON CR1.CONSTRUCTORID = C1.CONSTRUCTORID JOIN FORMULA_1_RESULTS R1 ON R1.CONSTRUCTORID = C1.CONSTRUCTORID WHERE CR1.RACEID = 18 AND R1.RACEID = 18 GROUP BY CR1.CONSTRUCTORRESULTSID, C1.NAME, CR1.POINTS HAVING CR1.POINTS > SUM(R1.POINTS)) AND CR.POINTS >= 10 ORDER BY CR.POINTS DESC, CR.CONSTRUCTORRESULTSID ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For that filtered set, how many entries fall under each status, and what is their total point award?",
+          "intention": "Group the previously filtered constructor results by status, counting the entries and summing their constructor points for each status.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_results"
+            ],
+            "golden_sql": "SELECT CR.STATUS, COUNT(*) AS ENTRY_COUNT, SUM(CR.POINTS) AS TOTAL_POINTS FROM FORMULA_1_CONSTRUCTORRESULTS CR WHERE (CR.CONSTRUCTORRESULTSID) IN (SELECT CR2.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR2 WHERE (CR2.CONSTRUCTORRESULTSID) IN (SELECT CR1.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 JOIN FORMULA_1_CONSTRUCTORS C1 ON CR1.CONSTRUCTORID = C1.CONSTRUCTORID JOIN FORMULA_1_RESULTS R1 ON R1.CONSTRUCTORID = C1.CONSTRUCTORID WHERE CR1.RACEID = 18 AND R1.RACEID = 18 GROUP BY CR1.CONSTRUCTORRESULTSID, C1.NAME, CR1.POINTS HAVING CR1.POINTS > SUM(R1.POINTS)) AND CR2.POINTS >= 10) GROUP BY CR.STATUS ORDER BY CR.STATUS ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "11",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which British constructors are there? List their names and nationalities alphabetically by name.",
+          "intention": "List the names and nationalities of British Formula 1 constructors, ordered alphabetically by constructor name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.NATIONALITY = 'British' ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those constructors, also show their reference names, keeping the same alphabetical order.",
+          "intention": "For the previously selected British Formula 1 constructors, list each constructor's name, reference name, and nationality in alphabetical order by constructor name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_CONSTRUCTORS.CONSTRUCTORREF, FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.NATIONALITY = 'British') ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which of those constructors have recorded a race result, and what result IDs are associated with each one?",
+          "intention": "For the previously selected British Formula 1 constructors, list those with recorded race results and show each constructor's associated result identifiers.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_results"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_RESULTS.RESULTID FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.NATIONALITY = 'British')) ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC, FORMULA_1_RESULTS.RESULTID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "12",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which British drivers have both recorded lap times and qualifying results?",
+          "intention": "Identify British drivers who have both recorded lap times and qualifying results.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT DISTINCT FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME FROM FORMULA_1_DRIVERS JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_QUALIFYING ON FORMULA_1_QUALIFYING.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_DRIVERS.NATIONALITY = 'British' ORDER BY FORMULA_1_DRIVERS.SURNAME ASC, FORMULA_1_DRIVERS.FORENAME ASC, FORMULA_1_DRIVERS.DRIVERID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those drivers, show their codes and numbers, ordered by number from lowest to highest.",
+          "intention": "Show the driver code and number for the previously identified British drivers who have both recorded lap times and qualifying results, ordered by number ascending.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.CODE, FORMULA_1_DRIVERS.\"number\" FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT DISTINCT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_QUALIFYING ON FORMULA_1_QUALIFYING.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_DRIVERS.NATIONALITY = 'British') ORDER BY FORMULA_1_DRIVERS.\"number\" ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Now list their names and dates of birth from oldest to youngest.",
+          "intention": "List the names and birth dates of the same previously identified British drivers who have both recorded lap times and qualifying results, ordered from earliest to latest birth date.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.DOB FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT DISTINCT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_QUALIFYING ON FORMULA_1_QUALIFYING.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_DRIVERS.NATIONALITY = 'British') ORDER BY FORMULA_1_DRIVERS.DOB ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "13",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which drivers have surnames beginning with H? Show their first name, surname, nationality, and code, ordered by surname.",
+          "intention": "List the first name, surname, nationality, and code of drivers whose surnames begin with H, ordered alphabetically by surname.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.NATIONALITY, FORMULA_1_DRIVERS.CODE FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.SURNAME LIKE 'H%' ORDER BY FORMULA_1_DRIVERS.SURNAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those drivers, which ones were born from 1970 through 1989? Show their names and birth dates from earliest to latest.",
+          "intention": "Among the drivers whose surnames begin with H, list those born between January 1, 1970 and December 31, 1989, showing their names and birth dates in chronological order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.DOB FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.SURNAME LIKE 'H%') AND FORMULA_1_DRIVERS.DOB BETWEEN DATE '1970-01-01' AND DATE '1989-12-31' ORDER BY FORMULA_1_DRIVERS.DOB ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those drivers, show each of their qualifying appearances, including the race, qualifying position, and Q1, Q2, and Q3 times.",
+          "intention": "For the previously identified drivers whose surnames begin with H and who were born from 1970 through 1989, show every qualifying appearance with the race, qualifying position, and session times.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, Q.RACEID, Q.POSITION, Q.Q1, Q.Q2, Q.Q3 FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON Q.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.SURNAME LIKE 'H%') AND FORMULA_1_DRIVERS.DOB BETWEEN DATE '1970-01-01' AND DATE '1989-12-31') ORDER BY D.SURNAME ASC, Q.RACEID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "14",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which British drivers have a recorded code and number, listed by number?",
+          "intention": "List British drivers with their names, codes, and racing numbers, ordered by racing number.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.CODE, FORMULA_1_DRIVERS.\"number\" FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY = 'British' ORDER BY FORMULA_1_DRIVERS.\"number\" ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those drivers, show each of their pit stops and qualifying results.",
+          "intention": "For the previously selected British drivers, show their pit-stop records and qualifying results.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_pitstops",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, P.RACEID, P.STOP, P.LAP, P.TIME, P.DURATION, Q.QUALIFYID, Q.POSITION, Q.Q1, Q.Q2, Q.Q3 FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_PITSTOPS P ON P.DRIVERID = D.DRIVERID JOIN FORMULA_1_QUALIFYING Q ON Q.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY = 'British') ORDER BY D.DRIVERID ASC, P.RACEID ASC, P.STOP ASC, Q.QUALIFYID ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Now give me the names, codes, and numbers of the drivers in those results, still ordered by number.",
+          "intention": "List the names, codes, and racing numbers of the British drivers included in the previously shown pit-stop and qualifying results, ordered by racing number.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_pitstops",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, D.CODE, D.\"number\" FROM FORMULA_1_DRIVERS D WHERE (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 JOIN FORMULA_1_PITSTOPS P ON P.DRIVERID = D2.DRIVERID JOIN FORMULA_1_QUALIFYING Q ON Q.DRIVERID = D2.DRIVERID WHERE (D2.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY = 'British')) ORDER BY D.\"number\" ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "15",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which pit stops in race 841 took less than 23,200 milliseconds?",
+          "intention": "Identify every pit stop from race 841 whose duration was under 23,200 milliseconds.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_pitstops"
+            ],
+            "golden_sql": "SELECT FORMULA_1_PITSTOPS.RACEID, FORMULA_1_PITSTOPS.DRIVERID, FORMULA_1_PITSTOPS.STOP, FORMULA_1_PITSTOPS.DURATION, FORMULA_1_PITSTOPS.MILLISECONDS FROM FORMULA_1_PITSTOPS WHERE FORMULA_1_PITSTOPS.RACEID = 841 AND FORMULA_1_PITSTOPS.MILLISECONDS < 23200 ORDER BY FORMULA_1_PITSTOPS.DRIVERID ASC, FORMULA_1_PITSTOPS.STOP ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those stops, on which laps and at what times did they happen?",
+          "intention": "For the pit stops from race 841 that lasted under 23,200 milliseconds, report the lap and clock time of each stop.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_pitstops"
+            ],
+            "golden_sql": "SELECT FORMULA_1_PITSTOPS.RACEID, FORMULA_1_PITSTOPS.DRIVERID, FORMULA_1_PITSTOPS.STOP, FORMULA_1_PITSTOPS.LAP, FORMULA_1_PITSTOPS.TIME FROM FORMULA_1_PITSTOPS WHERE (FORMULA_1_PITSTOPS.RACEID, FORMULA_1_PITSTOPS.DRIVERID, FORMULA_1_PITSTOPS.STOP) IN (SELECT P1.RACEID, P1.DRIVERID, P1.STOP FROM FORMULA_1_PITSTOPS P1 WHERE P1.RACEID = 841 AND P1.MILLISECONDS < 23200) ORDER BY FORMULA_1_PITSTOPS.LAP ASC, FORMULA_1_PITSTOPS.DRIVERID ASC, FORMULA_1_PITSTOPS.STOP ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What race name and season year do those stops belong to, and what is the URL for that season?",
+          "intention": "For the previously identified pit stops from race 841 lasting under 23,200 milliseconds, provide the race name, season year, and season webpage URL.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_pitstops",
+              "formula_1_races",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT P.RACEID, P.DRIVERID, P.STOP, R.NAME, R.YEAR, S.URL FROM FORMULA_1_PITSTOPS P JOIN FORMULA_1_RACES R ON P.RACEID = R.RACEID JOIN FORMULA_1_SEASONS S ON R.YEAR = S.YEAR WHERE (P.RACEID, P.DRIVERID, P.STOP) IN (SELECT P2.RACEID, P2.DRIVERID, P2.STOP FROM FORMULA_1_PITSTOPS P2 WHERE (P2.RACEID, P2.DRIVERID, P2.STOP) IN (SELECT P1.RACEID, P1.DRIVERID, P1.STOP FROM FORMULA_1_PITSTOPS P1 WHERE P1.RACEID = 841 AND P1.MILLISECONDS < 23200)) ORDER BY P.DRIVERID ASC, P.STOP ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "16",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits are at least 1,000 meters above sea level? Show their names, locations, countries, and altitudes, highest first.",
+          "intention": "List circuits at least 1,000 meters above sea level with their names, locations, countries, and altitudes, ordered from highest to lowest altitude.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.LOCATION, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.ALT FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 1000 ORDER BY FORMULA_1_CIRCUITS.ALT DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those circuits, what are their latitude and longitude coordinates? List them alphabetically by circuit name.",
+          "intention": "For the circuits at least 1,000 meters above sea level, list each circuit's name, country, latitude, and longitude in alphabetical order by circuit name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LAT, FORMULA_1_CIRCUITS.LNG FROM FORMULA_1_CIRCUITS WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 1000) ORDER BY FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which races took place at those circuits, and what constructor standings positions and points were recorded for each race?",
+          "intention": "For the previously identified circuits at least 1,000 meters above sea level, list the races held there together with every recorded constructor standings position and points total for each race.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorstandings"
+            ],
+            "golden_sql": "SELECT C.NAME AS CIRCUIT_NAME, R.NAME AS RACE_NAME, R.YEAR, CS.POSITION, CS.POINTS FROM FORMULA_1_CIRCUITS C JOIN FORMULA_1_RACES R ON R.CIRCUITID = C.CIRCUITID JOIN FORMULA_1_CONSTRUCTORSTANDINGS CS ON CS.RACEID = R.RACEID WHERE (C.CIRCUITID) IN (SELECT C2.CIRCUITID FROM FORMULA_1_CIRCUITS C2 WHERE (C2.CIRCUITID) IN (SELECT C3.CIRCUITID FROM FORMULA_1_CIRCUITS C3 WHERE C3.ALT >= 1000)) ORDER BY C.NAME ASC, R.YEAR ASC, R.NAME ASC, CS.POSITION ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "17",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which British constructors have achieved first place in a qualifying session?",
+          "intention": "Find the British constructors that have at least one first-place qualifying result.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT DISTINCT C.CONSTRUCTORID, C.NAME FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_QUALIFYING Q ON Q.CONSTRUCTORID = C.CONSTRUCTORID WHERE C.NATIONALITY = 'British' AND Q.POSITION = 1 ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those constructors, which ones also recorded a race result worth at least 10 points?",
+          "intention": "Among the British constructors with a first-place qualifying result, find those that also have at least one race result awarding 10 or more points.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_qualifying",
+              "formula_1_results"
+            ],
+            "golden_sql": "SELECT DISTINCT C.CONSTRUCTORID, C.NAME FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_RESULTS R ON R.CONSTRUCTORID = C.CONSTRUCTORID WHERE (C.CONSTRUCTORID) IN (SELECT C1.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS C1 JOIN FORMULA_1_QUALIFYING Q1 ON Q1.CONSTRUCTORID = C1.CONSTRUCTORID WHERE C1.NATIONALITY = 'British' AND Q1.POSITION = 1) AND R.POINTS >= 10 ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those constructors, show their names, nationalities, and available website URLs, ordered by nationality.",
+          "intention": "Show the name, nationality, and non-null website URL for each British constructor that achieved first place in qualifying and also earned at least 10 points in a race result, ordered by nationality.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_qualifying",
+              "formula_1_results"
+            ],
+            "golden_sql": "SELECT C.NAME, C.NATIONALITY, C.URL FROM FORMULA_1_CONSTRUCTORS C WHERE (C.CONSTRUCTORID) IN (SELECT DISTINCT C2.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS C2 JOIN FORMULA_1_RESULTS R2 ON R2.CONSTRUCTORID = C2.CONSTRUCTORID WHERE (C2.CONSTRUCTORID) IN (SELECT C1.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS C1 JOIN FORMULA_1_QUALIFYING Q1 ON Q1.CONSTRUCTORID = C1.CONSTRUCTORID WHERE C1.NATIONALITY = 'British' AND Q1.POSITION = 1) AND R2.POINTS >= 10) AND C.URL IS NOT NULL ORDER BY C.NATIONALITY ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "18",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "How many races were held in each year from 2007 through 2009? List the years chronologically.",
+          "intention": "Count the races held in each year from 2007 through 2009 and list the years in chronological order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT FORMULA_1_RACES.YEAR, COUNT(FORMULA_1_RACES.RACEID) AS RACE_COUNT FROM FORMULA_1_RACES WHERE FORMULA_1_RACES.YEAR BETWEEN 2007 AND 2009 GROUP BY FORMULA_1_RACES.YEAR ORDER BY FORMULA_1_RACES.YEAR ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For the years in that result, what was the highest round number in each year? Show the latest years first.",
+          "intention": "For exactly the years from 2007 through 2009 that had races in the preceding result, report the highest round number in each year and order the years from latest to earliest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT FORMULA_1_RACES.YEAR, MAX(FORMULA_1_RACES.ROUND) AS MAX_ROUND FROM FORMULA_1_RACES WHERE (FORMULA_1_RACES.YEAR) IN (SELECT FORMULA_1_RACES.YEAR FROM FORMULA_1_RACES WHERE FORMULA_1_RACES.YEAR BETWEEN 2007 AND 2009 GROUP BY FORMULA_1_RACES.YEAR) GROUP BY FORMULA_1_RACES.YEAR ORDER BY FORMULA_1_RACES.YEAR DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Among the races from those years, how many results had each finishing status?",
+          "intention": "For exactly the races belonging to the previously identified years from 2007 through 2009, count the recorded results for each finishing status.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_races",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT FORMULA_1_STATUS.STATUS, COUNT(FORMULA_1_RESULTS.RESULTID) AS RESULT_COUNT FROM FORMULA_1_RACES JOIN FORMULA_1_RESULTS ON FORMULA_1_RACES.RACEID = FORMULA_1_RESULTS.RACEID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID WHERE (FORMULA_1_RACES.RACEID) IN (SELECT FORMULA_1_RACES.RACEID FROM FORMULA_1_RACES WHERE (FORMULA_1_RACES.YEAR) IN (SELECT FORMULA_1_RACES.YEAR FROM FORMULA_1_RACES WHERE FORMULA_1_RACES.YEAR BETWEEN 2007 AND 2009 GROUP BY FORMULA_1_RACES.YEAR)) GROUP BY FORMULA_1_STATUS.STATUS ORDER BY FORMULA_1_STATUS.STATUS ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "19",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "How many constructors are there for each nationality?",
+          "intention": "Count the constructors from each nationality, listing nationalities alphabetically.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NATIONALITY, COUNT(FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) AS CONSTRUCTOR_COUNT FROM FORMULA_1_CONSTRUCTORS GROUP BY FORMULA_1_CONSTRUCTORS.NATIONALITY ORDER BY FORMULA_1_CONSTRUCTORS.NATIONALITY ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For the British nationality from that list, which constructors are they?",
+          "intention": "List the names and nationality of the constructors belonging to the British nationality included in the preceding nationality counts, ordered by constructor name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.NATIONALITY) IN (SELECT FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS GROUP BY FORMULA_1_CONSTRUCTORS.NATIONALITY HAVING FORMULA_1_CONSTRUCTORS.NATIONALITY = 'British') ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What qualifying positions have those British constructors recorded?",
+          "intention": "For exactly the British constructors identified previously, list each constructor's name and its recorded qualifying positions, ordered by constructor name and qualifying position.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_QUALIFYING.POSITION FROM FORMULA_1_CONSTRUCTORS JOIN FORMULA_1_QUALIFYING ON FORMULA_1_QUALIFYING.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.NATIONALITY) IN (SELECT FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS GROUP BY FORMULA_1_CONSTRUCTORS.NATIONALITY HAVING FORMULA_1_CONSTRUCTORS.NATIONALITY = 'British')) ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC, FORMULA_1_QUALIFYING.POSITION ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "20",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "For each known driver nationality, what are the earliest and latest dates of birth?",
+          "intention": "Find the earliest and latest driver birth dates for every non-null nationality.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.NATIONALITY, MIN(FORMULA_1_DRIVERS.DOB) AS EARLIEST_DOB, MAX(FORMULA_1_DRIVERS.DOB) AS LATEST_DOB FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY IS NOT NULL GROUP BY FORMULA_1_DRIVERS.NATIONALITY"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many drivers belong to each of those nationalities? List the largest groups first.",
+          "intention": "Count the drivers in each nationality identified previously and order the nationality groups from the highest driver count to the lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT D.NATIONALITY, COUNT(D.DRIVERID) AS DRIVER_COUNT FROM FORMULA_1_DRIVERS D WHERE (D.NATIONALITY) IN (SELECT D1.NATIONALITY FROM FORMULA_1_DRIVERS D1 WHERE D1.NATIONALITY IS NOT NULL GROUP BY D1.NATIONALITY) GROUP BY D.NATIONALITY ORDER BY COUNT(D.DRIVERID) DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those same nationality groups, how many driver-standing records are associated with their drivers?",
+          "intention": "For each nationality counted previously, count the standing records belonging to drivers of that nationality.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings"
+            ],
+            "golden_sql": "SELECT D.NATIONALITY, COUNT(DS.DRIVERSTANDINGSID) AS STANDING_RECORD_COUNT FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS DS ON DS.DRIVERID = D.DRIVERID WHERE (D.NATIONALITY) IN (SELECT D2.NATIONALITY FROM FORMULA_1_DRIVERS D2 WHERE (D2.NATIONALITY) IN (SELECT D1.NATIONALITY FROM FORMULA_1_DRIVERS D1 WHERE D1.NATIONALITY IS NOT NULL GROUP BY D1.NATIONALITY) GROUP BY D2.NATIONALITY) GROUP BY D.NATIONALITY ORDER BY COUNT(DS.DRIVERSTANDINGSID) DESC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "21",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which drivers were born between January 1, 1980 and December 31, 1989? Show their first name, surname, and date of birth, oldest first.",
+          "intention": "List the names and birth dates of drivers born from January 1, 1980 through December 31, 1989, ordered from earliest to latest birth date.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, D.DOB FROM FORMULA_1_DRIVERS D WHERE D.DOB BETWEEN DATE '1980-01-01' AND DATE '1989-12-31' ORDER BY D.DOB ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those drivers, which ones have a surname beginning with H? Include their nationality and driver code, ordered by surname.",
+          "intention": "Among the drivers born from January 1, 1980 through December 31, 1989, list those whose surname begins with H, including each driver's first name, surname, nationality, and code, ordered alphabetically by surname.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, D.NATIONALITY, D.CODE FROM FORMULA_1_DRIVERS D WHERE (D.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 WHERE D1.DOB BETWEEN DATE '1980-01-01' AND DATE '1989-12-31') AND D.SURNAME LIKE 'H%' ORDER BY D.SURNAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those H-surname drivers, list every recorded result and its status.",
+          "intention": "For the previously identified drivers born in the 1980s whose surnames begin with H, list every recorded result together with the driver's name and the result status.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, R.RESULTID, S.STATUS FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_RESULTS R ON D.DRIVERID = R.DRIVERID JOIN FORMULA_1_STATUS S ON R.STATUSID = S.STATUSID WHERE (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 WHERE (D2.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 WHERE D1.DOB BETWEEN DATE '1980-01-01' AND DATE '1989-12-31') AND D2.SURNAME LIKE 'H%') ORDER BY D.SURNAME ASC, D.FORENAME ASC, R.RESULTID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "22",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "How many Formula 1 constructors are there from each nationality? List the nationalities alphabetically.",
+          "intention": "Count the Formula 1 constructors for each nationality and list the nationalities in alphabetical order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NATIONALITY, COUNT(FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) AS CONSTRUCTOR_COUNT FROM FORMULA_1_CONSTRUCTORS GROUP BY FORMULA_1_CONSTRUCTORS.NATIONALITY ORDER BY FORMULA_1_CONSTRUCTORS.NATIONALITY ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For the British nationality from that list, which constructors are included? Show their names and nationality alphabetically by name.",
+          "intention": "For the British nationality among the previously grouped nationalities, list the names and nationality of its constructors in alphabetical order by constructor name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.NATIONALITY) IN (SELECT FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.NATIONALITY = 'British' GROUP BY FORMULA_1_CONSTRUCTORS.NATIONALITY) ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For exactly those British constructors, how many qualifying entries and race results does each one have?",
+          "intention": "For exactly the British constructors identified previously, show each constructor's number of qualifying entries and race-result records.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_qualifying",
+              "formula_1_results"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORS.NAME, COUNT(DISTINCT FORMULA_1_QUALIFYING.QUALIFYID) AS QUALIFYING_COUNT, COUNT(DISTINCT FORMULA_1_RESULTS.RESULTID) AS RESULT_COUNT FROM FORMULA_1_CONSTRUCTORS LEFT JOIN FORMULA_1_QUALIFYING ON FORMULA_1_QUALIFYING.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID LEFT JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID WHERE (FORMULA_1_CONSTRUCTORS.CONSTRUCTORID) IN (SELECT FORMULA_1_CONSTRUCTORS.CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE (FORMULA_1_CONSTRUCTORS.NATIONALITY) IN (SELECT FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORS WHERE FORMULA_1_CONSTRUCTORS.NATIONALITY = 'British' GROUP BY FORMULA_1_CONSTRUCTORS.NATIONALITY)) GROUP BY FORMULA_1_CONSTRUCTORS.CONSTRUCTORID, FORMULA_1_CONSTRUCTORS.NAME ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "23",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which drivers recorded lap times in race 1?",
+          "intention": "Identify the drivers who recorded at least one lap time in race 1.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes"
+            ],
+            "golden_sql": "SELECT DISTINCT FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME FROM FORMULA_1_DRIVERS JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_LAPTIMES.RACEID = 1 ORDER BY FORMULA_1_DRIVERS.DRIVERID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those drivers, which ones also made a pit stop in race 841?",
+          "intention": "Among the drivers who recorded lap times in race 1, identify those who also made at least one pit stop in race 841.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes",
+              "formula_1_pitstops"
+            ],
+            "golden_sql": "SELECT DISTINCT FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME FROM FORMULA_1_DRIVERS JOIN FORMULA_1_PITSTOPS ON FORMULA_1_PITSTOPS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_PITSTOPS.RACEID = 841 AND (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_LAPTIMES L1 ON L1.DRIVERID = D1.DRIVERID WHERE L1.RACEID = 1) ORDER BY FORMULA_1_DRIVERS.DRIVERID ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What qualifying positions did those drivers achieve in race 18?",
+          "intention": "For the drivers who recorded lap times in race 1 and also made a pit stop in race 841, report their qualifying positions in race 18.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes",
+              "formula_1_pitstops",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_QUALIFYING.POSITION FROM FORMULA_1_DRIVERS JOIN FORMULA_1_QUALIFYING ON FORMULA_1_QUALIFYING.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_QUALIFYING.RACEID = 18 AND (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT DISTINCT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 JOIN FORMULA_1_PITSTOPS P2 ON P2.DRIVERID = D2.DRIVERID WHERE P2.RACEID = 841 AND (D2.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_LAPTIMES L1 ON L1.DRIVERID = D1.DRIVERID WHERE L1.RACEID = 1)) ORDER BY FORMULA_1_QUALIFYING.POSITION ASC, FORMULA_1_DRIVERS.DRIVERID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "24",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which constructors recorded a constructor result in race 18, and how many points did each earn?",
+          "intention": "List the constructors that recorded a constructor result in race 18 and the points earned by each one.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT CR.CONSTRUCTORID, CR.RACEID, C.NAME, CR.POINTS FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID WHERE CR.RACEID = 18 ORDER BY C.NAME ASC, CR.CONSTRUCTORID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those same constructor-and-race entries, what were their championship standing positions and win totals?",
+          "intention": "For exactly the constructors and race identified previously, show each constructor's championship standing position and number of wins.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorstandings",
+              "formula_1_constructors",
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT CS.CONSTRUCTORID, CS.RACEID, C.NAME, CS.POSITION, CS.WINS FROM FORMULA_1_CONSTRUCTORSTANDINGS CS JOIN FORMULA_1_CONSTRUCTORS C ON CS.CONSTRUCTORID = C.CONSTRUCTORID WHERE (CS.CONSTRUCTORID, CS.RACEID) IN (SELECT CR.CONSTRUCTORID, CR.RACEID FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS PC ON CR.CONSTRUCTORID = PC.CONSTRUCTORID WHERE CR.RACEID = 18) ORDER BY CS.POSITION ASC, C.NAME ASC, CS.CONSTRUCTORID ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For exactly those standing entries, which drivers qualified for each constructor, and in what positions?",
+          "intention": "For exactly the constructor-and-race championship standing entries returned previously, list the qualifying drivers and their qualifying positions for each constructor.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_qualifying",
+              "formula_1_constructors",
+              "formula_1_constructorstandings",
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT Q.CONSTRUCTORID, Q.RACEID, C.NAME, Q.DRIVERID, Q.POSITION FROM FORMULA_1_QUALIFYING Q JOIN FORMULA_1_CONSTRUCTORS C ON Q.CONSTRUCTORID = C.CONSTRUCTORID WHERE (Q.CONSTRUCTORID, Q.RACEID) IN (SELECT CS.CONSTRUCTORID, CS.RACEID FROM FORMULA_1_CONSTRUCTORSTANDINGS CS JOIN FORMULA_1_CONSTRUCTORS SC ON CS.CONSTRUCTORID = SC.CONSTRUCTORID WHERE (CS.CONSTRUCTORID, CS.RACEID) IN (SELECT CR.CONSTRUCTORID, CR.RACEID FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS PC ON CR.CONSTRUCTORID = PC.CONSTRUCTORID WHERE CR.RACEID = 18)) ORDER BY C.NAME ASC, Q.POSITION ASC, Q.DRIVERID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "25",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which drivers were born from 1980 through 1989? List their first name, surname, and date of birth, oldest first.",
+          "intention": "List the first name, surname, and date of birth of drivers born between January 1, 1980 and December 31, 1989, ordered from earliest to latest birth date.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.DOB FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.DOB BETWEEN DATE '1980-01-01' AND DATE '1989-12-31' ORDER BY FORMULA_1_DRIVERS.DOB ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those drivers, which ones have a surname beginning with H? Include their nationality and code, and sort them by surname.",
+          "intention": "Among the drivers born between January 1, 1980 and December 31, 1989, list those whose surname begins with H, including their first name, surname, nationality, and driver code, ordered by surname.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.NATIONALITY, FORMULA_1_DRIVERS.CODE FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.SURNAME LIKE 'H%' AND (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 WHERE D1.DOB BETWEEN DATE '1980-01-01' AND DATE '1989-12-31') ORDER BY FORMULA_1_DRIVERS.SURNAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those H-surname drivers, show their race results with the race ID, starting grid position, finishing position, and points.",
+          "intention": "For the drivers born during the 1980s whose surnames begin with H, show each recorded race result with the driver's name, race identifier, starting grid position, finishing position, and points.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_results"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, R.RACEID, R.GRID, R.POSITION, R.POINTS FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_RESULTS R ON R.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 WHERE D2.SURNAME LIKE 'H%' AND (D2.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 WHERE D1.DOB BETWEEN DATE '1980-01-01' AND DATE '1989-12-31')) ORDER BY D.SURNAME ASC, D.FORENAME ASC, R.RACEID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "26",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits are at least 1,000 meters above sea level? Show their names, locations, countries, and altitudes, with the highest first.",
+          "intention": "List circuits at an altitude of at least 1,000 meters, including each circuit's name, location, country, and altitude, ordered from highest to lowest altitude.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.LOCATION, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.ALT FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 1000 ORDER BY FORMULA_1_CIRCUITS.ALT DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those circuits, which ones have hosted races with constructor results, and how many total constructor points were awarded there?",
+          "intention": "For the previously identified circuits at least 1,000 meters above sea level, list those that hosted races with recorded constructor results and calculate the total constructor points awarded at each one.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME, SUM(FORMULA_1_CONSTRUCTORRESULTS.POINTS) AS TOTAL_CONSTRUCTOR_POINTS FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_CONSTRUCTORRESULTS ON FORMULA_1_CONSTRUCTORRESULTS.RACEID = FORMULA_1_RACES.RACEID WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT C1.CIRCUITID FROM FORMULA_1_CIRCUITS C1 WHERE C1.ALT >= 1000) GROUP BY FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME ORDER BY TOTAL_CONSTRUCTOR_POINTS DESC, FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Of those circuits, which are in Spain or Austria? Give me their names, countries, and coordinates alphabetically by name.",
+          "intention": "Among the previously identified high-altitude circuits that hosted races with recorded constructor results, list those located in Spain or Austria with their names, countries, latitudes, and longitudes, ordered alphabetically by circuit name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LAT, FORMULA_1_CIRCUITS.LNG FROM FORMULA_1_CIRCUITS WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT C2.CIRCUITID FROM FORMULA_1_CIRCUITS C2 JOIN FORMULA_1_RACES R2 ON R2.CIRCUITID = C2.CIRCUITID JOIN FORMULA_1_CONSTRUCTORRESULTS CR2 ON CR2.RACEID = R2.RACEID WHERE (C2.CIRCUITID) IN (SELECT C1.CIRCUITID FROM FORMULA_1_CIRCUITS C1 WHERE C1.ALT >= 1000) GROUP BY C2.CIRCUITID) AND FORMULA_1_CIRCUITS.COUNTRY IN ('Spain', 'Austria') ORDER BY FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "27",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which British drivers have held first place in the standings with at least one win?",
+          "intention": "Identify British drivers who have occupied first place in the standings while having at least one win.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings"
+            ],
+            "golden_sql": "SELECT DISTINCT D.DRIVERID, D.FORENAME, D.SURNAME FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS DS ON DS.DRIVERID = D.DRIVERID WHERE D.NATIONALITY = 'British' AND DS.POSITION = 1 AND DS.WINS > 0 ORDER BY D.SURNAME ASC, D.FORENAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which of those drivers have recorded pit stops, and how many does each have?",
+          "intention": "Among the British drivers who have occupied first place in the standings with at least one win, identify those with recorded pit stops and count each driver's pit stops.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings",
+              "formula_1_pitstops"
+            ],
+            "golden_sql": "SELECT D.DRIVERID, D.FORENAME, D.SURNAME, COUNT(*) AS PITSTOP_COUNT FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_PITSTOPS P ON P.DRIVERID = D.DRIVERID WHERE (D.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS1 ON DS1.DRIVERID = D1.DRIVERID WHERE D1.NATIONALITY = 'British' AND DS1.POSITION = 1 AND DS1.WINS > 0) GROUP BY D.DRIVERID, D.FORENAME, D.SURNAME ORDER BY COUNT(*) DESC, D.SURNAME ASC, D.FORENAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those drivers, show their names, codes, and car numbers, keeping only British drivers and sorting by number.",
+          "intention": "For the previously identified drivers with recorded pit stops, list each driver's forename, surname, code, and car number, restricted to British drivers and ordered by car number.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings",
+              "formula_1_pitstops"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, D.CODE, D.\"number\" FROM FORMULA_1_DRIVERS D WHERE D.NATIONALITY = 'British' AND (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 JOIN FORMULA_1_PITSTOPS P2 ON P2.DRIVERID = D2.DRIVERID WHERE (D2.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS1 ON DS1.DRIVERID = D1.DRIVERID WHERE D1.NATIONALITY = 'British' AND DS1.POSITION = 1 AND DS1.WINS > 0)) ORDER BY D.\"number\" ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "28",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which constructor results from race 18 earned more than 8 points, ordered from highest to lowest points?",
+          "intention": "List the constructor results from race 18 that earned more than eight points, ordered by points from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT CONSTRUCTORRESULTSID, RACEID, CONSTRUCTORID, POINTS, STATUS FROM FORMULA_1_CONSTRUCTORRESULTS WHERE RACEID = 18 AND POINTS > 8 ORDER BY POINTS DESC, CONSTRUCTORRESULTSID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those results, what are the constructors' names and nationalities, and what finishing statuses did their race entries have?",
+          "intention": "For exactly the previously selected constructor results, show each constructor's name and nationality along with the finishing statuses of that constructor's entries in the same race.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT CR.CONSTRUCTORRESULTSID, C.NAME, C.NATIONALITY, S.STATUS FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_RESULTS R ON R.CONSTRUCTORID = C.CONSTRUCTORID AND R.RACEID = CR.RACEID JOIN FORMULA_1_STATUS S ON R.STATUSID = S.STATUSID WHERE (CR.CONSTRUCTORRESULTSID) IN (SELECT CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS WHERE RACEID = 18 AND POINTS > 8) ORDER BY CR.CONSTRUCTORRESULTSID ASC, R.RESULTID ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Among those same constructor results, show only the ones with at least 10 points, with the highest-scoring first.",
+          "intention": "From exactly the constructor results selected previously, retain only those worth at least ten points and order them from highest to lowest points.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT CONSTRUCTORRESULTSID, RACEID, CONSTRUCTORID, POINTS, STATUS FROM FORMULA_1_CONSTRUCTORRESULTS WHERE (CONSTRUCTORRESULTSID) IN (SELECT CR.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_RESULTS R ON R.CONSTRUCTORID = C.CONSTRUCTORID AND R.RACEID = CR.RACEID JOIN FORMULA_1_STATUS S ON R.STATUSID = S.STATUSID WHERE (CR.CONSTRUCTORRESULTSID) IN (SELECT CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS WHERE RACEID = 18 AND POINTS > 8)) AND POINTS >= 10 ORDER BY POINTS DESC, CONSTRUCTORRESULTSID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "29",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits hosted races in the 2011 season, and how many pit stops were recorded at each one that year?",
+          "intention": "List the circuits that hosted races during the 2011 season and the number of pit stops recorded at each circuit in that season.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_pitstops",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME, COUNT(FORMULA_1_PITSTOPS.STOP) AS PITSTOP_COUNT FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_PITSTOPS ON FORMULA_1_PITSTOPS.RACEID = FORMULA_1_RACES.RACEID JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR WHERE FORMULA_1_SEASONS.YEAR = 2011 GROUP BY FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME ORDER BY PITSTOP_COUNT DESC, FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those circuits, show the name, location, country, and altitude for any that are at least 100 meters above sea level, highest first.",
+          "intention": "Among the circuits that hosted races with recorded pit stops during the 2011 season, show the name, location, country, and altitude of those at least 100 meters above sea level, ordered from highest to lowest altitude.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_pitstops",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.LOCATION, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.ALT FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_PITSTOPS ON FORMULA_1_PITSTOPS.RACEID = FORMULA_1_RACES.RACEID JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_PITSTOPS ON FORMULA_1_PITSTOPS.RACEID = FORMULA_1_RACES.RACEID JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR WHERE FORMULA_1_SEASONS.YEAR = 2011 GROUP BY FORMULA_1_CIRCUITS.CIRCUITID) AND FORMULA_1_CIRCUITS.ALT >= 100 GROUP BY FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.LOCATION, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.ALT ORDER BY FORMULA_1_CIRCUITS.ALT DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those high-altitude circuits, which race years are represented, and how many pit stops were recorded at each circuit in each year?",
+          "intention": "For the previously selected circuits at least 100 meters above sea level that hosted races with recorded pit stops in 2011, list each represented race year and the pit-stop count for every circuit and year.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_pitstops",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME, FORMULA_1_SEASONS.YEAR, COUNT(FORMULA_1_PITSTOPS.STOP) AS PITSTOP_COUNT FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_PITSTOPS ON FORMULA_1_PITSTOPS.RACEID = FORMULA_1_RACES.RACEID JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_PITSTOPS ON FORMULA_1_PITSTOPS.RACEID = FORMULA_1_RACES.RACEID JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_PITSTOPS ON FORMULA_1_PITSTOPS.RACEID = FORMULA_1_RACES.RACEID JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR WHERE FORMULA_1_SEASONS.YEAR = 2011 GROUP BY FORMULA_1_CIRCUITS.CIRCUITID) AND FORMULA_1_CIRCUITS.ALT >= 100 GROUP BY FORMULA_1_CIRCUITS.CIRCUITID) GROUP BY FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME, FORMULA_1_SEASONS.YEAR ORDER BY FORMULA_1_CIRCUITS.NAME ASC, FORMULA_1_SEASONS.YEAR ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "30",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits hosted Formula One races in the 2009 season, and how many races did each host?",
+          "intention": "List the circuits that hosted races during the 2009 Formula One season and the number of races held at each circuit.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME, COUNT(FORMULA_1_RACES.RACEID) AS RACE_COUNT FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID WHERE FORMULA_1_RACES.YEAR = 2009 GROUP BY FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME ORDER BY FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those circuits, what was the average recorded lap time in milliseconds during their 2009 races?",
+          "intention": "For exactly the circuits identified as having hosted races in 2009, report each circuit's average recorded lap time in milliseconds across its 2009 races.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_laptimes"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME, AVG(FORMULA_1_LAPTIMES.MILLISECONDS) AS AVG_LAP_MILLISECONDS FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.RACEID = FORMULA_1_RACES.RACEID WHERE FORMULA_1_RACES.YEAR = 2009 AND (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID WHERE FORMULA_1_RACES.YEAR = 2009 GROUP BY FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME) GROUP BY FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME ORDER BY FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Across which seasons did the circuits in that lap-time summary host races, and how many races did each circuit host in each season?",
+          "intention": "For exactly the circuits included in the 2009 average-lap-time summary, list every season in which they hosted a race and count their races by circuit and season.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_seasons",
+              "formula_1_laptimes"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME, FORMULA_1_SEASONS.YEAR, COUNT(FORMULA_1_RACES.RACEID) AS RACE_COUNT FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.RACEID = FORMULA_1_RACES.RACEID WHERE FORMULA_1_RACES.YEAR = 2009 AND (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID WHERE FORMULA_1_RACES.YEAR = 2009 GROUP BY FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME) GROUP BY FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME) GROUP BY FORMULA_1_CIRCUITS.CIRCUITID, FORMULA_1_CIRCUITS.NAME, FORMULA_1_SEASONS.YEAR ORDER BY FORMULA_1_CIRCUITS.NAME ASC, FORMULA_1_SEASONS.YEAR ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "31",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which constructors are British? List their names and nationalities alphabetically by name.",
+          "intention": "List the names and nationalities of all British Formula 1 constructors, ordered alphabetically by constructor name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT NAME, NATIONALITY FROM FORMULA_1_CONSTRUCTORS WHERE NATIONALITY = 'British' ORDER BY NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Among those British constructors, which ones have a listed website? Show their names, nationalities, and URLs.",
+          "intention": "For exactly the British constructors identified previously, list those with a non-null website URL, including each constructor's name, nationality, and URL.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT NAME, NATIONALITY, URL FROM FORMULA_1_CONSTRUCTORS WHERE (CONSTRUCTORID) IN (SELECT CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE NATIONALITY = 'British') AND URL IS NOT NULL ORDER BY NATIONALITY ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What result statuses have been recorded for those constructors with websites? List each constructor and its statuses.",
+          "intention": "For exactly the previously selected British constructors with non-null website URLs, list each constructor and every distinct status recorded for its race results.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructors",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT DISTINCT C.NAME, S.STATUS FROM FORMULA_1_CONSTRUCTORS C JOIN FORMULA_1_RESULTS R ON R.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_STATUS S ON S.STATUSID = R.STATUSID WHERE (C.CONSTRUCTORID) IN (SELECT CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE (CONSTRUCTORID) IN (SELECT CONSTRUCTORID FROM FORMULA_1_CONSTRUCTORS WHERE NATIONALITY = 'British') AND URL IS NOT NULL) ORDER BY C.NAME ASC, S.STATUS ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "32",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which drivers recorded lap times in race 18, and what was each driver's fastest recorded lap time there?",
+          "intention": "Identify the drivers who recorded lap times in race 18 and give each driver's fastest recorded lap time in that race.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, MIN(FORMULA_1_LAPTIMES.MILLISECONDS) AS FASTEST_LAP_MILLISECONDS FROM FORMULA_1_DRIVERS JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_LAPTIMES.RACEID = 18 GROUP BY FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME ORDER BY FASTEST_LAP_MILLISECONDS ASC, FORMULA_1_DRIVERS.DRIVERID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those drivers, what finishing position and points did each one earn in race 18?",
+          "intention": "For exactly the drivers identified as having recorded lap times in race 18, show their finishing positions and points in that race.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes",
+              "formula_1_results"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_RESULTS.POSITION, FORMULA_1_RESULTS.POINTS FROM FORMULA_1_DRIVERS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_RESULTS.RACEID = 18 AND (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_LAPTIMES.RACEID = 18 GROUP BY FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME) ORDER BY FORMULA_1_RESULTS.POSITIONORDER ASC, FORMULA_1_DRIVERS.DRIVERID ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Of those race results, which drivers were classified as Finished?",
+          "intention": "Among exactly the race 18 results for the previously identified drivers, list those whose result status was Finished.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_RESULTS.POSITION, FORMULA_1_RESULTS.POINTS, FORMULA_1_STATUS.STATUS FROM FORMULA_1_DRIVERS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_STATUS ON FORMULA_1_RESULTS.STATUSID = FORMULA_1_STATUS.STATUSID WHERE FORMULA_1_STATUS.STATUS = 'Finished' AND (FORMULA_1_RESULTS.RESULTID) IN (SELECT FORMULA_1_RESULTS.RESULTID FROM FORMULA_1_DRIVERS JOIN FORMULA_1_RESULTS ON FORMULA_1_RESULTS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_RESULTS.RACEID = 18 AND (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE FORMULA_1_LAPTIMES.RACEID = 18 GROUP BY FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME)) ORDER BY FORMULA_1_RESULTS.POSITIONORDER ASC, FORMULA_1_DRIVERS.DRIVERID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "33",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which drivers were in the top three of the standings after race 18 and had recorded at least one win?",
+          "intention": "Identify the drivers who ranked in the top three after race 18 and had at least one win at that point.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings"
+            ],
+            "golden_sql": "SELECT D.DRIVERID, D.FORENAME, D.SURNAME FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_DRIVERSTANDINGS DS ON DS.DRIVERID = D.DRIVERID WHERE DS.RACEID = 18 AND DS.POSITION <= 3 AND DS.WINS >= 1 ORDER BY DS.POSITION ASC, D.DRIVERID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those drivers, show only the British ones, including their names, codes, and car numbers, ordered by number.",
+          "intention": "From the previously identified top-three drivers with at least one win after race 18, list only those who are British, showing each driver's first name, surname, code, and car number in ascending car-number order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, D.CODE, D.\"number\" FROM FORMULA_1_DRIVERS D WHERE D.NATIONALITY = 'British' AND (D.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS1 ON DS1.DRIVERID = D1.DRIVERID WHERE DS1.RACEID = 18 AND DS1.POSITION <= 3 AND DS1.WINS >= 1) ORDER BY D.\"number\" ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What were those British drivers' qualifying positions and Q1, Q2, and Q3 times for race 18?",
+          "intention": "For exactly the British drivers retained from the previous result, return their qualifying positions and session times for race 18.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, Q.POSITION, Q.Q1, Q.Q2, Q.Q3 FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_QUALIFYING Q ON Q.DRIVERID = D.DRIVERID WHERE Q.RACEID = 18 AND (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 WHERE D2.NATIONALITY = 'British' AND (D2.DRIVERID) IN (SELECT D3.DRIVERID FROM FORMULA_1_DRIVERS D3 JOIN FORMULA_1_DRIVERSTANDINGS DS3 ON DS3.DRIVERID = D3.DRIVERID WHERE DS3.RACEID = 18 AND DS3.POSITION <= 3 AND DS3.WINS >= 1)) ORDER BY Q.POSITION ASC, D.DRIVERID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "34",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which drivers made at least one pit stop in under 23 seconds?",
+          "intention": "Identify the drivers who made at least one pit stop lasting less than 23 seconds.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_pitstops"
+            ],
+            "golden_sql": "SELECT DISTINCT D.DRIVERID, D.FORENAME, D.SURNAME FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_PITSTOPS P ON P.DRIVERID = D.DRIVERID WHERE P.MILLISECONDS < 23000 ORDER BY D.SURNAME ASC, D.FORENAME ASC, D.DRIVERID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those drivers, show the German ones with their names, codes, and car numbers, ordered by number.",
+          "intention": "Among the drivers who made at least one pit stop lasting less than 23 seconds, list those of German nationality with their full names, driver codes, and car numbers, ordered by car number.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_pitstops"
+            ],
+            "golden_sql": "SELECT D.FORENAME, D.SURNAME, D.CODE, D.\"number\" FROM FORMULA_1_DRIVERS D WHERE D.NATIONALITY = 'German' AND (D.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_PITSTOPS P1 ON P1.DRIVERID = D1.DRIVERID WHERE P1.MILLISECONDS < 23000) ORDER BY D.\"number\" ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those German drivers, which result statuses have they recorded, and how many results fall under each status?",
+          "intention": "For the previously selected German drivers who made a pit stop in under 23 seconds, report each recorded race-result status and the number of their results with that status.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_pitstops",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT D.DRIVERID, D.FORENAME, D.SURNAME, S.STATUS, COUNT(R.RESULTID) AS RESULT_COUNT FROM FORMULA_1_DRIVERS D JOIN FORMULA_1_RESULTS R ON R.DRIVERID = D.DRIVERID JOIN FORMULA_1_STATUS S ON S.STATUSID = R.STATUSID WHERE (D.DRIVERID) IN (SELECT D2.DRIVERID FROM FORMULA_1_DRIVERS D2 WHERE D2.NATIONALITY = 'German' AND (D2.DRIVERID) IN (SELECT DISTINCT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_PITSTOPS P1 ON P1.DRIVERID = D1.DRIVERID WHERE P1.MILLISECONDS < 23000)) GROUP BY D.DRIVERID, D.FORENAME, D.SURNAME, S.STATUS ORDER BY D.SURNAME ASC, D.FORENAME ASC, S.STATUS ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "35",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits in Austria, Mexico, or South Africa are listed, and what are their coordinates?",
+          "intention": "List the names, countries, latitudes, and longitudes of circuits located in Austria, Mexico, or South Africa, ordered by circuit name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LAT, FORMULA_1_CIRCUITS.LNG FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.COUNTRY IN ('Austria', 'Mexico', 'South Africa') ORDER BY FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those circuits, which are at least 500 meters above sea level? Show their location and altitude, highest first.",
+          "intention": "From the circuits previously identified in Austria, Mexico, or South Africa, list only those at an altitude of at least 500 meters, including each circuit's name, location, country, and altitude, from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.LOCATION, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.ALT FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 500 AND (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.COUNTRY IN ('Austria', 'Mexico', 'South Africa')) ORDER BY FORMULA_1_CIRCUITS.ALT DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those high-altitude circuits, which races were held there, and which constructors recorded results in each race? Include their points.",
+          "intention": "For the previously selected circuits in Austria, Mexico, or South Africa that are at least 500 meters above sea level, list the races held at each circuit and the constructors with recorded results in those races, including points earned.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorresults",
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT C.NAME AS CIRCUIT_NAME, R.NAME AS RACE_NAME, R.YEAR, CO.NAME AS CONSTRUCTOR_NAME, CR.POINTS FROM FORMULA_1_CIRCUITS C JOIN FORMULA_1_RACES R ON R.CIRCUITID = C.CIRCUITID JOIN FORMULA_1_CONSTRUCTORRESULTS CR ON CR.RACEID = R.RACEID JOIN FORMULA_1_CONSTRUCTORS CO ON CR.CONSTRUCTORID = CO.CONSTRUCTORID WHERE (C.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 500 AND (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.COUNTRY IN ('Austria', 'Mexico', 'South Africa'))) ORDER BY C.NAME ASC, R.YEAR ASC, R.NAME ASC, CO.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "36",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which German drivers are listed, and what are their names, codes, and car numbers? Sort them by number.",
+          "intention": "List the German drivers with their first names, surnames, codes, and car numbers, ordered by car number.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.CODE, FORMULA_1_DRIVERS.\"number\" FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY = 'German' ORDER BY FORMULA_1_DRIVERS.\"number\" ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those drivers, show their birth dates too, with the oldest first.",
+          "intention": "For exactly the German drivers selected previously, show their first names, surnames, and birth dates, ordered from oldest to youngest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERS.DOB FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY = 'German') ORDER BY FORMULA_1_DRIVERS.DOB ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What qualifying positions has each of those drivers recorded? List the driver, race, and position.",
+          "intention": "For exactly the German drivers selected previously, list each driver's first name and surname together with every recorded qualifying race and qualifying position.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_QUALIFYING.RACEID, FORMULA_1_QUALIFYING.POSITION FROM FORMULA_1_DRIVERS JOIN FORMULA_1_QUALIFYING ON FORMULA_1_QUALIFYING.DRIVERID = FORMULA_1_DRIVERS.DRIVERID WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE FORMULA_1_DRIVERS.NATIONALITY = 'German')) ORDER BY FORMULA_1_DRIVERS.SURNAME ASC, FORMULA_1_QUALIFYING.RACEID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "37",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits hosted at least one Formula 1 race in the 2020 season?",
+          "intention": "Identify the circuits that hosted at least one Formula 1 race during the 2020 season.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT DISTINCT C.CIRCUITID, C.NAME, C.COUNTRY FROM FORMULA_1_CIRCUITS C JOIN FORMULA_1_RACES R ON R.CIRCUITID = C.CIRCUITID WHERE R.YEAR = 2020 ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those circuits, show me the name, location, country, and altitude for the ones at least 500 meters above sea level, highest first.",
+          "intention": "For the circuits that hosted a Formula 1 race in 2020, list the name, location, country, and altitude of those at an altitude of at least 500 meters, ordered from highest to lowest altitude.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT C.NAME, C.LOCATION, C.COUNTRY, C.ALT FROM FORMULA_1_CIRCUITS C WHERE C.ALT >= 500 AND (C.CIRCUITID) IN (SELECT DISTINCT C1.CIRCUITID FROM FORMULA_1_CIRCUITS C1 JOIN FORMULA_1_RACES R1 ON R1.CIRCUITID = C1.CIRCUITID WHERE R1.YEAR = 2020) ORDER BY C.ALT DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "How many recorded pit stops occurred in races held at each of these high-altitude circuits?",
+          "intention": "Count the recorded pit stops from all races held at each circuit in the previously identified set of 2020 host circuits situated at least 500 meters above sea level.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_pitstops"
+            ],
+            "golden_sql": "SELECT C.CIRCUITID, C.NAME, COUNT(P.RACEID) AS PITSTOP_COUNT FROM FORMULA_1_CIRCUITS C JOIN FORMULA_1_RACES R ON R.CIRCUITID = C.CIRCUITID JOIN FORMULA_1_PITSTOPS P ON P.RACEID = R.RACEID WHERE (C.CIRCUITID) IN (SELECT C2.CIRCUITID FROM FORMULA_1_CIRCUITS C2 WHERE C2.ALT >= 500 AND (C2.CIRCUITID) IN (SELECT DISTINCT C1.CIRCUITID FROM FORMULA_1_CIRCUITS C1 JOIN FORMULA_1_RACES R1 ON R1.CIRCUITID = C1.CIRCUITID WHERE R1.YEAR = 2020)) GROUP BY C.CIRCUITID, C.NAME ORDER BY C.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "38",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits are at least 1,000 meters above sea level? Show their names, locations, countries, and altitudes, with the highest first.",
+          "intention": "List the circuits at least 1,000 meters above sea level, including each circuit's name, location, country, and altitude, ordered from highest to lowest altitude.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.LOCATION, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.ALT FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 1000 ORDER BY FORMULA_1_CIRCUITS.ALT DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which races were held at those circuits? Include the race name, year, and round.",
+          "intention": "List the name, year, and round of every race held at the circuits identified as being at least 1,000 meters above sea level.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT R.RACEID, R.NAME, R.YEAR, R.ROUND FROM FORMULA_1_RACES R JOIN FORMULA_1_CIRCUITS C ON R.CIRCUITID = C.CIRCUITID WHERE (C.CIRCUITID) IN (SELECT C1.CIRCUITID FROM FORMULA_1_CIRCUITS C1 WHERE C1.ALT >= 1000) ORDER BY R.YEAR ASC, R.ROUND ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those races, show each constructor's standing position, points, and wins.",
+          "intention": "For exactly the races previously identified at circuits at least 1,000 meters above sea level, show every constructor's standing position, points, and number of wins.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorstandings"
+            ],
+            "golden_sql": "SELECT R.RACEID, R.NAME, CS.CONSTRUCTORID, CS.POSITION, CS.POINTS, CS.WINS FROM FORMULA_1_CIRCUITS C JOIN FORMULA_1_RACES R ON R.CIRCUITID = C.CIRCUITID JOIN FORMULA_1_CONSTRUCTORSTANDINGS CS ON CS.RACEID = R.RACEID WHERE (R.RACEID) IN (SELECT R2.RACEID FROM FORMULA_1_RACES R2 JOIN FORMULA_1_CIRCUITS C2 ON R2.CIRCUITID = C2.CIRCUITID WHERE (C2.CIRCUITID) IN (SELECT C3.CIRCUITID FROM FORMULA_1_CIRCUITS C3 WHERE C3.ALT >= 1000)) ORDER BY R.YEAR ASC, R.ROUND ASC, CS.POSITION ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "39",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Show me the names, countries, and coordinates of Formula 1 circuits in Italy and Spain, ordered by circuit name.",
+          "intention": "List the names, countries, latitudes, and longitudes of Formula 1 circuits located in Italy or Spain, ordered alphabetically by circuit name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LAT, FORMULA_1_CIRCUITS.LNG FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.COUNTRY IN ('Italy', 'Spain') ORDER BY FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which races in 2009 were held at those circuits? Include each race's name, date, and circuit name.",
+          "intention": "List the races held in 2009 at the previously identified Italian and Spanish circuits, including each race's name, date, and circuit name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT R.RACEID, R.NAME, R.\"date\", C.NAME AS CIRCUIT_NAME FROM FORMULA_1_RACES R JOIN FORMULA_1_CIRCUITS C ON R.CIRCUITID = C.CIRCUITID WHERE (C.CIRCUITID) IN (SELECT C2.CIRCUITID FROM FORMULA_1_CIRCUITS C2 WHERE C2.COUNTRY IN ('Italy', 'Spain')) AND R.YEAR = 2009 ORDER BY R.\"date\" ASC, R.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For each of those races, what was the total number of constructor points recorded? Order the results from highest to lowest total.",
+          "intention": "For every previously selected 2009 race at an Italian or Spanish circuit, calculate the total constructor points recorded and rank the races from the highest total to the lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT R.RACEID, R.NAME, C.NAME AS CIRCUIT_NAME, SUM(CR.POINTS) AS TOTAL_CONSTRUCTOR_POINTS FROM FORMULA_1_CIRCUITS C JOIN FORMULA_1_RACES R ON R.CIRCUITID = C.CIRCUITID JOIN FORMULA_1_CONSTRUCTORRESULTS CR ON CR.RACEID = R.RACEID WHERE (R.RACEID) IN (SELECT R2.RACEID FROM FORMULA_1_RACES R2 JOIN FORMULA_1_CIRCUITS C2 ON R2.CIRCUITID = C2.CIRCUITID WHERE (C2.CIRCUITID) IN (SELECT C3.CIRCUITID FROM FORMULA_1_CIRCUITS C3 WHERE C3.COUNTRY IN ('Italy', 'Spain')) AND R2.YEAR = 2009) GROUP BY R.RACEID, R.NAME, C.NAME ORDER BY TOTAL_CONSTRUCTOR_POINTS DESC, R.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "40",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "List the circuits in Spain and Malaysia with their names, countries, and coordinates, ordered by name.",
+          "intention": "List the Formula One circuits located in Spain or Malaysia, including each circuit’s name, country, latitude, and longitude, in alphabetical order by circuit name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.LAT, FORMULA_1_CIRCUITS.LNG FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.COUNTRY IN ('Spain', 'Malaysia') ORDER BY FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which of these circuits hosted a race in the 2009 season, and what were the race names?",
+          "intention": "For the previously listed circuits in Spain or Malaysia, identify those that hosted a race during the 2009 season and give the corresponding race names.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_RACES.NAME AS RACE_NAME, FORMULA_1_SEASONS.YEAR FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.COUNTRY IN ('Spain', 'Malaysia')) AND FORMULA_1_SEASONS.YEAR = 2009 ORDER BY FORMULA_1_CIRCUITS.NAME ASC, FORMULA_1_RACES.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Among those circuits, show the reference, full name, and country for the ones whose names contain “Circuit,” sorted by name.",
+          "intention": "Among the previously identified Spanish or Malaysian circuits that hosted a race in 2009, return the circuit reference, full name, and country only when the full name contains the word “Circuit,” ordered alphabetically by full name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.CIRCUITREF, FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.COUNTRY FROM FORMULA_1_CIRCUITS WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.COUNTRY IN ('Spain', 'Malaysia')) AND FORMULA_1_SEASONS.YEAR = 2009) AND FORMULA_1_CIRCUITS.NAME LIKE '%Circuit%' ORDER BY FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "41",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "For driver 1 in race 1, which laps from lap 2 onward were completed in under 95,000 milliseconds, and what was the driver's position on each?",
+          "intention": "List the lap number, completion time in milliseconds, and position for driver 1 in race 1, limited to laps numbered 2 or higher that took less than 95,000 milliseconds.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_laptimes"
+            ],
+            "golden_sql": "SELECT FORMULA_1_LAPTIMES.RACEID, FORMULA_1_LAPTIMES.DRIVERID, FORMULA_1_LAPTIMES.LAP, FORMULA_1_LAPTIMES.MILLISECONDS, FORMULA_1_LAPTIMES.POSITION FROM FORMULA_1_LAPTIMES WHERE FORMULA_1_LAPTIMES.RACEID = 1 AND FORMULA_1_LAPTIMES.DRIVERID = 1 AND FORMULA_1_LAPTIMES.LAP >= 2 AND FORMULA_1_LAPTIMES.MILLISECONDS < 95000 ORDER BY FORMULA_1_LAPTIMES.LAP ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those laps, what was the race name and season year, and what is the season's reference URL?",
+          "intention": "For exactly the laps previously identified for driver 1, provide the name of the race, its season year, and the reference URL for that season.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_laptimes",
+              "formula_1_races",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT L.RACEID, L.DRIVERID, L.LAP, R.NAME, R.YEAR, S.URL FROM FORMULA_1_LAPTIMES L JOIN FORMULA_1_RACES R ON L.RACEID = R.RACEID JOIN FORMULA_1_SEASONS S ON R.YEAR = S.YEAR WHERE (L.RACEID, L.DRIVERID, L.LAP) IN (SELECT L1.RACEID, L1.DRIVERID, L1.LAP FROM FORMULA_1_LAPTIMES L1 WHERE L1.RACEID = 1 AND L1.DRIVERID = 1 AND L1.LAP >= 2 AND L1.MILLISECONDS < 95000) ORDER BY L.LAP ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Now rank those same laps from fastest to slowest, showing each lap's milliseconds and position along with the race and season.",
+          "intention": "Order exactly the previously identified laps from the shortest to the longest completion time, showing the lap number, milliseconds, position, race name, and season year.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_laptimes",
+              "formula_1_races",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT L.RACEID, L.DRIVERID, L.LAP, L.MILLISECONDS, L.POSITION, R.NAME, R.YEAR FROM FORMULA_1_LAPTIMES L JOIN FORMULA_1_RACES R ON L.RACEID = R.RACEID JOIN FORMULA_1_SEASONS S ON R.YEAR = S.YEAR WHERE (L.RACEID, L.DRIVERID, L.LAP) IN (SELECT L2.RACEID, L2.DRIVERID, L2.LAP FROM FORMULA_1_LAPTIMES L2 JOIN FORMULA_1_RACES R2 ON L2.RACEID = R2.RACEID JOIN FORMULA_1_SEASONS S2 ON R2.YEAR = S2.YEAR WHERE (L2.RACEID, L2.DRIVERID, L2.LAP) IN (SELECT L1.RACEID, L1.DRIVERID, L1.LAP FROM FORMULA_1_LAPTIMES L1 WHERE L1.RACEID = 1 AND L1.DRIVERID = 1 AND L1.LAP >= 2 AND L1.MILLISECONDS < 95000)) ORDER BY L.MILLISECONDS ASC, L.LAP ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "42",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits are at least 500 metres above sea level? Show their names, locations, countries, and altitudes, highest first.",
+          "intention": "List the circuits with an altitude of at least 500 metres, including each circuit's name, location, country, and altitude, ordered from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.LOCATION, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.ALT FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 500 ORDER BY FORMULA_1_CIRCUITS.ALT DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those circuits, which ones hosted races from 2010 through 2020? Include the race name and year.",
+          "intention": "For exactly the circuits at least 500 metres above sea level identified previously, list the races they hosted from 2010 through 2020, including each circuit name, race name, and year.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT FORMULA_1_RACES.RACEID, FORMULA_1_CIRCUITS.NAME AS CIRCUIT_NAME, FORMULA_1_RACES.NAME AS RACE_NAME, FORMULA_1_RACES.YEAR FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 500) AND FORMULA_1_RACES.YEAR BETWEEN 2010 AND 2020 ORDER BY FORMULA_1_RACES.YEAR ASC, FORMULA_1_RACES.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those races, how many pit stops were recorded, and what was the average pit-stop time in milliseconds? Keep the circuit and race details visible.",
+          "intention": "For exactly the races from 2010 through 2020 held at the previously identified high-altitude circuits, show the circuit, race, and year together with the number of recorded pit stops and the average pit-stop duration in milliseconds.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_pitstops"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME AS CIRCUIT_NAME, FORMULA_1_RACES.NAME AS RACE_NAME, FORMULA_1_RACES.YEAR, COUNT(FORMULA_1_PITSTOPS.STOP) AS PIT_STOP_COUNT, AVG(FORMULA_1_PITSTOPS.MILLISECONDS) AS AVG_PIT_STOP_MILLISECONDS FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID LEFT JOIN FORMULA_1_PITSTOPS ON FORMULA_1_PITSTOPS.RACEID = FORMULA_1_RACES.RACEID WHERE (FORMULA_1_RACES.RACEID) IN (SELECT FORMULA_1_RACES.RACEID FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 500) AND FORMULA_1_RACES.YEAR BETWEEN 2010 AND 2020) GROUP BY FORMULA_1_CIRCUITS.NAME, FORMULA_1_RACES.NAME, FORMULA_1_RACES.YEAR, FORMULA_1_RACES.RACEID ORDER BY PIT_STOP_COUNT DESC, FORMULA_1_RACES.YEAR ASC, FORMULA_1_RACES.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "43",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which nationalities have more than 20 drivers, and how many drivers does each have? List the largest groups first.",
+          "intention": "Find nationalities represented by more than twenty drivers, show the driver count for each nationality, and order the results from the largest group to the smallest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.NATIONALITY, COUNT(FORMULA_1_DRIVERS.DRIVERID) AS DRIVER_COUNT FROM FORMULA_1_DRIVERS GROUP BY FORMULA_1_DRIVERS.NATIONALITY HAVING COUNT(FORMULA_1_DRIVERS.DRIVERID) > 20 ORDER BY DRIVER_COUNT DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For drivers from those nationalities, what are the earliest and latest birth dates in each group?",
+          "intention": "For drivers belonging exactly to the nationalities previously found to have more than twenty drivers, return each nationality's earliest and latest driver birth dates.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.NATIONALITY, MIN(FORMULA_1_DRIVERS.DOB) AS EARLIEST_DOB, MAX(FORMULA_1_DRIVERS.DOB) AS LATEST_DOB FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.NATIONALITY) IN (SELECT FORMULA_1_DRIVERS.NATIONALITY FROM FORMULA_1_DRIVERS GROUP BY FORMULA_1_DRIVERS.NATIONALITY HAVING COUNT(FORMULA_1_DRIVERS.DRIVERID) > 20) AND FORMULA_1_DRIVERS.NATIONALITY IS NOT NULL GROUP BY FORMULA_1_DRIVERS.NATIONALITY"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those same drivers, which races have recorded lap times for them? Show each driver's name, the race name, and the number of recorded laps, with the highest totals first.",
+          "intention": "For drivers belonging exactly to the previously identified nationalities, list the races in which they have recorded lap times, along with each driver's name and number of recorded laps, ordered from the highest lap count downward.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_laptimes",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_RACES.NAME, COUNT(FORMULA_1_LAPTIMES.LAP) AS RECORDED_LAPS FROM FORMULA_1_DRIVERS JOIN FORMULA_1_LAPTIMES ON FORMULA_1_LAPTIMES.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_RACES ON FORMULA_1_LAPTIMES.RACEID = FORMULA_1_RACES.RACEID WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT FORMULA_1_DRIVERS.DRIVERID FROM FORMULA_1_DRIVERS WHERE (FORMULA_1_DRIVERS.NATIONALITY) IN (SELECT FORMULA_1_DRIVERS.NATIONALITY FROM FORMULA_1_DRIVERS GROUP BY FORMULA_1_DRIVERS.NATIONALITY HAVING COUNT(FORMULA_1_DRIVERS.DRIVERID) > 20) AND FORMULA_1_DRIVERS.NATIONALITY IS NOT NULL) GROUP BY FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_RACES.RACEID, FORMULA_1_RACES.NAME ORDER BY RECORDED_LAPS DESC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "44",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits hosted a race during the 2009 Formula One season?",
+          "intention": "List the circuits that hosted at least one race during the 2009 Formula One season.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT DISTINCT C.CIRCUITID, C.NAME, C.COUNTRY FROM FORMULA_1_CIRCUITS C JOIN FORMULA_1_RACES R ON R.CIRCUITID = C.CIRCUITID JOIN FORMULA_1_SEASONS S ON R.YEAR = S.YEAR WHERE S.YEAR = 2009 ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those circuits, which ones hosted a race where at least one constructor was credited with a win in the standings?",
+          "intention": "Among the circuits that hosted a race during the 2009 Formula One season, list those that hosted at least one race for which a constructor had one or more wins recorded in the constructor standings.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorstandings",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT DISTINCT C.CIRCUITID, C.NAME, C.COUNTRY FROM FORMULA_1_CIRCUITS C JOIN FORMULA_1_RACES R ON R.CIRCUITID = C.CIRCUITID JOIN FORMULA_1_CONSTRUCTORSTANDINGS CS ON CS.RACEID = R.RACEID WHERE CS.WINS >= 1 AND (C.CIRCUITID) IN (SELECT DISTINCT C1.CIRCUITID FROM FORMULA_1_CIRCUITS C1 JOIN FORMULA_1_RACES R1 ON R1.CIRCUITID = C1.CIRCUITID JOIN FORMULA_1_SEASONS S1 ON R1.YEAR = S1.YEAR WHERE S1.YEAR = 2009) ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those circuits, show the name, location, country, and altitude, keeping only altitudes of at least 100 and sorting from highest to lowest.",
+          "intention": "For the 2009 race-hosting circuits that hosted a race where a constructor had at least one win recorded in the standings, show each circuit's name, location, country, and altitude when the altitude is at least 100, ordered by descending altitude.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_constructorstandings",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT C.NAME, C.LOCATION, C.COUNTRY, C.ALT FROM FORMULA_1_CIRCUITS C WHERE C.ALT >= 100 AND (C.CIRCUITID) IN (SELECT DISTINCT C2.CIRCUITID FROM FORMULA_1_CIRCUITS C2 JOIN FORMULA_1_RACES R2 ON R2.CIRCUITID = C2.CIRCUITID JOIN FORMULA_1_CONSTRUCTORSTANDINGS CS2 ON CS2.RACEID = R2.RACEID WHERE CS2.WINS >= 1 AND (C2.CIRCUITID) IN (SELECT DISTINCT C1.CIRCUITID FROM FORMULA_1_CIRCUITS C1 JOIN FORMULA_1_RACES R1 ON R1.CIRCUITID = C1.CIRCUITID JOIN FORMULA_1_SEASONS S1 ON R1.YEAR = S1.YEAR WHERE S1.YEAR = 2009)) ORDER BY C.ALT DESC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "45",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which drivers had a recorded championship standing after the 2009 Australian Grand Prix, and what were their points and positions?",
+          "intention": "List the drivers who had a championship standing after the 2009 Australian Grand Prix, along with their points and positions.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_driverstandings",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.DRIVERID, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_DRIVERSTANDINGS.POINTS, FORMULA_1_DRIVERSTANDINGS.POSITION FROM FORMULA_1_DRIVERS JOIN FORMULA_1_DRIVERSTANDINGS ON FORMULA_1_DRIVERSTANDINGS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_RACES ON FORMULA_1_DRIVERSTANDINGS.RACEID = FORMULA_1_RACES.RACEID WHERE FORMULA_1_RACES.YEAR = 2009 AND FORMULA_1_RACES.NAME = 'Australian Grand Prix' ORDER BY FORMULA_1_DRIVERSTANDINGS.POSITION ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those drivers, show each of their pit stops in the 2011 Australian Grand Prix, including the lap, time, and duration.",
+          "intention": "For exactly the drivers who had a championship standing after the 2009 Australian Grand Prix, list every pit stop they made in the 2011 Australian Grand Prix, including its lap, time, and duration.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_pitstops",
+              "formula_1_races",
+              "formula_1_driverstandings"
+            ],
+            "golden_sql": "SELECT FORMULA_1_PITSTOPS.RACEID, FORMULA_1_PITSTOPS.DRIVERID, FORMULA_1_PITSTOPS.STOP, FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_PITSTOPS.LAP, FORMULA_1_PITSTOPS.TIME, FORMULA_1_PITSTOPS.DURATION FROM FORMULA_1_DRIVERS JOIN FORMULA_1_PITSTOPS ON FORMULA_1_PITSTOPS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_RACES ON FORMULA_1_PITSTOPS.RACEID = FORMULA_1_RACES.RACEID WHERE (FORMULA_1_DRIVERS.DRIVERID) IN (SELECT D0.DRIVERID FROM FORMULA_1_DRIVERS D0 JOIN FORMULA_1_DRIVERSTANDINGS DS0 ON DS0.DRIVERID = D0.DRIVERID JOIN FORMULA_1_RACES R0 ON DS0.RACEID = R0.RACEID WHERE R0.YEAR = 2009 AND R0.NAME = 'Australian Grand Prix') AND FORMULA_1_RACES.YEAR = 2011 AND FORMULA_1_RACES.NAME = 'Australian Grand Prix' ORDER BY FORMULA_1_DRIVERS.DRIVERID ASC, FORMULA_1_PITSTOPS.STOP ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those pit stops, what championship position, points, and wins did each driver have after that race?",
+          "intention": "For exactly the pit stops identified for those drivers in the 2011 Australian Grand Prix, show each driver's championship position, points, and win count after that same race.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_drivers",
+              "formula_1_pitstops",
+              "formula_1_races",
+              "formula_1_driverstandings"
+            ],
+            "golden_sql": "SELECT FORMULA_1_DRIVERS.FORENAME, FORMULA_1_DRIVERS.SURNAME, FORMULA_1_RACES.NAME, FORMULA_1_PITSTOPS.STOP, FORMULA_1_DRIVERSTANDINGS.POSITION, FORMULA_1_DRIVERSTANDINGS.POINTS, FORMULA_1_DRIVERSTANDINGS.WINS FROM FORMULA_1_PITSTOPS JOIN FORMULA_1_DRIVERS ON FORMULA_1_PITSTOPS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID JOIN FORMULA_1_RACES ON FORMULA_1_PITSTOPS.RACEID = FORMULA_1_RACES.RACEID JOIN FORMULA_1_DRIVERSTANDINGS ON FORMULA_1_DRIVERSTANDINGS.DRIVERID = FORMULA_1_DRIVERS.DRIVERID AND FORMULA_1_DRIVERSTANDINGS.RACEID = FORMULA_1_RACES.RACEID WHERE (FORMULA_1_PITSTOPS.RACEID, FORMULA_1_PITSTOPS.DRIVERID, FORMULA_1_PITSTOPS.STOP) IN (SELECT PS0.RACEID, PS0.DRIVERID, PS0.STOP FROM FORMULA_1_DRIVERS D0 JOIN FORMULA_1_PITSTOPS PS0 ON PS0.DRIVERID = D0.DRIVERID JOIN FORMULA_1_RACES R0 ON PS0.RACEID = R0.RACEID WHERE (D0.DRIVERID) IN (SELECT D1.DRIVERID FROM FORMULA_1_DRIVERS D1 JOIN FORMULA_1_DRIVERSTANDINGS DS1 ON DS1.DRIVERID = D1.DRIVERID JOIN FORMULA_1_RACES R1 ON DS1.RACEID = R1.RACEID WHERE R1.YEAR = 2009 AND R1.NAME = 'Australian Grand Prix') AND R0.YEAR = 2011 AND R0.NAME = 'Australian Grand Prix') ORDER BY FORMULA_1_DRIVERS.DRIVERID ASC, FORMULA_1_PITSTOPS.STOP ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "46",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which constructor results from race 18 earned more than 8 points, ordered from highest to lowest points?",
+          "intention": "Which constructor results in race 18 earned more than 8 points, ordered by points from highest to lowest?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORRESULTSID, FORMULA_1_CONSTRUCTORRESULTS.RACEID, FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID, FORMULA_1_CONSTRUCTORRESULTS.POINTS, FORMULA_1_CONSTRUCTORRESULTS.STATUS FROM FORMULA_1_CONSTRUCTORRESULTS WHERE FORMULA_1_CONSTRUCTORRESULTS.RACEID = 18 AND FORMULA_1_CONSTRUCTORRESULTS.POINTS > 8 ORDER BY FORMULA_1_CONSTRUCTORRESULTS.POINTS DESC, FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORRESULTSID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Among those results, how many have each status?",
+          "intention": "For exactly the constructor results from race 18 that earned more than 8 points, how many results have each status?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORRESULTS.STATUS, COUNT(*) AS RESULT_COUNT FROM FORMULA_1_CONSTRUCTORRESULTS WHERE (FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORRESULTSID) IN (SELECT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS WHERE FORMULA_1_CONSTRUCTORRESULTS.RACEID = 18 AND FORMULA_1_CONSTRUCTORRESULTS.POINTS > 8) GROUP BY FORMULA_1_CONSTRUCTORRESULTS.STATUS ORDER BY RESULT_COUNT DESC, FORMULA_1_CONSTRUCTORRESULTS.STATUS ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which constructors recorded those results, and what were their names and nationalities?",
+          "intention": "For exactly the previously selected constructor results from race 18 that earned more than 8 points, which constructors recorded them, and what are those constructors' names and nationalities?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORRESULTSID, FORMULA_1_CONSTRUCTORS.CONSTRUCTORID, FORMULA_1_CONSTRUCTORS.NAME, FORMULA_1_CONSTRUCTORS.NATIONALITY FROM FORMULA_1_CONSTRUCTORRESULTS JOIN FORMULA_1_CONSTRUCTORS ON FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID = FORMULA_1_CONSTRUCTORS.CONSTRUCTORID WHERE (FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORRESULTSID) IN (SELECT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS WHERE FORMULA_1_CONSTRUCTORRESULTS.RACEID = 18 AND FORMULA_1_CONSTRUCTORRESULTS.POINTS > 8) ORDER BY FORMULA_1_CONSTRUCTORS.NAME ASC, FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORRESULTSID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "47",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which British constructors earned points in the 2008 Australian Grand Prix, and how many points did each earn?",
+          "intention": "Identify the British constructors that earned points in the 2008 Australian Grand Prix and report the points earned by each one.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT C.CONSTRUCTORID, C.NAME, CR.POINTS FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_RACES R ON CR.RACEID = R.RACEID WHERE C.NATIONALITY = 'British' AND R.YEAR = 2008 AND R.NAME = 'Australian Grand Prix' AND CR.POINTS > 0 ORDER BY CR.POINTS DESC, C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those constructors in that race, what was their best qualifying position?",
+          "intention": "For exactly the previously identified British constructors in the 2008 Australian Grand Prix, report each constructor's best qualifying position in that same race.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_races",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT C.CONSTRUCTORID, C.NAME, MIN(Q.POSITION) AS BEST_QUALIFYING_POSITION FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_RACES R ON CR.RACEID = R.RACEID JOIN FORMULA_1_QUALIFYING Q ON Q.CONSTRUCTORID = C.CONSTRUCTORID AND Q.RACEID = R.RACEID WHERE (CR.CONSTRUCTORID, CR.RACEID) IN (SELECT CR1.CONSTRUCTORID, CR1.RACEID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 JOIN FORMULA_1_CONSTRUCTORS C1 ON CR1.CONSTRUCTORID = C1.CONSTRUCTORID JOIN FORMULA_1_RACES R1 ON CR1.RACEID = R1.RACEID WHERE C1.NATIONALITY = 'British' AND R1.YEAR = 2008 AND R1.NAME = 'Australian Grand Prix' AND CR1.POINTS > 0) GROUP BY C.CONSTRUCTORID, C.NAME ORDER BY BEST_QUALIFYING_POSITION ASC, C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Among those constructors, which qualifying drivers started ahead of their constructor's best-positioned rival from the same set?",
+          "intention": "Among exactly the previously retained constructors in the 2008 Australian Grand Prix, list the qualifying drivers whose starting position was better than the best qualifying position achieved by any other retained constructor.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_races",
+              "formula_1_qualifying"
+            ],
+            "golden_sql": "SELECT C.CONSTRUCTORID, C.NAME, Q.DRIVERID, Q.POSITION FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_RACES R ON CR.RACEID = R.RACEID JOIN FORMULA_1_QUALIFYING Q ON Q.CONSTRUCTORID = C.CONSTRUCTORID AND Q.RACEID = R.RACEID WHERE (CR.CONSTRUCTORID, CR.RACEID) IN (SELECT CR2.CONSTRUCTORID, CR2.RACEID FROM FORMULA_1_CONSTRUCTORRESULTS CR2 JOIN FORMULA_1_CONSTRUCTORS C2 ON CR2.CONSTRUCTORID = C2.CONSTRUCTORID JOIN FORMULA_1_RACES R2 ON CR2.RACEID = R2.RACEID JOIN FORMULA_1_QUALIFYING Q2 ON Q2.CONSTRUCTORID = C2.CONSTRUCTORID AND Q2.RACEID = R2.RACEID WHERE (CR2.CONSTRUCTORID, CR2.RACEID) IN (SELECT CR1.CONSTRUCTORID, CR1.RACEID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 JOIN FORMULA_1_CONSTRUCTORS C1 ON CR1.CONSTRUCTORID = C1.CONSTRUCTORID JOIN FORMULA_1_RACES R1 ON CR1.RACEID = R1.RACEID WHERE C1.NATIONALITY = 'British' AND R1.YEAR = 2008 AND R1.NAME = 'Australian Grand Prix' AND CR1.POINTS > 0) GROUP BY CR2.CONSTRUCTORID, CR2.RACEID, C2.NAME) AND Q.POSITION < (SELECT MIN(QR.POSITION) FROM FORMULA_1_QUALIFYING QR WHERE QR.RACEID = CR.RACEID AND QR.CONSTRUCTORID <> CR.CONSTRUCTORID AND (QR.CONSTRUCTORID, QR.RACEID) IN (SELECT CR3.CONSTRUCTORID, CR3.RACEID FROM FORMULA_1_CONSTRUCTORRESULTS CR3 JOIN FORMULA_1_CONSTRUCTORS C3 ON CR3.CONSTRUCTORID = C3.CONSTRUCTORID JOIN FORMULA_1_RACES R3 ON CR3.RACEID = R3.RACEID WHERE C3.NATIONALITY = 'British' AND R3.YEAR = 2008 AND R3.NAME = 'Australian Grand Prix' AND CR3.POINTS > 0)) ORDER BY Q.POSITION ASC, C.NAME ASC, Q.DRIVERID ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "48",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which circuits hosted a Formula 1 race in 2009, and what countries are they in?",
+          "intention": "List the circuits that hosted Formula 1 races during the 2009 season, along with their countries.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT DISTINCT C.CIRCUITID, C.NAME, C.COUNTRY FROM FORMULA_1_CIRCUITS C JOIN FORMULA_1_RACES R ON R.CIRCUITID = C.CIRCUITID WHERE R.YEAR = 2009 ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Among those circuits, which ones are at least 100 meters above sea level? Show their locations and altitudes, highest first.",
+          "intention": "From the circuits that hosted races in 2009, list those with an altitude of at least 100 meters, including each circuit's location, country, and altitude, ordered from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races"
+            ],
+            "golden_sql": "SELECT C.NAME, C.LOCATION, C.COUNTRY, C.ALT FROM FORMULA_1_CIRCUITS C WHERE C.ALT >= 100 AND (C.CIRCUITID) IN (SELECT DISTINCT C1.CIRCUITID FROM FORMULA_1_CIRCUITS C1 JOIN FORMULA_1_RACES R1 ON R1.CIRCUITID = C1.CIRCUITID WHERE R1.YEAR = 2009) ORDER BY C.ALT DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For the 2009 races at those high-altitude circuits, what was the average recorded lap time in milliseconds for each race?",
+          "intention": "For each 2009 race held at one of the previously identified circuits at least 100 meters above sea level, report the average recorded lap time in milliseconds.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_laptimes"
+            ],
+            "golden_sql": "SELECT R.RACEID, R.NAME, AVG(L.MILLISECONDS) AS AVG_LAP_MILLISECONDS FROM FORMULA_1_CIRCUITS C JOIN FORMULA_1_RACES R ON R.CIRCUITID = C.CIRCUITID JOIN FORMULA_1_LAPTIMES L ON L.RACEID = R.RACEID WHERE R.YEAR = 2009 AND (C.CIRCUITID) IN (SELECT C2.CIRCUITID FROM FORMULA_1_CIRCUITS C2 WHERE C2.ALT >= 100 AND (C2.CIRCUITID) IN (SELECT DISTINCT C1.CIRCUITID FROM FORMULA_1_CIRCUITS C1 JOIN FORMULA_1_RACES R1 ON R1.CIRCUITID = C1.CIRCUITID WHERE R1.YEAR = 2009)) GROUP BY R.RACEID, R.NAME ORDER BY R.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "49",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "For race 18, which constructor-result entries earned at least 9 points, ordered from highest to lowest points?",
+          "intention": "List the constructor-result entries from race 18 that earned at least 9 points, ordered by points from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORRESULTSID, FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORID, FORMULA_1_CONSTRUCTORRESULTS.POINTS FROM FORMULA_1_CONSTRUCTORRESULTS WHERE FORMULA_1_CONSTRUCTORRESULTS.RACEID = 18 AND FORMULA_1_CONSTRUCTORRESULTS.POINTS >= 9 ORDER BY FORMULA_1_CONSTRUCTORRESULTS.POINTS DESC, FORMULA_1_CONSTRUCTORRESULTS.CONSTRUCTORRESULTSID ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the constructor names and nationalities for those entries?",
+          "intention": "For exactly the constructor-result entries from race 18 that earned at least 9 points, give the associated constructor names and nationalities.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors"
+            ],
+            "golden_sql": "SELECT CR.CONSTRUCTORRESULTSID, C.NAME, C.NATIONALITY FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID WHERE (CR.CONSTRUCTORRESULTSID) IN (SELECT CR1.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 WHERE CR1.RACEID = 18 AND CR1.POINTS >= 9) ORDER BY CR.CONSTRUCTORRESULTSID ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those same entries, what finishing statuses appear in the associated constructors' race results?",
+          "intention": "For exactly those previously identified constructor-result entries and their associated constructors, list the finishing statuses recorded in the constructors' race results.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_constructorresults",
+              "formula_1_constructors",
+              "formula_1_results",
+              "formula_1_status"
+            ],
+            "golden_sql": "SELECT DISTINCT CR.CONSTRUCTORRESULTSID, C.NAME, S.STATUS FROM FORMULA_1_CONSTRUCTORRESULTS CR JOIN FORMULA_1_CONSTRUCTORS C ON CR.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_RESULTS R ON R.CONSTRUCTORID = C.CONSTRUCTORID JOIN FORMULA_1_STATUS S ON R.STATUSID = S.STATUSID WHERE (CR.CONSTRUCTORRESULTSID) IN (SELECT CR2.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR2 JOIN FORMULA_1_CONSTRUCTORS C2 ON CR2.CONSTRUCTORID = C2.CONSTRUCTORID WHERE (CR2.CONSTRUCTORRESULTSID) IN (SELECT CR1.CONSTRUCTORRESULTSID FROM FORMULA_1_CONSTRUCTORRESULTS CR1 WHERE CR1.RACEID = 18 AND CR1.POINTS >= 9)) ORDER BY CR.CONSTRUCTORRESULTSID ASC, C.NAME ASC, S.STATUS ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "50",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which Formula 1 circuits are at least 1,000 meters above sea level? Show their names, locations, countries, and altitudes, highest first.",
+          "intention": "List the Formula 1 circuits at elevations of at least 1,000 meters, including each circuit's name, location, country, and altitude, ordered from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.LOCATION, FORMULA_1_CIRCUITS.COUNTRY, FORMULA_1_CIRCUITS.ALT FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 1000 ORDER BY FORMULA_1_CIRCUITS.ALT DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those, which ones have \"Circuit\" in their name? Give me the reference name, full name, and country alphabetically by full name.",
+          "intention": "Among the previously identified circuits at elevations of at least 1,000 meters, list only those whose full names contain \"Circuit,\" showing their reference names, full names, and countries in alphabetical order by full name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits"
+            ],
+            "golden_sql": "SELECT FORMULA_1_CIRCUITS.CIRCUITREF, FORMULA_1_CIRCUITS.NAME, FORMULA_1_CIRCUITS.COUNTRY FROM FORMULA_1_CIRCUITS WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 1000) AND FORMULA_1_CIRCUITS.NAME LIKE '%Circuit%' ORDER BY FORMULA_1_CIRCUITS.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which races were held at those circuits, and what season did each race belong to? Include the race name and date, ordered by season and round.",
+          "intention": "For exactly the high-altitude circuits from the previous result whose names contain \"Circuit,\" list the races held there with each race's season, name, and date, ordered by season and championship round.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "formula_1_circuits",
+              "formula_1_races",
+              "formula_1_seasons"
+            ],
+            "golden_sql": "SELECT FORMULA_1_SEASONS.YEAR, FORMULA_1_RACES.NAME, FORMULA_1_RACES.\"date\" FROM FORMULA_1_CIRCUITS JOIN FORMULA_1_RACES ON FORMULA_1_RACES.CIRCUITID = FORMULA_1_CIRCUITS.CIRCUITID JOIN FORMULA_1_SEASONS ON FORMULA_1_RACES.YEAR = FORMULA_1_SEASONS.YEAR WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE (FORMULA_1_CIRCUITS.CIRCUITID) IN (SELECT FORMULA_1_CIRCUITS.CIRCUITID FROM FORMULA_1_CIRCUITS WHERE FORMULA_1_CIRCUITS.ALT >= 1000) AND FORMULA_1_CIRCUITS.NAME LIKE '%Circuit%') ORDER BY FORMULA_1_SEASONS.YEAR ASC, FORMULA_1_RACES.ROUND ASC"
+          }
+        }
+      ]
+    }
+  ]
+}

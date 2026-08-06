@@ -19,6 +19,7 @@ MODEL_4O = 'gpt-4o'
 MODEL_EMBEDDING = 'text-embedding-ada-002'
 MODEL_O1_MINI = 'o1-mini'
 MODEL_O3_MINI = 'o3-mini'
+MODEL_5_6_SOL = 'gpt-5.6-sol'
 
 
 

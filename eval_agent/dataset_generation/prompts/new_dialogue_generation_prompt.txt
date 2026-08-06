@@ -62,47 +62,47 @@ You must output a single JSON object with the structure of the EXAMPLE below and
     {{
       "interaction_id": "1",
       "speaker": "User",
-      "utterance": "What are the biggest city in the world?",
-      "intention": "What are the biggest city in the world?",
+      "utterance": "Which cities have a population greater than 1,000,000?",
+      "intention": "Which cities have a population greater than one million?",
       "ground_truths": {{
-         "tables_from_schema_linking": [ ... ],
-         "golden_sql": "<Valid SQL query corresponding to the question>"
+         "tables_from_schema_linking": ["MONDIAL_CITY"],
+         "golden_sql": "SELECT NAME, POPULATION FROM MONDIAL_CITY WHERE POPULATION > 1000000 ORDER BY NAME ASC, COUNTRY ASC, PROVINCE ASC"
       }}
     }},
     {{
       "interaction_id": "2",
       "speaker": "User",
-      "utterance": "What are the area of this city?",
-      "intention": "What are the area of <city retrieved in the previous interaction>?",
+      "utterance": "What is the area of these cities?",
+      "intention": "What is the area of those cities?",
       "ground_truths": {{
-         "tables_from_schema_linking": [ ... ],
-         "golden_sql": "<Valid SQL query for the follow-up question>"
+         "tables_from_schema_linking": ["MONDIAL_CITY"],
+         "golden_sql": "SELECT NAME, AREA FROM MONDIAL_CITY WHERE (NAME, COUNTRY, PROVINCE) IN (SELECT NAME, COUNTRY, PROVINCE FROM MONDIAL_CITY WHERE POPULATION > 1000000) ORDER BY NAME ASC, COUNTRY ASC, PROVINCE ASC"
       }}
     }},
     {{
       "interaction_id": "3",
       "speaker": "User",
-      "utterance": "And tell me also in which continent it is?",
-      "intention": "In which continent is <city retrieved in the previous interaction>?",
+      "utterance": "In which countries are these cities located?",
+      "intention": "In which countries are those cities located?",
       "ground_truths": {{
-         "tables_from_schema_linking": [ ... ],
-         "golden_sql": "<Valid SQL query for the additional question>"
+         "tables_from_schema_linking": ["MONDIAL_CITY", "MONDIAL_COUNTRY"],
+         "golden_sql": "SELECT C.NAME, CO.NAME AS COUNTRY_NAME FROM MONDIAL_CITY C JOIN MONDIAL_COUNTRY CO ON C.COUNTRY = CO.CODE WHERE (C.NAME, C.COUNTRY, C.PROVINCE) IN (SELECT NAME, COUNTRY, PROVINCE FROM MONDIAL_CITY WHERE POPULATION > 1000000) ORDER BY CO.NAME ASC, C.NAME ASC"
       }}
     }}
   ]
 }}
 
-As you see, follow up questions are always related to the previous one, and the intention is a natural language version of the question, considering that you don't know the global context of the dialogue.
+As you see, follow-up questions are always related to the previous one and MUST restrict to exactly the previously selected entities via a subquery `WHERE (<keys>) IN (SELECT <keys> ...)`, reproducing the previous interaction's selection instead of re-scanning the whole table; and the intention is a natural language version of the question, considering that you don't know the global context of the dialogue.
 ---
 
 ## Field Constraints
 
 - "utterance":
-  - Natural, conversational user question.
+  - Natural conversational user question.
 - "intention":
   - A refined natural language rewrite of the utterance.
   - Must NOT reference database tables, columns, or schema.
-  - For follow-ups, include context implicitly (e.g., “that team”, “this country”).
+  - For follow-ups, explicitly include context, the intention must be without any ambiguities.
 - "tables_from_schema_linking":
   - Exact table names used in the SQL.
 - "golden_sql":
@@ -110,6 +110,7 @@ As you see, follow up questions are always related to the previous one, and the 
   - Use ONLY tables and columns provided.
   - Use UPPERCASE for table and column names (e.g., MONDIAL_CITY.NAME).
   - Sample values are allowed ONLY as filters.
+  - For follow-ups referring to previous entities, it MUST restrict to exactly those entities via `WHERE (<KEY_COLS>) IN ( <previous interaction's selection projected to KEY_COLS> )`, reproducing the previous interaction's selection. Do NOT re-scan the whole table.
 
 ---
 

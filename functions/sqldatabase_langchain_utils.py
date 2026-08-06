@@ -42,8 +42,8 @@ class SQLDatabaseLangchainUtils:
             else:
                 db = SQLDatabase.from_uri(uri, sample_rows_in_table_info=self.sample_rows_in_table_info, schema=self.schema,  view_support = self.view_support)
             return db
-        except:
-            raise ConnectionError("Error connecting to the database")
+        except Exception as e:
+            raise ConnectionError("Error connecting to the database") from e
         
     def get_connection_mysql(self):
         """Construct a SQLAlchemy engine from URI."""

@@ -34,12 +34,20 @@ class LLMConfig:
 
         if "model" not in kwargs: kwargs["model"] = self.DEFAULT_AZURE_MODEL
 
-        if kwargs.get("model").startswith("o1") or kwargs.get("model").startswith("o3"):
+        if kwargs.get("model").startswith("o1") or kwargs.get("model").startswith("o3") or "5.6" in kwargs.get("model"):
             # constraints of o1 and o3 family
             kwargs["temperature"] = 1
             kwargs["disabled_params"] = {"parallel_tool_calls": None}
-            
-        return AzureChatOpenAI(**self.params, **kwargs)
+            if "max_tokens" in kwargs:
+                kwargs["max_completion_tokens"] = kwargs.pop("max_tokens")
+        
+        if "model" in kwargs:
+            kwargs["azure_deployment"] = kwargs.pop("model")
+       
+        final_kwargs = {**self.params, **kwargs}  
+        llm = AzureChatOpenAI(**final_kwargs)
+
+        return llm
 
     def get_aws_bedrock_llm(self, **kwargs):
         pass

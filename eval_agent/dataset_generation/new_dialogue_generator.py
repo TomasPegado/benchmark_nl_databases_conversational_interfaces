@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Dict, List, Any
@@ -13,6 +14,8 @@ from typing import List
 import json
 import oracledb
 import random
+import sqlglot
+from sqlglot import exp
 
 class GroundTruth(BaseModel):
     tables_from_schema_linking: List[str] = Field(..., description="List of tables involved in the query.")
@@ -42,7 +45,13 @@ class DialogueGenerator:
                  sql_database_langchain: SQLDatabaseLangchainUtils = None,
                  language: str = "en",
                  interactions: int = 3,
-                 max_columns_interactions: int = 2
+                 max_columns_interactions: int = 2,
+                 # First-N (deterministic top-N) directive DISABLED: it dropped the
+                 # SQL-correctness metric. Persistence/context-threading is kept.
+                 # apply_first_n: bool = True,
+                 # first_n_scope: str = "all",
+                 # first_n: int = 5,
+                 enforce_semantics: bool = True
                  ) -> None:
         
         self.join_combination_data = join_combination_data
@@ -55,6 +64,19 @@ class DialogueGenerator:
         self.interactions = interactions
         self.max_columns_interactions = max_columns_interactions
         self.max_column_combos_in_prompt = 10
+
+        # First-N (deterministic top-N) config DISABLED: enabling it dropped the
+        # SQL-correctness metric. Persistence/context-threading between turns stays on.
+        # self.apply_first_n = apply_first_n
+        # "all"  -> every interaction is limited to the first N rows
+        # "last" -> only the final interaction of each dialogue is limited
+        # self.first_n_scope = first_n_scope
+        # self.first_n = first_n
+        self.enforce_semantics = enforce_semantics
+        # Referential tokens that signal a follow-up depends on previous entities
+        self.referential_tokens = (
+            " these ", " those ", " them ", " that ", " this ", " they ", " it ",
+        )
         
         dialogue_generation_prompt_path = "prompts/new_dialogue_generation_prompt.txt"
         if language == "pt_br":
@@ -128,6 +150,7 @@ class DialogueGenerator:
         column_combo_str=column_combo_str,
         tables_involved=", ".join(tables_involved),
         tables_context=tables_context,
+        # first_n_directive=self._build_first_n_directive(),  # First-N disabled
     )
         for table in tables_involved:
             if table not in self.tables_used:
@@ -189,11 +212,59 @@ class DialogueGenerator:
             column_combo_str=column_combo_str,
             tables_involved=", ".join(tables_involved),
             tables_context=tables_context,
+            # first_n_directive=self._build_first_n_directive(),  # First-N disabled
         )
 
         return prompt
 
         
+
+    # _build_first_n_directive is DISABLED. The First-N (deterministic top-N)
+    # directive dropped the SQL-correctness metric, so it is no longer injected into
+    # the prompt. Persistence/context-threading between turns is kept via the static
+    # prompt text and validate_semantics(). Original body preserved for reference:
+    '''
+    def _build_first_n_directive(self) -> str:
+        """
+        Builds the instruction block injected into the dialogue-generation prompt
+        that enforces deterministic top-N results and context threading.
+
+        Returns an empty string when `apply_first_n` is disabled.
+        """
+        if not self.apply_first_n:
+            return ""
+
+        n = self.first_n
+
+        if self.first_n_scope == "last":
+            scope_line = (
+                f"- ONLY the LAST interaction must limit its result to the first {n} rows. "
+                f"All earlier interactions must return their full result set."
+            )
+        else:  # "all"
+            scope_line = (
+                f"- EVERY interaction must limit its result to the first {n} rows."
+            )
+
+        return f"""
+## Deterministic Top-N and Context Threading Rules (MANDATORY)
+
+{scope_line}
+
+### Top-N determinism
+- When an interaction limits its result, its `utterance` AND `intention` MUST state the ordering criterion explicitly (e.g. "the {n} largest cities BY POPULATION", "the {n} most recent seasons BY YEAR"). A bare "the {n} cities" is INVALID because the answer is ambiguous.
+- The `golden_sql` MUST implement the limit as:
+  `ORDER BY <criterion> [ASC|DESC], <identifying/primary-key column(s)> ASC FETCH FIRST {n} ROWS ONLY`
+- The ORDER BY MUST be TOTAL: always append the table's identifying/primary-key column(s) (infer them from the DDL) as final tie-breakers so the {n} returned rows are deterministic.
+- NEVER use FETCH FIRST or ROWNUM without an ORDER BY.
+
+### Context threading
+- When an interaction refers to entities from a previous interaction ("these", "those", "that", "them", "it"), the `golden_sql` MUST restrict to EXACTLY those entities by reproducing the previous interaction's selection as a subquery, keyed on the entity's identifying column(s):
+  `WHERE (<KEY_COLS>) IN ( <previous interaction's golden_sql, projected to KEY_COLS only, KEEPING its ORDER BY ... FETCH FIRST {n} ROWS ONLY> )`
+- Use Oracle tuple syntax `WHERE (COL_A, COL_B) IN (SELECT COL_A, COL_B FROM ...)` when the identifying key is composite.
+- Do NOT re-scan the whole table for a follow-up; it MUST be filtered through the previous interaction's subquery.
+"""
+    '''
 
     def generate_dialogue(self, prompt: str) -> str:
         return self.dialogue_generator.invoke(prompt)
@@ -217,11 +288,11 @@ class DialogueGenerator:
             dialogue = self.generate_dialogue(prompt)
 
             print(f"[Generated dialogue] {dialogue}")
-            # Check the dialogue syntax, if it's not valid, retry up to 3 times using error messages as feedback
+            # Check the dialogue syntax, if it's not valid, retry up to 5 times using error messages as feedback
             retries = 0
             is_valid, feedback = self.check_dialogue_sintax(dialogue)
-            while not is_valid and retries < 3:
-                print(f"[Retrying] Dialogue for combination {i+1} is not valid. Retrying... ({retries+1}/3)")
+            while not is_valid and retries < 5:
+                print(f"[Retrying] Dialogue for combination {i+1} is not valid. Retrying... ({retries+1}/5)")
                 dialogue = self.generate_dialogue(prompt + feedback)
 
                 is_valid, feedback = self.check_dialogue_sintax(dialogue)
@@ -295,9 +366,173 @@ class DialogueGenerator:
 
     def check_dialogue_sintax(self, dialogue: Experiment) -> tuple[bool, str]:
         if self.sql_database_langchain != None:
-            return self.check_dialogue_sintax_all(dialogue)
+            syntax_ok, syntax_feedback = self.check_dialogue_sintax_all(dialogue)
         else:
-            return self.check_dialogue_sintax_oracle(dialogue)
+            syntax_ok, syntax_feedback = self.check_dialogue_sintax_oracle(dialogue)
+
+        # semantics_ok, semantics_feedback = self.validate_semantics(dialogue)
+
+        if syntax_ok:  
+            return True, ""
+
+        return False, f"{syntax_feedback}"
+
+    def validate_semantics(self, dialogue: Experiment) -> tuple[bool, str]:
+        """
+        Enforces the context-threading (persistence between turns) contract on the
+        generated golden SQLs. This is a heuristic gate that feeds the retry loop:
+
+        - A follow-up whose utterance/intention references previous entities must
+          thread them through a subquery that reproduces the previous interaction's
+          selection (`... IN (SELECT <keys> FROM <previous selection> ...)`). This is
+          verified semantically by parsing both SQLs and matching row-selection bodies
+          (see `_sql_has_threading`), not by mere substring/regex presence.
+
+        The deterministic top-N ("First-N") checks are DISABLED (they dropped the
+        SQL-correctness metric).
+
+        Returns (True, "") when disabled or fully compliant, otherwise
+        (False, feedback) so the generator can retry.
+        """
+        if not self.enforce_semantics:
+            return True, ""
+
+        errors: List[str] = []
+        interactions = dialogue.interactions
+        # total = len(interactions)  # only needed by the disabled First-N checks
+
+        for idx, interaction in enumerate(interactions):
+            iid = interaction.interaction_id
+            sql = (interaction.ground_truths.golden_sql or "").strip()
+
+            # First-N (deterministic top-N) checks DISABLED: they dropped the
+            # SQL-correctness metric. Persistence/context-threading stays enforced.
+            # has_limit = self._sql_has_row_limit(sql_upper)
+            # has_order = "ORDER BY" in sql_upper
+            #
+            # if self.apply_first_n:
+            #     must_limit = (
+            #         self.first_n_scope == "all"
+            #         or (self.first_n_scope == "last" and idx == total - 1)
+            #     )
+            #     if must_limit and not has_limit:
+            #         errors.append(
+            #             f"Interaction {iid}: must limit its result to the first "
+            #             f"{self.first_n} rows (ORDER BY ... FETCH FIRST {self.first_n} ROWS ONLY), "
+            #             f"but no row limit was found."
+            #         )
+            #
+            # if has_limit and not has_order:
+            #     errors.append(
+            #         f"Interaction {iid}: uses FETCH FIRST/ROWNUM without an ORDER BY, "
+            #         f"which is non-deterministic. Add a TOTAL ORDER BY with identifying "
+            #         f"column(s) as tie-breakers."
+            #     )
+
+            if idx > 0:
+                reference_text = f"{interaction.utterance} {interaction.intention}"
+                previous_sql = (interactions[idx - 1].ground_truths.golden_sql or "").strip()
+                if self._is_referential(reference_text) and not self._sql_has_threading(sql, previous_sql):
+                    errors.append(
+                        f"Interaction {iid}: refers to entities from a previous interaction "
+                        f"but its golden_sql does not thread them via a subquery that "
+                        f"reproduces the previous interaction's selection "
+                        f"(WHERE (<keys>) IN (SELECT <keys> FROM <previous selection> ...))."
+                    )
+
+        if not errors:
+            return True, ""
+
+        feedback = (
+            "\n\n# Semantic Feedback:\n"
+            "The generated golden SQLs violate the context-threading "
+            "rules. Fix ONLY the affected golden_sql / utterance / intention, keeping the "
+            "rest of the structure identical:\n"
+        )
+        feedback += "\n".join(f"- {e}" for e in errors)
+        return False, feedback
+
+    # _sql_has_row_limit is unused while First-N is disabled (kept for reference):
+    # def _sql_has_row_limit(self, sql_upper: str) -> bool:
+    #     return (
+    #         "FETCH FIRST" in sql_upper
+    #         or "ROWNUM" in sql_upper
+    #         or "ROW_NUMBER" in sql_upper
+    #     )
+
+    def _sql_has_threading(self, current_sql: str, previous_sql: str) -> bool:
+        """
+        Full semantic threading check.
+
+        A referential follow-up must thread the previous interaction's entities by
+        reproducing that interaction's *selection* as a nested subquery, keyed on the
+        entity's identifying column(s):
+            WHERE (<KEY_COLS>) IN ( <previous selection projected to KEY_COLS> )
+
+        Instead of merely detecting the presence of any subquery (the old regex
+        heuristic, which both over- and under-matched), this parses both SQLs and
+        returns True only when `current_sql` contains a nested subquery whose
+        row-selection body (FROM / JOIN / WHERE / GROUP BY / HAVING) is equal to
+        `previous_sql`'s body. The projected columns, ORDER BY and any row-limit are
+        intentionally ignored, since threading only requires reproducing the previous
+        *selection* while re-projecting to the key columns.
+
+        Falls back to the structural regex heuristic when a query is missing or cannot
+        be parsed, so parser hiccups never hard-block dialogue generation.
+        """
+        if not current_sql or not previous_sql:
+            return self._sql_has_threading_regex(current_sql or "")
+
+        try:
+            current_ast = sqlglot.parse_one(current_sql, dialect="oracle")
+            previous_ast = sqlglot.parse_one(previous_sql, dialect="oracle")
+        except Exception:
+            return self._sql_has_threading_regex(current_sql)
+
+        previous_select = previous_ast.find(exp.Select)
+        previous_signature = self._selection_signature(previous_select) if previous_select else None
+        if previous_signature is None:
+            return self._sql_has_threading_regex(current_sql)
+
+        root_select = current_ast.find(exp.Select)
+        for candidate in current_ast.find_all(exp.Select):
+            if candidate is root_select:
+                # The outer query itself is not a threading subquery.
+                continue
+            if self._selection_signature(candidate) == previous_signature:
+                return True
+
+        return False
+
+    def _selection_signature(self, select_expr) -> str | None:
+        """
+        Normalized signature of a SELECT's row-selection body, ignoring the projected
+        columns, ORDER BY and row limits. Two queries with the same signature select
+        the same rows regardless of which columns they project.
+        """
+        if select_expr is None:
+            return None
+        try:
+            node = select_expr.copy()
+            # Collapse the projection so only the FROM/WHERE/GROUP/HAVING body matters.
+            node.set("expressions", [exp.Star()])
+            for key in ("order", "limit", "offset", "distinct"):
+                node.set(key, None)
+            rendered = node.sql(dialect="oracle", normalize=True)
+        except Exception:
+            return None
+        return re.sub(r"\s+", " ", rendered.strip().lower())
+
+    def _sql_has_threading_regex(self, sql: str) -> bool:
+        """Structural fallback: detect the presence of a filtering subquery."""
+        sql_upper = sql.upper()
+        return bool(re.search(r"IN\s*\(\s*SELECT", sql_upper)) or bool(
+            re.search(r"EXISTS\s*\(\s*SELECT", sql_upper)
+        )
+
+    def _is_referential(self, text: str) -> bool:
+        padded = f" {text.lower()} "
+        return any(token in padded for token in self.referential_tokens)
             
     def check_dialogue_sintax_all(self, dialogue: Experiment) -> tuple[bool, str]:
         """
