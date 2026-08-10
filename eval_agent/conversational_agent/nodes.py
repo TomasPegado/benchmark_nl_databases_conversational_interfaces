@@ -18,11 +18,12 @@ class ConversationalAgentNodes:
                 prompt_module_path = f"eval_agent.conversational_agent.prompts"
                 prompt_module = importlib.import_module(prompt_module_path)
                 self.ASSISTANT_PROMPT = prompt_module.ASSISTANT_PROMPT
+                self.RAW_LLM_PROMPT = prompt_module.RAW_LLM_PROMPT
                 
-                
-                # Importing the tools for the mondial environment
-                from eval_agent.conversational_agent.tool import TOOLS
+                # Importing the tools
+                from eval_agent.conversational_agent.tool import TOOLS, RAW_LLM_SQL_EXECUTION_TOOL
                 self.TOOLS = TOOLS
+                self.RAW_LLM_SQL_EXECUTION_TOOL = RAW_LLM_SQL_EXECUTION_TOOL
             case _:
                 raise ValueError(f"Invalid environment: {self.env}")
    
@@ -49,42 +50,27 @@ class ConversationalAgentNodes:
 
         return {"messages": [llm_with_tools.invoke([sys_msg] + state["messages"])]}
     
-    # def assistant_without_tools(self, state: MessagesState) -> MessagesState:
-    #     """
-    #     This function representes the single node on graph, is a ReAct assistant.
-    #     It receives a query, decides if it is a NL question about database or not and returns a response
-    #     based on that
-    #     """
+    def raw_llm(self, state: MessagesState) -> MessagesState:
+        """
+        This function representes the single node on graph, is a Raw LLM assistant.
+        It receives a query, decides if it is a NL question about database or not and returns a response
+        based on that
+        """
+        llm_with_tools = self.LLM.bind_tools(self.RAW_LLM_SQL_EXECUTION_TOOL, parallel_tool_calls=False)
         
-        
-    #     feedback_error = ""
-    #     if ("retry_reason" in state and state["retry_reason"] == "json_decode_error") and state["actual_number_of_retries"] < state["max_retries"]:
-    #         feedback_error = "\n\nThe previous response was not in a valid JSON format. Please ensure that your response strictly adheres to the specified JSON structure and does not include any additional text or formatting outside of the JSON."
+        feedback_error = ""
+        if ("retry_reason" in state and state["retry_reason"] == "json_decode_error") and state["actual_number_of_retries"] < state["max_retries"]:
+            feedback_error = "\n\nThe previous response was not in a valid JSON format. Please ensure that your response strictly adheres to the specified JSON structure and does not include any additional text or formatting outside of the JSON."
 
-    #     prompt_with_schema = self.ASSISTANT_PROMPT+ feedback_error
+        prompt_with_schema = self.RAW_LLM_PROMPT+ feedback_error
 
-    #     sys_msg = SystemMessage(content=prompt_with_schema)
-    #     response = self.LLM.invoke([sys_msg] + state["messages"])
-    #     sql = response.sql_query
-    #     result = {"messages": [self.LLM.invoke([sys_msg] + state["messages"])]}
+        sys_msg = SystemMessage(content=prompt_with_schema)
 
-    #     try:
-    #         result = {
-    #             "input": query,
-    #             "schema_linking": text_to_sql_result.schema_linking_tables,
-    #             "answer": execute_sql_query(text_to_sql_result.sql_query),
-    #             "sql": text_to_sql_result.sql_query
-    #         }
+        print("Raw LLM invoked")
+        result = {"messages": [llm_with_tools.invoke([sys_msg] + state["messages"])]}
 
-    #         return result
-    
-    #     except Exception as e:
-    #         result = {
-    #             "input": query,
-    #             "schema_linking": text_to_sql_result.schema_linking_tables,
-    #             "answer": e,
-    #             "sql": text_to_sql_result.sql_query
-    #         }
+        print("Raw LLM Result:")
+        print(result)
 
-    #         return result
+        return result
     

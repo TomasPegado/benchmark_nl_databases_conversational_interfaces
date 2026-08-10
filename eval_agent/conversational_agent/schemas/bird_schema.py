@@ -1,7 +1,5 @@
 DATABASE_SCHEMA  = """
-------------------------------------------------------------
-DATABASE SCHEMA (BIRD — FORMULA 1)
-------------------------------------------------------------
+(BIRD — FORMULA 1)
 
 Tables and Columns:
 

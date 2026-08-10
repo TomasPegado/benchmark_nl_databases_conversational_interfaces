@@ -1,5 +1,5 @@
 from numpy import empty_like
-from eval_agent.conversational_agent.conversational_agent_graph import build_graph
+from eval_agent.conversational_agent.conversational_agent_graph import build_graph, build_graph_raw_llm
 from functions.llm_config import LLMConfig
 from eval_agent.user_agent.states.user_agent_state import UserState
 from langchain_core.output_parsers import StrOutputParser
@@ -24,7 +24,7 @@ load_dotenv()
 # root_path = Path().absolute().parent.parent.parent.parent
 
 class EvaluatorNodes:
-    def __init__(self, agent_memory: bool = True, env: Literal[ "tec"] = "tec"):
+    def __init__(self, agent_memory: bool = True, env: Literal[ "tec"] = "tec", raw_llm_conversational_agent: bool = False):
 
         if env == "tec":
            
@@ -37,8 +37,11 @@ class EvaluatorNodes:
     
         else:
             self.EVALUATOR = None
-  
-        self.conversational_agent_graph = build_graph(have_memory=agent_memory, env=env)
+        
+        if raw_llm_conversational_agent:
+            self.conversational_agent_graph = build_graph_raw_llm(have_memory=agent_memory, env=env)
+        else:
+            self.conversational_agent_graph = build_graph(have_memory=agent_memory, env=env)
         self.llm = LLMConfig(provider="azure", environment=env).get_llm(model=os.getenv("USER_AGENT_MODEL"), max_tokens=2000)
 
     def classify_query_complexity(self, sql: Optional[str]) -> str:

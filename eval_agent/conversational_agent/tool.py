@@ -104,7 +104,39 @@ def convert_text_to_sql_and_execute(query, limit=3) -> str:
 
         return result
 
+def raw_llm_sql_execution(sql_query: str):
+    """
+    Execute a generated SQL query.
+    """
+    sql_query = sql_query.replace("```sql", "").replace("```", "")
+
+    if not sql_query.strip().upper().startswith("SELECT"):
+        sql_query = "SELECT " + sql_query
+
+    if "DISTINCT" in sql_query:
+        sql_query = sql_query.replace("DISTINCT", "")
+
+    try:
+        final_result = {
+            "answer": execute_sql_query(sql_query),
+            "sql": sql_query
+        }
+        print("Raw LLM called execution tool")
+        return final_result
+    
+    except Exception as e:
+        final_result = {
+            "answer": e,
+            "sql": sql_query
+        }
+        print("Raw LLM called execution tool with error")
+        print("error: ", e)
+
+        return final_result
+
 TOOLS = [convert_text_to_sql_and_execute]
+
+RAW_LLM_SQL_EXECUTION_TOOL = [raw_llm_sql_execution]
 
 #============================================== TESTING ==============================================
 
