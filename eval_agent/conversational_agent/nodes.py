@@ -10,8 +10,9 @@ import importlib
 experiment = os.getenv("EXPERIMENT_NAME")
 
 class ConversationalAgentNodes:
-    def __init__(self, env: str):
+    def __init__(self, env: str, provider: str):
         self.env = env
+        self.provider = provider
         match self.env:
             case "tec":
                 # Importing the prompt for the experiment environment
@@ -27,7 +28,7 @@ class ConversationalAgentNodes:
             case _:
                 raise ValueError(f"Invalid environment: {self.env}")
    
-        self.LLM = LLMConfig(provider="azure", environment=self.env).get_llm(model=os.getenv("CONVERSATIONAL_AGENT_MODEL"))
+        self.LLM = LLMConfig(provider=self.provider, environment=self.env).get_llm(model=os.getenv("CONVERSATIONAL_AGENT_MODEL"))
    
     def assistant(self, state: MessagesState) -> MessagesState:
         """
@@ -37,8 +38,12 @@ class ConversationalAgentNodes:
         """
         
         
+        if self.provider == "aws_bedrock":
+            llm_with_tools = self.LLM.bind_tools(self.TOOLS)
+        else:
+            llm_with_tools = self.LLM.bind_tools(self.TOOLS, parallel_tool_calls=False)
 
-        llm_with_tools = self.LLM.bind_tools(self.TOOLS, parallel_tool_calls=False)
+        # llm_with_tools = self.LLM.bind_tools(self.TOOLS, parallel_tool_calls=False)
         
         feedback_error = ""
         if ("retry_reason" in state and state["retry_reason"] == "json_decode_error") and state["actual_number_of_retries"] < state["max_retries"]:
@@ -56,7 +61,11 @@ class ConversationalAgentNodes:
         It receives a query, decides if it is a NL question about database or not and returns a response
         based on that
         """
-        llm_with_tools = self.LLM.bind_tools(self.RAW_LLM_SQL_EXECUTION_TOOL, parallel_tool_calls=False)
+        if self.provider == "aws_bedrock":
+            llm_with_tools = self.LLM.bind_tools(self.RAW_LLM_SQL_EXECUTION_TOOL)
+        else:
+            llm_with_tools = self.LLM.bind_tools(self.RAW_LLM_SQL_EXECUTION_TOOL, parallel_tool_calls=False)
+        # llm_with_tools = self.LLM.bind_tools(self.RAW_LLM_SQL_EXECUTION_TOOL, parallel_tool_calls=False)
         
         feedback_error = ""
         if ("retry_reason" in state and state["retry_reason"] == "json_decode_error") and state["actual_number_of_retries"] < state["max_retries"]:

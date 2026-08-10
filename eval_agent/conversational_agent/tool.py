@@ -20,7 +20,7 @@ import paths as paths
 
 experiment = os.getenv("EXPERIMENT_NAME")
 
-LLM = LLMConfig(provider="azure").get_llm(model=os.getenv("TEXT_TO_SQL_MODEL"))
+LLM = LLMConfig(provider=os.getenv("TEXT_TO_SQL_MODEL_PROVIDER")).get_llm(model=os.getenv("TEXT_TO_SQL_MODEL"))
 
 prompt_path = paths.EXTENDED_SCHEMA_PROMPT
 DATASET_SYNTHETIC_PATH = paths.DATASET_SYNTHETIC_PATH

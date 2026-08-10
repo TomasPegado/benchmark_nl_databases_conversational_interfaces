@@ -1,5 +1,6 @@
 
 from langchain_openai import AzureChatOpenAI
+from langchain_aws import ChatBedrockConverse
 import httpx
 
 class LLMConfig:
@@ -50,4 +51,13 @@ class LLMConfig:
         return llm
 
     def get_aws_bedrock_llm(self, **kwargs):
-        pass
+        if "model" not in kwargs:
+            kwargs["model_id"] = "deepseek.v3.2"
+        else:
+            kwargs["model_id"] = kwargs.pop("model")
+        if "temperature" not in kwargs:
+            kwargs["temperature"] = 0
+        if "region_name" not in kwargs:
+            kwargs["region_name"] = "us-east-2"
+
+        return ChatBedrockConverse(**kwargs)

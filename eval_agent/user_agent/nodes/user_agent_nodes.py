@@ -39,9 +39,9 @@ class EvaluatorNodes:
             self.EVALUATOR = None
         
         if raw_llm_conversational_agent:
-            self.conversational_agent_graph = build_graph_raw_llm(have_memory=agent_memory, env=env)
+            self.conversational_agent_graph = build_graph_raw_llm(have_memory=agent_memory, env=env, provider=os.getenv("CONVERSATIONAL_AGENT_MODEL_PROVIDER"))
         else:
-            self.conversational_agent_graph = build_graph(have_memory=agent_memory, env=env)
+            self.conversational_agent_graph = build_graph(have_memory=agent_memory, env=env, provider=os.getenv("CONVERSATIONAL_AGENT_MODEL_PROVIDER"))
         self.llm = LLMConfig(provider="azure", environment=env).get_llm(model=os.getenv("USER_AGENT_MODEL"), max_tokens=2000)
 
     def classify_query_complexity(self, sql: Optional[str]) -> str:
@@ -258,11 +258,16 @@ class EvaluatorNodes:
 
         state["interaction_history"] = state["last_response"]["messages"]
 
-        if "```json" in state["last_response"]["messages"][-1].content:
-            state["last_response"]["messages"][-1].content = state["last_response"]["messages"][-1].content.replace(
-                "```json", "").replace("```", "")
+        # Bedrock returns content as a list of blocks, so flatten it to text before parsing.
+        last_message = state["last_response"]["messages"][-1]
+        last_message_text = last_message.text()
 
-        if state["debug_mode"]: print(f"[INFO] O resultado da execução foi: {state['last_response']['messages'][-1].content}.\n")
+        if "```json" in last_message_text:
+            last_message_text = last_message_text.replace("```json", "").replace("```", "")
+
+        last_message.content = last_message_text
+
+        if state["debug_mode"]: print(f"[INFO] O resultado da execução foi: {last_message_text}.\n")
 
         print("----" * 10)
         return state
@@ -284,8 +289,8 @@ class EvaluatorNodes:
         current_interaction_id = state["interactions_counting"]
 
         try:
-            print(f"[INFO] O resultado da execução foi: {state['last_response']['messages'][-1].content}.\n")
-            llm_response_content = state["last_response"]["messages"][-1].content
+            llm_response_content = state["last_response"]["messages"][-1].text()
+            print(f"[INFO] O resultado da execução foi: {llm_response_content}.\n")
             json_str = self.extract_outer_json(llm_response_content)
             if json_str is None:
                 response = {
@@ -583,12 +588,13 @@ class EvaluatorNodes:
         for msg in messages:
             # Obtem o nome da classe (ex: "HumanMessage", "AIMessage", "ToolMessage")
             msg_type = msg.__class__.__name__
+            msg_text = msg.text()
 
-            if msg_type == "AIMessage" and msg.content == "":
+            if msg_type == "AIMessage" and msg_text == "":
                 continue
             else:
                 # Cria uma string combinando o tipo e o conteúdo da mensagem
-                string += f"{msg_type}: {msg.content}" + "\n"
+                string += f"{msg_type}: {msg_text}" + "\n"
 
         return string
 
@@ -657,7 +663,7 @@ class EvaluatorNodes:
         return result.strip().lower() == "true"
 
     def convert_story_to_string(self, chat_history):
-        return "\n".join([msg.content for msg in chat_history])
+        return "\n".join([msg.text() for msg in chat_history])
 
     def append_turn_evaluation(self, state: UserState, turn_eval: dict) -> None:
         """

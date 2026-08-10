@@ -9,8 +9,8 @@ from eval_agent.conversational_agent.tool import TOOLS, RAW_LLM_SQL_EXECUTION_TO
 
 memory = MemorySaver()
 
-def build_graph(have_memory: bool = True, env: Literal["tec"] = "tec") -> StateGraph:
-    nodes = ConversationalAgentNodes(env=env)
+def build_graph(have_memory: bool = True, env: Literal["tec"] = "tec", provider: Literal["azure", "aws_bedrock"] = "azure") -> StateGraph:
+    nodes = ConversationalAgentNodes(env=env, provider=provider)
 
     match env:
         case "tec":
@@ -34,8 +34,8 @@ def build_graph(have_memory: bool = True, env: Literal["tec"] = "tec") -> StateG
     # Compile graph
     return builder.compile(checkpointer=memory) if have_memory else builder.compile()
 
-def build_graph_raw_llm(have_memory: bool = True, env: Literal["tec"] = "tec") -> StateGraph:
-    nodes = ConversationalAgentNodes(env=env)
+def build_graph_raw_llm(have_memory: bool = True, env: Literal["tec"] = "tec", provider: Literal["azure", "aws_bedrock"] = "azure") -> StateGraph:
+    nodes = ConversationalAgentNodes(env=env, provider=provider)
 
     match env:
         case "tec":
