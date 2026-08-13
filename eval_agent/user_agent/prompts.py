@@ -106,9 +106,9 @@ You are an user of a dialogue system that have a text to SQL tool, you are follo
 
 You will receive a chat_history with some messages, if the last message is the system asking some thing, use the actual turn above to answer it.
 
-- If model is asking to desambiguate a question, you should answer with a natural language question that expresses you query in a more clear way, based on chat history and your real intentions that will be given.
-- If llm returns a result that don't looks relevante to last question user did, you may argue that it is not a good answer and ask for a better one.
-- If the llm message is a error on SQL execution, try to understand the error and formulate you query in a way that it will not happen again.
+- If model is asking to desambiguate a question, you should answer with a natural language question that expresses your query in a more clear way, based on chat history and your real intentions that will be given.
+- If llm returns a result that doesn't look relevant to the last user question, you may argue that it is not a good answer and ask for a better one.
+- If the llm message is an error on SQL execution, try to understand the error and formulate your query in a way that it will not happen again.
 
 Just follow like example below:
 
@@ -195,4 +195,40 @@ Also if you asks for something and agent return a giant dataframe, it is not a f
 !!!
 
 # Your answer:
+"""
+
+AI_JUDGE_RESPONSE_CORRECTNESS_PROMPT = """
+# User Question Context:
+            The original user question is:
+            {user_query}
+                    
+            # Generated SQL Query:
+            The SQL query produced by the text-to-SQL agent is:
+            {generated_query}
+
+            # Generated Query Result:
+            The execution of the generated query returned the following data:
+            {result_table}
+
+            # Ground Truth SQL Query:
+            The ground truth (correct) SQL query is:
+            {true_query}
+
+            # Ground Truth Query Result:
+            The execution of the ground truth query returned the following data:
+            {true_table}
+
+            # Evaluation Question:
+            Consider only the same columns that appear in both tables.
+            Check if most of the rows that appear in the predicted query result also appear in the ground truth query result.
+            Based on the information provided above, do both SQL queries answer the user question? 
+            Even if the resulting dataframes have minor differences in ordering, formatting, or other formal aspects, do they produce equivalent responses to the original question?
+
+            # Tips:
+            If both the generated SQL query/Query Result have more information than the user question, please consider it as correct.
+            If both return empty dataframes, please consider it as correct, but the columns should be the same (consider also True if the ordering is different, or have more than expected).
+
+            Answer with a single character only, don't include any explanation or justification:
+            T = True
+            F = False
 """

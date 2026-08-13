@@ -9,9 +9,9 @@ pyfile = pathlib.Path(__file__).parent.resolve()
 
 
 ##### CONFIF #######
-AZURE_OPENAI_BASE_URL = os.environ["AZURE_OPENAI_BASE_URL"]
-OPENAI_API_KEY = os.environ["AZURE_OPENAI_API_KEY"]
-OPENAI_API_VERSION = os.environ["AZURE_OPENAI_API_VERSION"]
+OPENAI_BASE_URL = os.environ["OPENAI_BASE_URL"]
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+OPENAI_API_VERSION = os.environ["OPENAI_API_VERSION"]
 
 
 ###### MODELS #########

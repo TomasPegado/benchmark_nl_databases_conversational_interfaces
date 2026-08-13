@@ -42,7 +42,7 @@ class EvaluatorNodes:
             self.conversational_agent_graph = build_graph_raw_llm(have_memory=agent_memory, env=env, provider=os.getenv("CONVERSATIONAL_AGENT_MODEL_PROVIDER"))
         else:
             self.conversational_agent_graph = build_graph(have_memory=agent_memory, env=env, provider=os.getenv("CONVERSATIONAL_AGENT_MODEL_PROVIDER"))
-        self.llm = LLMConfig(provider="azure", environment=env).get_llm(model=os.getenv("USER_AGENT_MODEL"), max_tokens=2000)
+        self.llm = LLMConfig(provider=os.getenv("EVALUATOR_MODEL_PROVIDER"), environment=env).get_llm(model=os.getenv("EVALUATOR_MODEL"), max_tokens=2000)
 
     def classify_query_complexity(self, sql: Optional[str]) -> str:
         """Classifica a complexidade de uma query SQL baseada em heurísticas simples"""
@@ -258,7 +258,7 @@ class EvaluatorNodes:
 
         state["interaction_history"] = state["last_response"]["messages"]
 
-        # Bedrock returns content as a list of blocks, so flatten it to text before parsing.
+        
         last_message = state["last_response"]["messages"][-1]
         last_message_text = last_message.text()
 

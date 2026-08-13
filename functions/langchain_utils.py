@@ -17,7 +17,7 @@ def get_llm(temperature=1, n=1, model=gptconfig.MODEL_5_6_SOL, logprobs=None, **
         "openai_api_key":  gptconfig.OPENAI_API_KEY,  
         "openai_api_version":  gptconfig.OPENAI_API_VERSION,
         # "azure_endpoint": config['OPENAI']['OPENAI_API_BASE'],
-        "azure_endpoint": gptconfig.AZURE_OPENAI_BASE_URL,
+        "azure_endpoint": gptconfig.OPENAI_BASE_URL,
         
     }
 
@@ -46,7 +46,7 @@ def get_embeddings_model(model=gptconfig.MODEL_EMBEDDING):
         openai_api_key= gptconfig.OPENAI_API_KEY, 
         openai_api_version= gptconfig.OPENAI_API_VERSION,
         # azure_endpoint=config['OPENAI']['OPENAI_API_BASE'],
-        azure_endpoint=gptconfig.AZURE_OPENAI_BASE_URL
+        azure_endpoint=gptconfig.OPENAI_BASE_URL
     )
     return embeddings
 

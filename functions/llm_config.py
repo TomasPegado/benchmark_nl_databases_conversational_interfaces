@@ -7,10 +7,10 @@ class LLMConfig:
     def __init__(self, provider: str = "azure", environment: str= "tec"):
 
         if environment == "tec":
-            from functions.gptconfig import OPENAI_API_KEY, OPENAI_API_VERSION, AZURE_OPENAI_BASE_URL, MODEL_4O
+            from functions.gptconfig import OPENAI_API_KEY, OPENAI_API_VERSION, OPENAI_BASE_URL, MODEL_4O
             self.http_client = None
             self.params = {
-                "azure_endpoint": AZURE_OPENAI_BASE_URL
+                "azure_endpoint": OPENAI_BASE_URL
             }
         
         else:
