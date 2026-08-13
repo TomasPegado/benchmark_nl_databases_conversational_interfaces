@@ -1,0 +1,2299 @@
+[
+    {
+        "experiment_id": "1",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:27:20.274121",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 2,
+                "original_intent": "For exactly the previously identified mountains recorded in India with corresponding mountain details, list the islands on which they are located.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which islands, if any, are those mountains located on?",
+                        "agent_reply": "None of the mountains listed (Saltoro Kangri, Saser Kangri, Nun Kun, Nanda Devi, Kangchendzonga, Saramati, Guru Shikhar, Doddabetta, Anamudi, Dhupgarh, Arma Konda, or Shillong Peak) are recorded as being located on any islands in the database.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the islands, if any, where the mountains located in India (Saltoro Kangri, Saser Kangri, Nun Kun, Nanda Devi, Kangchendzonga, Saramati, Guru Shikhar, Doddabetta, Anamudi, Dhupgarh, Arma Konda, Shillong Peak) are situated.",
+                            "user_intention": "For exactly the previously identified mountains recorded in India with corresponding mountain details, list the islands on which they are located.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE, MI.ISLAND FROM MONDIAL_GEO_MOUNTAIN GM JOIN MONDIAL_MOUNTAIN M ON GM.MOUNTAIN = M.NAME JOIN MONDIAL_MOUNTAINONISLAND MI ON M.NAME = MI.MOUNTAIN WHERE (GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE) IN (SELECT GM1.MOUNTAIN, GM1.COUNTRY, GM1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM1 JOIN MONDIAL_MOUNTAIN M1 ON GM1.MOUNTAIN = M1.NAME WHERE GM1.COUNTRY = 'IND') ORDER BY GM.MOUNTAIN ASC, GM.PROVINCE ASC, MI.ISLAND ASC",
+                            "generated_sql": "SELECT MI.NAME AS ISLAND_NAME FROM mondial_gpt.island MI JOIN mondial_gpt.mountainonisland MMI ON MI.NAME = MMI.ISLAND JOIN mondial_gpt.mountain M ON MMI.MOUNTAIN = M.NAME WHERE LOWER(M.NAME) IN (     'saltoro kangri', 'saser kangri', 'nun kun', 'nanda devi',      'kangchendzonga', 'saramati', 'guru shikhar', 'doddabetta',      'anamudi', 'dhupgarh', 'arma konda', 'shillong peak' )",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 11.1913321018219,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "2",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:27:47.073738",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the river estuary records located in Sachsen-Anhalt, including each river, country code, and province.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which river estuaries are recorded in Sachsen-Anhalt?",
+                        "agent_reply": "There are no recorded river estuaries in the province of Sachsen-Anhalt in the database.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which river estuaries are recorded in the province of Sachsen-Anhalt?",
+                            "user_intention": "List the river estuary records located in Sachsen-Anhalt, including each river, country code, and province.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT MONDIAL_GEO_ESTUARY.RIVER, MONDIAL_GEO_ESTUARY.COUNTRY, MONDIAL_GEO_ESTUARY.PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE MONDIAL_GEO_ESTUARY.PROVINCE = 'Sachsen-Anhalt' ORDER BY MONDIAL_GEO_ESTUARY.RIVER ASC, MONDIAL_GEO_ESTUARY.COUNTRY ASC, MONDIAL_GEO_ESTUARY.PROVINCE ASC",
+                            "generated_sql": "SELECT r.name AS river_name, ge.province, ge.country FROM mondial_geo_estuary ge JOIN mondial_province p ON ge.province = p.name AND ge.country = p.country WHERE LOWER(p.name) = LOWER('Sachsen-Anhalt')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 7.824311017990112,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "List the lakes traversed by exactly the rivers in the previously ordered set of Sachsen-Anhalt estuary records.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which lakes do those rivers flow through?",
+                        "agent_reply": "The database does not provide information about lakes that the rivers **Havel, Mulde, Saale,** or **Wei\u00dfe Elster** flow through.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which lakes do the rivers Havel, Mulde, Saale, and Wei\u00dfe Elster flow through?",
+                            "user_intention": "List the lakes traversed by exactly the rivers in the previously ordered set of Sachsen-Anhalt estuary records.",
+                            "recall": 0.3333333333333333,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT G.RIVER, RT.LAKE FROM MONDIAL_GEO_ESTUARY G JOIN MONDIAL_RIVER R ON G.RIVER = R.NAME JOIN MONDIAL_RIVERTHROUGH RT ON RT.RIVER = R.NAME WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT G2.RIVER, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_ESTUARY G2 WHERE (G2.RIVER, G2.COUNTRY, G2.PROVINCE) IN (SELECT G1.RIVER, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_ESTUARY G1 WHERE G1.PROVINCE = 'Sachsen-Anhalt')) ORDER BY G.RIVER ASC, RT.LAKE ASC",
+                            "generated_sql": "SELECT ML.NAME AS LAKE_NAME FROM MONDIAL_GPT.riverthrough RT JOIN MONDIAL_GPT.lake ML ON RT.lake = ML.name WHERE LOWER(RT.river) IN ('havel', 'mulde', 'saale', 'wei\u00dfe elster')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 7.973527908325195,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "3",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:28:11.206450",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 2,
+                "original_intent": "Among the airports serving cities with populations above one million, list those located on an island and give that island's area and type.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Of those airports, which ones are located on an island, and what are the island's area and type?",
+                        "agent_reply": "There are **no airports** from the previously listed cities with populations above one million that are located on an island in the database. If you'd like to explore airports on islands regardless of city population or refine the query further, let me know!",
+                        "evaluation": {
+                            "text_to_sql_input": "Which airports from the previous result are located on an island, and what are the island's area and type?",
+                            "user_intention": "Among the airports serving cities with populations above one million, list those located on an island and give that island's area and type.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT A.NAME AS AIRPORT_NAME, A.IATACODE, I.NAME AS ISLAND_NAME, I.AREA, I.TYPE FROM MONDIAL_AIRPORT A JOIN MONDIAL_ISLAND I ON A.ISLAND = I.NAME WHERE (A.NAME, A.IATACODE, A.COUNTRY, A.CITY, A.PROVINCE) IN (SELECT A1.NAME, A1.IATACODE, A1.COUNTRY, A1.CITY, A1.PROVINCE FROM MONDIAL_AIRPORT A1 JOIN MONDIAL_CITY C1 ON A1.CITY = C1.NAME AND A1.COUNTRY = C1.COUNTRY AND A1.PROVINCE = C1.PROVINCE WHERE C1.POPULATION > 1000000) ORDER BY I.NAME ASC, A.NAME ASC, A.IATACODE ASC",
+                            "generated_sql": "SELECT a.iataCode, a.name AS airport_name, i.name AS island_name, i.area AS island_area, i.type AS island_type FROM MONDIAL_AIRPORT a JOIN MONDIAL_ISLAND i ON a.island = i.name WHERE a.iataCode IN ('SHA', 'PVG', 'KHI', 'LOS', 'SAW', 'JFK', 'NRT', 'BOM', 'DEL', 'MEX', 'GRU', 'SAO', 'IST', 'LAX', 'CDG', 'HKG', 'PEK', 'DOH', 'DXB', 'GIG', 'CGK', 'SIN', 'HND', 'MNL', 'TPE', 'SEA', 'YYZ', 'LHR', 'AMS', 'FRA', 'MAD', 'BCN', 'CDG', 'MCO', 'ATL', 'ORD', 'DFW', 'DEN', 'SFO', 'CLT', 'PHX', 'MIA', 'BWI', 'IAD', 'EWR', 'JFK', 'LGA', 'BOS', 'SAN', 'OAK', 'LAS', 'PHL', 'IAD', 'MSP', 'DFW', 'SEA', 'SLC', 'PDX', 'STL', 'IAH', 'HOU', 'SFO', 'SAN', 'OAK', 'LAS', 'PHL', 'MIA', 'BWI', 'EWR', 'JFK', 'LGA', 'BOS', 'CGN', 'ASR', 'VOZ', 'KTM', 'UET', 'CGK', 'SIN', 'HND', 'MNL', 'TPE', 'SEA', 'YYZ', 'LHR', 'AMS', 'FRA', 'MAD', 'BCN', 'CDG', 'MCO', 'ATL', 'ORD', 'DFW', 'DEN', 'SFO', 'CLT', 'PHX', 'MIA', 'BWI', 'IAD', 'EWR', 'JFK', 'LGA', 'BOS', 'SAN', 'OAK', 'LAS', 'PHL', 'MIA', 'BWI', 'EWR', 'JFK', 'LGA', 'BOS', 'CGN', 'ASR', 'VOZ', 'KTM', 'UET')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 10.764074087142944,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "4",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:28:42.689041",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the rivers whose estuaries are in Sachsen-Anhalt, Germany, together with each river's length.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which rivers have estuaries in Sachsen-Anhalt, Germany, and what are their lengths?",
+                        "agent_reply": "The rivers with estuaries in Sachsen-Anhalt, Germany, are the **Havel** (334 km), **Saale** (413 km), **Wei\u00dfe Elster** (257 km), and **Mulde** (314 km).",
+                        "evaluation": {
+                            "text_to_sql_input": "Which rivers have estuaries in Sachsen-Anhalt, Germany, and what are their lengths?",
+                            "user_intention": "List the rivers whose estuaries are in Sachsen-Anhalt, Germany, together with each river's length.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT E.RIVER, E.COUNTRY, E.PROVINCE, R.LENGTH FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME WHERE E.COUNTRY = 'D' AND E.PROVINCE = 'Sachsen-Anhalt' ORDER BY E.RIVER ASC",
+                            "generated_sql": "SELECT r.name AS river_name, r.length AS river_length FROM mondial_gpt.river r JOIN mondial_gpt.geo_estuary ge ON r.name = ge.river JOIN mondial_gpt.province p ON ge.province = p.name AND ge.country = p.country JOIN mondial_gpt.country c ON p.country = c.code WHERE LOWER(p.name) = LOWER('Sachsen-Anhalt') AND LOWER(c.name) = LOWER('Germany')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.142039060592651,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Among the rivers whose estuaries are in Sachsen-Anhalt, Germany, list only those at least 100 kilometers long, ordered from longest to shortest.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Of those, keep only the rivers at least 100 kilometers long and sort them from longest to shortest.",
+                        "agent_reply": "There are no rivers with estuaries in Sachsen-Anhalt, Germany, that meet the criteria of being at least 100 kilometers long in the provided data.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which rivers have estuaries in Sachsen-Anhalt, Germany, are at least 100 kilometers long, and what are their lengths? Sort the results from longest to shortest.",
+                            "user_intention": "Among the rivers whose estuaries are in Sachsen-Anhalt, Germany, list only those at least 100 kilometers long, ordered from longest to shortest.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT E.RIVER, E.COUNTRY, E.PROVINCE, R.LENGTH FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT E1.RIVER, E1.COUNTRY, E1.PROVINCE FROM MONDIAL_GEO_ESTUARY E1 JOIN MONDIAL_RIVER R1 ON E1.RIVER = R1.NAME WHERE E1.COUNTRY = 'D' AND E1.PROVINCE = 'Sachsen-Anhalt') AND R.LENGTH >= 100 ORDER BY R.LENGTH DESC, E.RIVER ASC",
+                            "generated_sql": "SELECT r.name AS river_name, r.length AS river_length FROM mondial_gpt.river r JOIN mondial_gpt.geo_estuary ge ON r.name = ge.river JOIN mondial_gpt.province p ON ge.province = p.name AND ge.country = p.country WHERE LOWER(p.name) = LOWER('Sachsen-Anhalt') AND p.country = 'DE' AND r.length >= 100 ORDER BY r.length DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.271132946014404,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For the previously selected rivers with estuaries in Sachsen-Anhalt, Germany, and lengths of at least 100 kilometers, list the countries and provinces through which they flow.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Through which countries and provinces do those longer rivers flow?",
+                        "agent_reply": "The rivers **Havel, Saale, Wei\u00dfe Elster, and Mulde** flow through the following countries and provinces:\n\n- **Czech Republic**: Karlovarsk\u00fd\n- **Germany**: Sachsen, Sachsen-Anhalt, Th\u00fcringen, Mecklenburg-Vorpommern, Bayern, Berlin, and Brandenburg.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the countries and provinces through which the rivers named Havel, Saale, Wei\u00dfe Elster, and Mulde flow.",
+                            "user_intention": "For the previously selected rivers with estuaries in Sachsen-Anhalt, Germany, and lengths of at least 100 kilometers, list the countries and provinces through which they flow.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT E.RIVER, GR.COUNTRY, GR.PROVINCE FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME JOIN MONDIAL_GEO_RIVER GR ON GR.RIVER = R.NAME WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT E1.RIVER, E1.COUNTRY, E1.PROVINCE FROM MONDIAL_GEO_ESTUARY E1 JOIN MONDIAL_RIVER R1 ON E1.RIVER = R1.NAME WHERE (E1.RIVER, E1.COUNTRY, E1.PROVINCE) IN (SELECT E2.RIVER, E2.COUNTRY, E2.PROVINCE FROM MONDIAL_GEO_ESTUARY E2 JOIN MONDIAL_RIVER R2 ON E2.RIVER = R2.NAME WHERE E2.COUNTRY = 'D' AND E2.PROVINCE = 'Sachsen-Anhalt') AND R1.LENGTH >= 100) ORDER BY E.RIVER ASC, GR.COUNTRY ASC, GR.PROVINCE ASC",
+                            "generated_sql": "SELECT  c.name AS country_name, p.name AS province_name  FROM mondial_gpt.river r  JOIN mondial_gpt.geo_river gr ON LOWER(r.name) IN ('havel', 'saale', 'wei\u00dfe elster', 'mulde') AND r.name = gr.river  JOIN mondial_gpt.country c ON gr.country = c.code  JOIN mondial_gpt.province p ON gr.province = p.name AND gr.country = p.country",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.340681076049805,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "5",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:29:21.918020",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "6",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:29:44.042389",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "7",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:30:12.287341",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "8",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:30:44.829834",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "9",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:31:10.348208",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the cities in Russia's Sankt-Peterburg province whose populations exceed one million.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which cities in Russia's Sankt-Peterburg province have more than one million residents?",
+                        "agent_reply": "The city of **Sankt Peterburg** (Saint Petersburg) in Russia's Sankt-Peterburg province has a population of **5,028,000**, which exceeds one million residents. No other cities in this province meet the population criterion.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which cities in Russia's Sankt-Peterburg province have populations exceeding one million residents?",
+                            "user_intention": "Find the cities in Russia's Sankt-Peterburg province whose populations exceed one million.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE, MONDIAL_CITY.POPULATION FROM MONDIAL_CITY WHERE MONDIAL_CITY.COUNTRY = 'R' AND MONDIAL_CITY.PROVINCE = 'Sankt-Peterburg' AND MONDIAL_CITY.POPULATION > 1000000 ORDER BY MONDIAL_CITY.NAME ASC, MONDIAL_CITY.COUNTRY ASC, MONDIAL_CITY.PROVINCE ASC",
+                            "generated_sql": "SELECT c.name, c.population FROM MONDIAL_CITY c JOIN MONDIAL_PROVINCE p ON c.PROVINCE = p.NAME AND c.COUNTRY = p.COUNTRY JOIN MONDIAL_COUNTRY co ON p.COUNTRY = co.CODE WHERE LOWER(co.NAME) = LOWER('Russia') AND LOWER(p.NAME) = LOWER('Sankt-Peterburg') AND c.POPULATION > 1000000",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.811246871948242,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "List every recorded alternate name for exactly the previously identified cities in Russia's Sankt-Peterburg province with populations above one million.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What alternate names are recorded for those cities?",
+                        "agent_reply": "No alternate names are recorded for **Sankt Peterburg** in the database.",
+                        "evaluation": {
+                            "text_to_sql_input": "What alternate names are recorded for Sankt Peterburg in Russia's Sankt-Peterburg province?",
+                            "user_intention": "List every recorded alternate name for exactly the previously identified cities in Russia's Sankt-Peterburg province with populations above one million.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE, MONDIAL_CITYOTHERNAME.OTHERNAME FROM MONDIAL_CITY JOIN MONDIAL_CITYOTHERNAME ON MONDIAL_CITYOTHERNAME.CITY = MONDIAL_CITY.NAME AND MONDIAL_CITYOTHERNAME.COUNTRY = MONDIAL_CITY.COUNTRY AND MONDIAL_CITYOTHERNAME.PROVINCE = MONDIAL_CITY.PROVINCE WHERE (MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE) IN (SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE FROM MONDIAL_CITY WHERE MONDIAL_CITY.COUNTRY = 'R' AND MONDIAL_CITY.PROVINCE = 'Sankt-Peterburg' AND MONDIAL_CITY.POPULATION > 1000000) ORDER BY MONDIAL_CITY.NAME ASC, MONDIAL_CITYOTHERNAME.OTHERNAME ASC",
+                            "generated_sql": "SELECT OTHERNAME FROM MONDIAL_CITYOTHERNAME WHERE LOWER(CITY) = 'sankt peterburg' AND LOWER(COUNTRY) = 'RU' AND LOWER(PROVINCE) = 'sankt-peterburg'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 6.637892723083496,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "10",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:31:33.399394",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 3,
+                "original_intent": "Identify the lakes traversed by the rivers flowing into the North Sea that are longer than 200 kilometers.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which lakes do those same rivers flow through?",
+                        "agent_reply": "Among the rivers Rhein, Elbe, Weser, Schelde, and Thames, only the **Rhein** flows through a lake, specifically **Bodensee (Lake Constance)**. The other rivers do not have recorded lakes they flow through in this dataset.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which lakes do the rivers Rhein, Elbe, Weser, Schelde, and Thames flow through?",
+                            "user_intention": "Identify the lakes traversed by the rivers flowing into the North Sea that are longer than 200 kilometers.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT R.NAME, RT.LAKE FROM MONDIAL_RIVER R JOIN MONDIAL_RIVERTHROUGH RT ON RT.RIVER = R.NAME WHERE (R.NAME) IN (SELECT MONDIAL_RIVER.NAME FROM MONDIAL_RIVER WHERE MONDIAL_RIVER.SEA = 'North Sea' AND MONDIAL_RIVER.LENGTH > 200) ORDER BY R.NAME ASC, RT.LAKE ASC",
+                            "generated_sql": "SELECT ML.NAME AS lake_name FROM MONDIAL_LAKE ML JOIN MONDIAL_RIVERTHROUGH RT ON ML.NAME = RT.LAKE JOIN MONDIAL_RIVER R ON RT.RIVER = R.NAME WHERE LOWER(R.NAME) IN ('rhein', 'elbe', 'weser', 'schelde', 'thames')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 8.063180685043335,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "11",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:31:53.189389",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "12",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:32:13.026776",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "13",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:32:33.712159",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the Japanese provinces that border the Sea of Japan.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which provinces of Japan border the Sea of Japan?",
+                        "agent_reply": "The provinces of Japan that border the Sea of Japan are Hokkaido, Aomori, Akita, Yamagata, Niigata, Toyama, Ishikawa, Fukui, Kyoto, Hyogo, Tottori, Shimane, Yamaguchi, Fukuoka, Saga, and Nagasaki.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which provinces of Japan border the Sea of Japan?",
+                            "user_intention": "List the Japanese provinces that border the Sea of Japan.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan' AND COUNTRY = 'J' ORDER BY PROVINCE ASC",
+                            "generated_sql": "SELECT g.province, c.name AS country_name  FROM MONDIAL_GEO_SEA g  JOIN MONDIAL_COUNTRY c ON g.country = c.code  WHERE g.sea = 'Sea of Japan'  AND c.code = 'J'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.149922132492065,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Count the Japanese provinces previously identified as bordering the Sea of Japan.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many of those provinces are there?",
+                        "agent_reply": "There are **16 provinces** of Japan that border the Sea of Japan.",
+                        "evaluation": {
+                            "text_to_sql_input": "How many provinces of Japan border the Sea of Japan?",
+                            "user_intention": "Count the Japanese provinces previously identified as bordering the Sea of Japan.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT COUNT(*) AS PROVINCE_COUNT FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY, PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan' AND COUNTRY = 'J')",
+                            "generated_sql": "SELECT COUNT(DISTINCT g.province) AS number_of_provinces FROM MONDIAL_GEO_SEA g JOIN MONDIAL_COUNTRY c ON g.country = c.code WHERE g.sea = 'Sea of Japan' AND c.code = 'J'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 3.500826835632324,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Give the area and depth of the sea associated with those previously counted Japanese provinces, along with the islands located in that sea.",
+                "total_retries_needed": 6,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "For that sea, what are its area and depth, and which islands lie in it?",
+                        "agent_reply": "The **Sea of Japan** has an area of **978,000 square kilometers** and a maximum depth of **4,036 meters**.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the area and depth of the Sea of Japan?",
+                            "user_intention": "Give the area and depth of the sea associated with those previously counted Japanese provinces, along with the islands located in that sea.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.NAME, S.AREA, S.DEPTH, I.ISLAND FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME JOIN MONDIAL_ISLANDIN I ON I.SEA = S.NAME WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY, PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan' AND COUNTRY = 'J')) ORDER BY I.ISLAND ASC",
+                            "generated_sql": "SELECT name AS sea_name, area, depth FROM MONDIAL_SEA WHERE LOWER(name) = LOWER('Sea of Japan')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 16.171128034591675,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "Yes, that\u2019s what I meant: the Sea of Japan has an area of 978,000 km\u00b2 and a maximum depth of 4,036 m, and its islands include Sachalin, Hokkaido, Honshu, and Kyushu.",
+                        "agent_reply": "Thank you! To summarize, the **Sea of Japan** has an area of **978,000 square kilometers** and a maximum depth of **4,036 meters**. The major islands located within it are **Sachalin, Hokkaido, Honshu, and Kyushu**. Let me know if you need further details!",
+                        "evaluation": {
+                            "text_to_sql_input": "response",
+                            "user_intention": "Give the area and depth of the sea associated with those previously counted Japanese provinces, along with the islands located in that sea.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.NAME, S.AREA, S.DEPTH, I.ISLAND FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME JOIN MONDIAL_ISLANDIN I ON I.SEA = S.NAME WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY, PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan' AND COUNTRY = 'J')) ORDER BY I.ISLAND ASC",
+                            "generated_sql": "",
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "alignment_and_correctness_failure",
+                            "execution_time": 22.560323238372803,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    },
+                    {
+                        "user_query": "Yes, that answers my question: the Sea of Japan has an area of 978,000 km\u00b2 and a maximum depth of 4,036 m, and the islands located in it are Hokkaido, Honshu, Kyushu, and Sachalin.",
+                        "agent_reply": "Great! I'm glad I could provide the information you needed. If you have any more questions or need further details, feel free to ask!",
+                        "evaluation": {
+                            "text_to_sql_input": "feedback",
+                            "user_intention": "Give the area and depth of the sea associated with those previously counted Japanese provinces, along with the islands located in that sea.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT S.NAME, S.AREA, S.DEPTH, I.ISLAND FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME JOIN MONDIAL_ISLANDIN I ON I.SEA = S.NAME WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY, PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan' AND COUNTRY = 'J')) ORDER BY I.ISLAND ASC",
+                            "generated_sql": "",
+                            "is_retry": true,
+                            "retry_count": 3,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 38.814563035964966,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 3
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "14",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:33:27.190368",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 3,
+                "original_intent": "For each Chinese lake returned in the preceding question, count its recorded country assignments that are not null, ordering the results alphabetically by lake name.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For each of these lakes, how many non-null country assignments are recorded? Order the results by lake name.",
+                        "agent_reply": "Each of the lakes\u2014**Dongting Hu**, **Hongze Hu**, **Poyang Hu**, and **Rakshastal**\u2014has **one non-null country assignment** recorded in the database. The results are already ordered by lake name as requested.",
+                        "evaluation": {
+                            "text_to_sql_input": "For the lakes Dongting Hu, Hongze Hu, Poyang Hu, and Rakshastal, determine how many non-null country assignments are recorded for each lake. Order the results by lake name.",
+                            "user_intention": "For each Chinese lake returned in the preceding question, count its recorded country assignments that are not null, ordering the results alphabetically by lake name.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT GL.LAKE, COUNT(GL.COUNTRY) FROM MONDIAL_GEO_LAKE GL WHERE GL.COUNTRY IS NOT NULL AND (GL.LAKE, GL.COUNTRY, GL.PROVINCE) IN (SELECT GL2.LAKE, GL2.COUNTRY, GL2.PROVINCE FROM MONDIAL_GEO_LAKE GL2 WHERE (GL2.LAKE, GL2.COUNTRY, GL2.PROVINCE) IN (SELECT DISTINCT GL1.LAKE, GL1.COUNTRY, GL1.PROVINCE FROM MONDIAL_GEO_LAKE GL1 JOIN MONDIAL_LAKE L1 ON GL1.LAKE = L1.NAME JOIN MONDIAL_RIVERTHROUGH RT1 ON L1.NAME = RT1.LAKE) AND GL2.COUNTRY = 'CN') GROUP BY GL.LAKE ORDER BY GL.LAKE ASC",
+                            "generated_sql": "SELECT lake, COUNT(country) AS non_null_country_assignments FROM mondial_gpt.geo_lake WHERE lake IN ('Dongting Hu', 'Hongze Hu', 'Poyang Hu', 'Rakshastal') AND country IS NOT NULL GROUP BY lake ORDER BY lake ASC;",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 7.64247989654541,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "15",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:33:50.104157",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the mountains located on the island of Bali and give each mountain's elevation.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which mountains are located on Bali, and how high is each one?",
+                        "agent_reply": "The mountain located on Bali is **Mount Agung**, with an elevation of **3,142 meters**.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which mountains are located on Bali, and what is the elevation of each one?",
+                            "user_intention": "List the mountains located on the island of Bali and give each mountain's elevation.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT I.NAME AS ISLAND_NAME, M.NAME AS MOUNTAIN_NAME, M.ELEVATION AS MOUNTAIN_ELEVATION FROM MONDIAL_ISLAND I JOIN MONDIAL_MOUNTAINONISLAND MI ON MI.ISLAND = I.NAME JOIN MONDIAL_MOUNTAIN M ON M.NAME = MI.MOUNTAIN WHERE I.NAME = 'Bali' ORDER BY M.NAME ASC",
+                            "generated_sql": "SELECT m.name AS mountain_name, m.elevation FROM MONDIAL_MOUNTAIN m JOIN MONDIAL_MOUNTAINONISLAND mi ON m.name = mi.mountain WHERE LOWER(mi.island) = 'bali'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 6.134918928146362,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "For every mountain located on Bali identified previously, give the island group to which Bali belongs.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For each of those mountain-island matches, which island group does the island belong to?",
+                        "agent_reply": "The island **Bali** belongs to the **Sunda Islands** group.",
+                        "evaluation": {
+                            "text_to_sql_input": "For the island 'Bali', which island group does it belong to?",
+                            "user_intention": "For every mountain located on Bali identified previously, give the island group to which Bali belongs.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT I.NAME AS ISLAND_NAME, M.NAME AS MOUNTAIN_NAME, I.ISLANDS AS ISLAND_GROUP FROM MONDIAL_ISLAND I JOIN MONDIAL_MOUNTAINONISLAND MI ON MI.ISLAND = I.NAME JOIN MONDIAL_MOUNTAIN M ON M.NAME = MI.MOUNTAIN WHERE (I.NAME, M.NAME) IN (SELECT I1.NAME, M1.NAME FROM MONDIAL_ISLAND I1 JOIN MONDIAL_MOUNTAINONISLAND MI1 ON MI1.ISLAND = I1.NAME JOIN MONDIAL_MOUNTAIN M1 ON M1.NAME = MI1.MOUNTAIN WHERE I1.NAME = 'Bali') ORDER BY M.NAME ASC",
+                            "generated_sql": "SELECT islands FROM MONDIAL_ISLAND WHERE LOWER(name) = 'bali'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 6.52251124382019,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "16",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:34:10.375002",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "17",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:34:36.323277",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "18",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:34:57.068436",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the rivers whose source country code is Sudan, together with their source country code and province.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which rivers have their source in a province of Sudan?",
+                        "agent_reply": "There are no rivers recorded in the database that have their source in a province of Sudan.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which rivers have their source in a province of Sudan?",
+                            "user_intention": "List the rivers whose source country code is Sudan, together with their source country code and province.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD' ORDER BY RIVER ASC, PROVINCE ASC",
+                            "generated_sql": "SELECT r.name AS river_name, gs.province AS source_province, gs.country AS country_code, c.name AS country_name FROM MONDIAL_RIVER r JOIN MONDIAL_GEO_SOURCE gs ON r.name = gs.river JOIN MONDIAL_COUNTRY c ON gs.country = c.code WHERE gs.country = 'SD' ORDER BY r.name",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.366492986679077,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "For exactly the Sudanese river sources identified previously, give each river and source province along with that province's capital.",
+                "total_retries_needed": 2,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "What are the capitals of those source provinces?",
+                        "agent_reply": "The capital of the province in Sudan associated with rivers having their sources is **Khartoum** (assuming the reference to 'Sudan,' as the country code 'SUD' is used).",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the capitals of the provinces in Sudan that have rivers with their sources?",
+                            "user_intention": "For exactly the Sudanese river sources identified previously, give each river and source province along with that province's capital.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT G.RIVER, G.COUNTRY, G.PROVINCE, P.CAPITAL FROM MONDIAL_GEO_SOURCE G JOIN MONDIAL_PROVINCE P ON G.PROVINCE = P.NAME AND G.COUNTRY = P.COUNTRY WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD') ORDER BY G.RIVER ASC, G.PROVINCE ASC",
+                            "generated_sql": "SELECT p.capprov AS province_capital FROM MONDIAL_PROVINCE p JOIN MONDIAL_GEO_SOURCE gs ON p.name = gs.province AND p.country = gs.country WHERE p.country = 'SUD' AND gs.river IS NOT NULL",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.893524169921875,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "That answer does not match the result. For exactly the rivers whose sources are in Sudan, list each river, its source province, and that province\u2019s capital, using the correct Sudan country code consistently.",
+                        "agent_reply": "There are no rivers recorded in the database with their sources in any province of Sudan.",
+                        "evaluation": {
+                            "text_to_sql_input": "List each river that has its source in a province of Sudan, along with the source province's name and the province's capital. Use the correct country code for Sudan ('SD').",
+                            "user_intention": "For exactly the Sudanese river sources identified previously, give each river and source province along with that province's capital.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT G.RIVER, G.COUNTRY, G.PROVINCE, P.CAPITAL FROM MONDIAL_GEO_SOURCE G JOIN MONDIAL_PROVINCE P ON G.PROVINCE = P.NAME AND G.COUNTRY = P.COUNTRY WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD') ORDER BY G.RIVER ASC, G.PROVINCE ASC",
+                            "generated_sql": "SELECT gs.river AS river_name, p.name AS province_name, p.capital AS province_capital FROM MONDIAL_GEO_SOURCE gs JOIN MONDIAL_PROVINCE p ON gs.province = p.name AND gs.country = p.country WHERE gs.country = 'SD'",
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "alignment_and_correctness_failure",
+                            "execution_time": 18.406052112579346,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 2
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "List exactly the river sources whose provinces and capitals were identified in the previous step, ordered first by source province and then by river name.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Now list those river-source records by province, then by river.",
+                        "agent_reply": "There are no records of rivers with their sources in provinces of Sudan in the database.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve all records of rivers with their sources in provinces of Sudan, including the province name and river name, ordered first by province and then by river name.",
+                            "user_intention": "List exactly the river sources whose provinces and capitals were identified in the previous step, ordered first by source province and then by river name.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT G.RIVER, G.COUNTRY, G.PROVINCE FROM MONDIAL_GEO_SOURCE G WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT G2.RIVER, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_SOURCE G2 JOIN MONDIAL_PROVINCE P2 ON G2.PROVINCE = P2.NAME AND G2.COUNTRY = P2.COUNTRY WHERE (G2.RIVER, G2.COUNTRY, G2.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD')) ORDER BY G.PROVINCE ASC, G.RIVER ASC",
+                            "generated_sql": "SELECT g.province, r.name AS river_name FROM MONDIAL_GEO_SOURCE g JOIN MONDIAL_RIVER r ON g.river = r.name JOIN MONDIAL_PROVINCE p ON g.province = p.name AND g.country = p.country WHERE p.country = 'SD' ORDER BY g.province, r.name",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.561543941497803,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "19",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:35:41.702029",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the countries formerly dependent on the Ottoman Empire whose form of government is parliamentary.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which countries that were formerly dependent on the Ottoman Empire have parliamentary governments?",
+                        "agent_reply": "The countries that were formerly dependent on the Ottoman Empire and currently have parliamentary governments are:\n- Albania (parliamentary democracy)\n- Greece (parliamentary republic)\n- Bulgaria (parliamentary democracy)\n- Turkey (republican parliamentary democracy).",
+                        "evaluation": {
+                            "text_to_sql_input": "Which countries that were formerly dependent on the Ottoman Empire have parliamentary governments?",
+                            "user_intention": "List the countries formerly dependent on the Ottoman Empire whose form of government is parliamentary.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT C.NAME, P.GOVERNMENT FROM MONDIAL_COUNTRY C JOIN MONDIAL_POLITICS P ON P.COUNTRY = C.CODE WHERE P.WASDEPENDENT = 'Ottoman Empire' AND P.GOVERNMENT LIKE 'parliamentary%' ORDER BY C.NAME ASC",
+                            "generated_sql": "SELECT c.name AS country_name, p.government  FROM MONDIAL_COUNTRY c  JOIN MONDIAL_POLITICS p ON c.code = p.country  WHERE LOWER(p.`WAS DEPENDENT`) = 'ottoman empire'  AND (LOWER(p.government) LIKE '%parliamentary%' OR LOWER(p.government) LIKE '%democracy%')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 7.385493040084839,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Show the population growth and infant mortality rates for the countries formerly dependent on the Ottoman Empire whose form of government is parliamentary.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those countries, what are their population growth and infant mortality rates?",
+                        "agent_reply": "Here are the population growth and infant mortality rates for the specified countries:\n\n- **Albania**: Population growth of **0.30%**, infant mortality rate of **13.19** per 1,000 live births.\n- **Bulgaria**: Population growth of **-0.83%** (indicating decline), infant mortality rate of **15.08** per 1,000 live births.\n- **Greece**: Population growth of **0.01%**, infant mortality rate of **4.78** per 1,000 live births.\n- **Turkey**: Population growth of **1.12%**, infant mortality rate of **21.43** per 1,000 live births.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the population growth and infant mortality rates for Albania, Greece, Bulgaria, and Turkey.",
+                            "user_intention": "Show the population growth and infant mortality rates for the countries formerly dependent on the Ottoman Empire whose form of government is parliamentary.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT C.NAME, POP.POPULATION_GROWTH, POP.INFANT_MORTALITY FROM MONDIAL_COUNTRY C JOIN MONDIAL_POPULATION POP ON POP.COUNTRY = C.CODE WHERE (C.CODE) IN (SELECT C1.CODE FROM MONDIAL_COUNTRY C1 JOIN MONDIAL_POLITICS P1 ON P1.COUNTRY = C1.CODE WHERE P1.WASDEPENDENT = 'Ottoman Empire' AND P1.GOVERNMENT LIKE 'parliamentary%') ORDER BY C.NAME ASC",
+                            "generated_sql": "SELECT c.name AS country_name, p.`POPULATION GROWTH`, p.`INFANT MORTALITY`  FROM MONDIAL_COUNTRY c  JOIN MONDIAL_POPULATION p ON c.code = p.country  WHERE LOWER(c.name) IN ('albania', 'greece', 'bulgaria', 'turkey')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "query_execution_error",
+                            "execution_time": 8.157265186309814,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "From the countries formerly dependent on the Ottoman Empire with parliamentary governments whose population growth and infant mortality rates were requested, list those with an area above 100,000 square units from largest to smallest.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Among those countries, which have an area greater than 100,000, ordered from largest to smallest?",
+                        "agent_reply": "Among the countries previously discussed, the following have an area greater than 100,000 square kilometers, ordered from largest to smallest:\n\n1. **Turkey**: 780,580 square kilometers\n2. **Greece**: 131,940 square kilometers\n3. **Bulgaria**: 110,910 square kilometers\n\n*Note: Albania has an area smaller than 100,000 square kilometers and is excluded.*",
+                        "evaluation": {
+                            "text_to_sql_input": "Which countries among Albania, Greece, Bulgaria, and Turkey have an area greater than 100,000 square kilometers, ordered from largest to smallest?",
+                            "user_intention": "From the countries formerly dependent on the Ottoman Empire with parliamentary governments whose population growth and infant mortality rates were requested, list those with an area above 100,000 square units from largest to smallest.",
+                            "recall": 0.3333333333333333,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT C.NAME, C.AREA FROM MONDIAL_COUNTRY C JOIN MONDIAL_POPULATION POP ON POP.COUNTRY = C.CODE WHERE (C.CODE) IN (SELECT C2.CODE FROM MONDIAL_COUNTRY C2 JOIN MONDIAL_POPULATION POP2 ON POP2.COUNTRY = C2.CODE WHERE (C2.CODE) IN (SELECT C1.CODE FROM MONDIAL_COUNTRY C1 JOIN MONDIAL_POLITICS P1 ON P1.COUNTRY = C1.CODE WHERE P1.WASDEPENDENT = 'Ottoman Empire' AND P1.GOVERNMENT LIKE 'parliamentary%')) AND C.AREA > 100000 ORDER BY C.AREA DESC, C.NAME ASC",
+                            "generated_sql": "SELECT MC.NAME, MC.AREA  FROM MONDIAL_COUNTRY MC  WHERE MC.CODE IN ('AL', 'GR', 'BG', 'TR')    AND MC.AREA > 100000  ORDER BY MC.AREA DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.65787124633789,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "20",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:36:09.053755",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 3,
+                "original_intent": "Among exactly the previously identified Czech airports above 200 meters, identify those located on recognized islands and report each island's group, area, mapped country and province, and associated sea, lake, or river.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which of those airports are on recognized islands, and for each one, what are the island group, island area, mapped country and province, and associated sea, lake, or river?",
+                        "agent_reply": "None of the airports **Karlovy Vary (KLV)**, **Vaclav Havel Airport (PRG)**, **Mosnov (OSR)**, **Brno-Turany (BRQ)**, or **Pardubice (PED)** in the Czech Republic are located on recognized islands. The query returned no results for islands associated with these airports.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which of the airports Karlovy Vary (KLV), Vaclav Havel Airport (PRG), Mosnov (OSR), Brno-Turany (BRQ), and Pardubice (PED) in the Czech Republic are located on recognized islands? For those airports, provide the island group, island area, mapped country, province, and the associated sea, lake, or river.",
+                            "user_intention": "Among exactly the previously identified Czech airports above 200 meters, identify those located on recognized islands and report each island's group, area, mapped country and province, and associated sea, lake, or river.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT A.NAME, A.IATACODE, I.NAME AS ISLAND_NAME, I.ISLANDS AS ISLAND_GROUP, I.AREA AS ISLAND_AREA, G.COUNTRY AS ISLAND_COUNTRY, G.PROVINCE AS ISLAND_PROVINCE, II.SEA, II.LAKE, II.RIVER FROM MONDIAL_AIRPORT A JOIN MONDIAL_ISLAND I ON A.ISLAND = I.NAME JOIN MONDIAL_GEO_ISLAND G ON G.ISLAND = I.NAME JOIN MONDIAL_ISLANDIN II ON II.ISLAND = I.NAME WHERE (A.NAME, A.IATACODE) IN (SELECT NAME, IATACODE FROM MONDIAL_AIRPORT WHERE (NAME, IATACODE) IN (SELECT NAME, IATACODE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 200)) ORDER BY A.NAME ASC, A.IATACODE ASC, I.NAME ASC, G.COUNTRY ASC, G.PROVINCE ASC, II.SEA ASC, II.LAKE ASC, II.RIVER ASC",
+                            "generated_sql": "SELECT a.name AS airport_name, a.iataCode AS airport_code, i.name AS island_name, i.islands AS island_group, i.area AS island_area, c.name AS country_name, a.province AS province_name, s.name AS associated_sea, l.name AS associated_lake, r.name AS associated_river FROM MONDIAL_AIRPORT a JOIN MONDIAL_ISLAND i ON a.island = i.name JOIN MONDIAL_COUNTRY c ON a.country = c.code LEFT JOIN MONDIAL_SEA s ON a.island IN (SELECT island FROM MONDIAL_ISLANDIN WHERE sea = s.name) LEFT JOIN MONDIAL_LAKE l ON a.island IN (SELECT island FROM MONDIAL_ISLANDIN WHERE lake = l.name) LEFT JOIN MONDIAL_RIVER r ON a.island IN (SELECT island FROM MONDIAL_ISLANDIN WHERE river = r.name) WHERE a.iataCode IN ('KLV', 'PRG', 'OSR', 'BRQ', 'PED') AND a.country = 'CZ'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 14.988322019577026,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "21",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:36:41.596139",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 2,
+                "original_intent": "List the islands recorded within exactly the Chinese lakes that had matching physical lake details in the previous request.",
+                "total_retries_needed": 2,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "Among those lakes, which ones have islands recorded in them?",
+                        "agent_reply": "None of the lakes listed in China with recorded details have islands recorded in them.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which lakes in China, from the previously listed lakes with recorded details, have islands recorded in them?",
+                            "user_intention": "List the islands recorded within exactly the Chinese lakes that had matching physical lake details in the previous request.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT I.ISLAND, I.LAKE FROM MONDIAL_GEO_LAKE G JOIN MONDIAL_LAKE L ON G.LAKE = L.NAME JOIN MONDIAL_ISLANDIN I ON I.LAKE = L.NAME WHERE (L.NAME) IN (SELECT L1.NAME FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME WHERE G1.COUNTRY = 'CN') ORDER BY I.LAKE ASC, I.ISLAND ASC",
+                            "generated_sql": "SELECT  l.name AS lake_name, i.name AS island_name FROM mondial_gpt.lake l JOIN mondial_gpt.geo_lake gl ON l.name = gl.lake JOIN mondial_gpt.lakeonisland li ON l.name = li.lake JOIN mondial_gpt.island i ON li.island = i.name WHERE gl.country = 'CN'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 9.528836011886597,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "I think that query used `lakeonisland`, which represents lakes located on islands, rather than islands located within lakes. Please list the islands recorded inside exactly these previously identified Chinese lakes: Lop Nor, Aydingkol, Hulun Nur, Nam Co, Manasarovar, Poyang Hu, and Heaven Lake.",
+                        "agent_reply": "There are no islands recorded inside the Chinese lakes: **Lop Nor, Aydingkol, Hulun Nur, Nam Co, Manasarovar, Poyang Hu,** or **Heaven Lake** based on the available data.",
+                        "evaluation": {
+                            "text_to_sql_input": "Are there any islands recorded inside the following Chinese lakes: Lop Nor, Aydingkol, Hulun Nur, Nam Co, Manasarovar, Poyang Hu, and Heaven Lake?",
+                            "user_intention": "List the islands recorded within exactly the Chinese lakes that had matching physical lake details in the previous request.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT I.ISLAND, I.LAKE FROM MONDIAL_GEO_LAKE G JOIN MONDIAL_LAKE L ON G.LAKE = L.NAME JOIN MONDIAL_ISLANDIN I ON I.LAKE = L.NAME WHERE (L.NAME) IN (SELECT L1.NAME FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME WHERE G1.COUNTRY = 'CN') ORDER BY I.LAKE ASC, I.ISLAND ASC",
+                            "generated_sql": "SELECT  li.island  FROM mondial_gpt.lake l  JOIN mondial_gpt.lakeonisland li ON l.name = li.lake  WHERE l.name IN ('Lop Nor', 'Aydingkol', 'Hulun Nur', 'Nam Co', 'Manasarovar', 'Poyang Hu', 'Heaven Lake')",
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "alignment_and_correctness_failure",
+                            "execution_time": 20.839262008666992,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For exactly the island-and-lake pairs identified previously, list any corresponding recorded seas and give each sea's area and depth.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those island-lake pairs, which islands also have a recorded sea, and what are that sea's area and depth?",
+                        "agent_reply": "There are no islands recorded within the lakes **Lop Nor, Aydingkol, Hulun Nur, Nam Co, Manasarovar, Poyang Hu,** or **Heaven Lake** that have a recorded association with a sea.",
+                        "evaluation": {
+                            "text_to_sql_input": "For the lakes Lop Nor, Aydingkol, Hulun Nur, Nam Co, Manasarovar, Poyang Hu, and Heaven Lake, are there any islands located within them that also have a recorded association with a sea? If so, provide the name of the sea, its area, and depth.",
+                            "user_intention": "For exactly the island-and-lake pairs identified previously, list any corresponding recorded seas and give each sea's area and depth.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT I.ISLAND, I.LAKE, S.NAME AS SEA_NAME, S.AREA, S.DEPTH FROM MONDIAL_GEO_LAKE G JOIN MONDIAL_LAKE L ON G.LAKE = L.NAME JOIN MONDIAL_ISLANDIN I ON I.LAKE = L.NAME JOIN MONDIAL_SEA S ON I.SEA = S.NAME WHERE (I.ISLAND, I.LAKE) IN (SELECT I2.ISLAND, I2.LAKE FROM MONDIAL_GEO_LAKE G2 JOIN MONDIAL_LAKE L2 ON G2.LAKE = L2.NAME JOIN MONDIAL_ISLANDIN I2 ON I2.LAKE = L2.NAME WHERE (L2.NAME) IN (SELECT L1.NAME FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME WHERE G1.COUNTRY = 'CN')) ORDER BY I.LAKE ASC, I.ISLAND ASC, S.NAME ASC",
+                            "generated_sql": "SELECT  S.NAME AS SEA_NAME, S.AREA AS SEA_AREA, S.DEPTH AS SEA_DEPTH FROM MONDIAL_GPT.lake L JOIN MONDIAL_GPT.lakeonisland LI ON L.NAME = LI.LAKE JOIN MONDIAL_GPT.islandin ISL ON LI.ISLAND = ISL.ISLAND JOIN MONDIAL_GPT.sea S ON ISL.SEA = S.NAME WHERE L.NAME IN ('Lop Nor', 'Aydingkol', 'Hulun Nur', 'Nam Co', 'Manasarovar', 'Poyang Hu', 'Heaven Lake')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 15.868036985397339,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "22",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:37:27.964214",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the country and provinces that border the Sea of Japan.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which country and provinces border the Sea of Japan?",
+                        "agent_reply": "The **Sea of Japan** is bordered by the following countries and provinces:\n\n**Japan**: Hokkaido, Aomori, Akita, Yamagata, Niigata, Toyama, Ishikawa, Fukui, Kyoto, Hyogo, Tottori, Shimane, Yamaguchi, Fukuoka, Saga, and Nagasaki.\n\n**North Korea**: The entire country borders the Sea of Japan.\n\n**Russia**: Primorskiy, Khabarovskiy, and Sakhalin provinces border the sea.\n\n**South Korea**: The entire country borders the Sea of Japan.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which country and provinces border the Sea of Japan?",
+                            "user_intention": "List the country and provinces that border the Sea of Japan.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan' ORDER BY COUNTRY ASC, PROVINCE ASC",
+                            "generated_sql": "SELECT c.name AS country, p.name AS province FROM mondial_gpt.geo_sea gs JOIN mondial_gpt.province p ON gs.province = p.name AND gs.country = p.country JOIN mondial_gpt.country c ON gs.country = c.code WHERE gs.sea = 'Sea of Japan'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.322516918182373,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "For the country and provinces that border the Sea of Japan, count the selected provinces in each country.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many of those provinces are there in each country?",
+                        "agent_reply": "Here is the count of provinces bordering the **Sea of Japan** for each country:\n\n- **Japan**: 16 provinces\n- **North Korea**: 1 province (the entire country is considered as a single entity in this context)\n- **Russia**: 3 provinces\n- **South Korea**: 1 province (the entire country is considered as a single entity in this context).",
+                        "evaluation": {
+                            "text_to_sql_input": "Count the number of provinces bordering the Sea of Japan for each country that borders it.",
+                            "user_intention": "For the country and provinces that border the Sea of Japan, count the selected provinces in each country.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT COUNTRY, COUNT(*) AS PROVINCE_COUNT FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY, PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan') GROUP BY COUNTRY ORDER BY COUNTRY ASC",
+                            "generated_sql": "SELECT c.name AS country_name, COUNT(g.province) AS number_of_provinces_bordering_sea_of_japan FROM mondial_gpt.country c JOIN mondial_gpt.geo_sea g ON c.code = g.country WHERE g.sea = 'Sea of Japan' GROUP BY c.name",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.832504034042358,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Give the area and depth of the sea bordered by the previously selected provinces around the Sea of Japan.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "What are the area and depth of the sea bordered by those provinces?",
+                        "agent_reply": "The **Sea of Japan** has an **area of 978,000 square kilometers** and a **maximum depth of 4,036 meters**.",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the area and depth of the Sea of Japan?",
+                            "user_intention": "Give the area and depth of the sea bordered by the previously selected provinces around the Sea of Japan.",
+                            "recall": 0.5,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT S.NAME, S.AREA, S.DEPTH FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY, PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan')) ORDER BY S.NAME ASC",
+                            "generated_sql": "SELECT NAME, AREA, DEPTH FROM mondial_gpt.sea WHERE LOWER(NAME) = LOWER('Sea of Japan')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 6.008518934249878,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "23",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:37:55.465011",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "24",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:38:12.849593",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 2,
+                "original_intent": "Among the Indian provincial mountains with mountain details identified previously, list those located on islands and give each island's name.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which of those mountains are located on islands, and what are the islands' names?",
+                        "agent_reply": "None of the mountains listed in Indian provinces are located on islands based on the available data.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which mountains from the previously listed Indian mountains are located on islands, and what are the names of those islands?",
+                            "user_intention": "Among the Indian provincial mountains with mountain details identified previously, list those located on islands and give each island's name.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT G.MOUNTAIN, I.NAME AS ISLAND_NAME FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME JOIN MONDIAL_MOUNTAINONISLAND MI ON M.NAME = MI.MOUNTAIN JOIN MONDIAL_ISLAND I ON MI.ISLAND = I.NAME WHERE (G.MOUNTAIN, G.COUNTRY, G.PROVINCE) IN (SELECT G1.MOUNTAIN, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN G1 JOIN MONDIAL_MOUNTAIN M1 ON G1.MOUNTAIN = M1.NAME WHERE G1.COUNTRY = 'IND') ORDER BY G.MOUNTAIN ASC, I.NAME ASC",
+                            "generated_sql": "SELECT MI.NAME AS ISLAND_NAME, MM.NAME AS MOUNTAIN_NAME FROM mondial_gpt.mountain MM JOIN mondial_gpt.mountainonisland MMI ON MM.NAME = MMI.MOUNTAIN JOIN mondial_gpt.island MI ON MMI.ISLAND = MI.NAME JOIN mondial_gpt.geo_mountain GM ON MM.NAME = GM.MOUNTAIN JOIN mondial_gpt.country C ON GM.COUNTRY = C.CODE WHERE C.NAME = 'India'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 8.907512187957764,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For the previously identified island mountains among Indian provincial mountains with mountain details, count their provincial records by country.",
+                "total_retries_needed": 2,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "For those island mountains, how many provincial records are there per country?",
+                        "agent_reply": "Since none of the previously listed mountains in Indian provinces are located on islands, there are no provincial records of island mountains to analyze per country. If you have any other questions or need further clarification, feel free to ask!",
+                        "evaluation": {
+                            "text_to_sql_input": "response",
+                            "user_intention": "For the previously identified island mountains among Indian provincial mountains with mountain details, count their provincial records by country.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT G.COUNTRY, COUNT(*) AS PROVINCIAL_RECORD_COUNT FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME JOIN MONDIAL_MOUNTAINONISLAND MI ON M.NAME = MI.MOUNTAIN JOIN MONDIAL_ISLAND I ON MI.ISLAND = I.NAME WHERE (G.MOUNTAIN, MI.ISLAND) IN (SELECT G2.MOUNTAIN, I2.NAME FROM MONDIAL_GEO_MOUNTAIN G2 JOIN MONDIAL_MOUNTAIN M2 ON G2.MOUNTAIN = M2.NAME JOIN MONDIAL_MOUNTAINONISLAND MI2 ON M2.NAME = MI2.MOUNTAIN JOIN MONDIAL_ISLAND I2 ON MI2.ISLAND = I2.NAME WHERE (G2.MOUNTAIN, G2.COUNTRY, G2.PROVINCE) IN (SELECT G1.MOUNTAIN, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN G1 JOIN MONDIAL_MOUNTAIN M1 ON G1.MOUNTAIN = M1.NAME WHERE G1.COUNTRY = 'IND')) GROUP BY G.COUNTRY ORDER BY G.COUNTRY ASC",
+                            "generated_sql": "",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 3.134903907775879,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "Please directly count the provincial records by country for mountains that have mountain details, are recorded in Indian provinces, and are also listed as being on islands. If none qualify, report India with a count of 0.",
+                        "agent_reply": "There are **0 provincial records** of mountains located in Indian provinces that are also listed as being on islands.",
+                        "evaluation": {
+                            "text_to_sql_input": "Count the number of provincial records for mountains located in Indian provinces that are also listed as being on islands. If no such records exist, return India with a count of 0.",
+                            "user_intention": "For the previously identified island mountains among Indian provincial mountains with mountain details, count their provincial records by country.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT G.COUNTRY, COUNT(*) AS PROVINCIAL_RECORD_COUNT FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME JOIN MONDIAL_MOUNTAINONISLAND MI ON M.NAME = MI.MOUNTAIN JOIN MONDIAL_ISLAND I ON MI.ISLAND = I.NAME WHERE (G.MOUNTAIN, MI.ISLAND) IN (SELECT G2.MOUNTAIN, I2.NAME FROM MONDIAL_GEO_MOUNTAIN G2 JOIN MONDIAL_MOUNTAIN M2 ON G2.MOUNTAIN = M2.NAME JOIN MONDIAL_MOUNTAINONISLAND MI2 ON M2.NAME = MI2.MOUNTAIN JOIN MONDIAL_ISLAND I2 ON MI2.ISLAND = I2.NAME WHERE (G2.MOUNTAIN, G2.COUNTRY, G2.PROVINCE) IN (SELECT G1.MOUNTAIN, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN G1 JOIN MONDIAL_MOUNTAIN M1 ON G1.MOUNTAIN = M1.NAME WHERE G1.COUNTRY = 'IND')) GROUP BY G.COUNTRY ORDER BY G.COUNTRY ASC",
+                            "generated_sql": "SELECT COUNT(gm.province) AS mountain_province_count FROM mondial_gpt.geo_mountain gm JOIN mondial_gpt.mountainonisland moi ON gm.mountain = moi.mountain JOIN mondial_gpt.province p ON gm.province = p.name AND gm.country = p.country WHERE LOWER(p.country) = LOWER('IN')",
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "alignment_and_correctness_failure",
+                            "execution_time": 24.088889122009277,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "25",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:38:56.879537",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Identify the lakes located in China that contain at least one island.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which lakes in China contain at least one island?",
+                        "agent_reply": "There are no lakes in China recorded in the database that contain at least one island.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which lakes in China contain at least one island?",
+                            "user_intention": "Identify the lakes located in China that contain at least one island.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT DISTINCT G.LAKE, G.COUNTRY, G.PROVINCE FROM MONDIAL_GEO_LAKE G JOIN MONDIAL_LAKE L ON G.LAKE = L.NAME JOIN MONDIAL_ISLANDIN I ON I.LAKE = L.NAME WHERE G.COUNTRY = 'CN' ORDER BY G.LAKE ASC",
+                            "generated_sql": "SELECT l.name AS lake_name, c.name AS country_name, p.name AS province_name, i.name AS island_name FROM MONDIAL_LAKE l JOIN MONDIAL_GEO_LAKE gl ON l.name = gl.lake JOIN MONDIAL_PROVINCE p ON gl.province = p.name AND gl.country = p.country JOIN MONDIAL_COUNTRY c ON gl.country = c.code AND c.code = 'CN' JOIN MONDIAL_ISLANDIN li ON l.name = li.lake JOIN MONDIAL_ISLAND i ON li.island = i.name ORDER BY l.name, i.name",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.210155010223389,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "List the name and province of each previously identified Chinese lake containing an island, ordered alphabetically by lake name.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those lakes, list each lake and its province, ordered by lake name.",
+                        "agent_reply": "There are no lakes in China recorded in the database that contain at least one island. Thus, no results are available for this query.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve lakes in China that contain at least one island, listing each lake's name and its associated province, ordered by lake name.",
+                            "user_intention": "List the name and province of each previously identified Chinese lake containing an island, ordered alphabetically by lake name.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT G.LAKE, G.PROVINCE FROM MONDIAL_GEO_LAKE G WHERE G.COUNTRY = 'CN' AND (G.LAKE, G.COUNTRY, G.PROVINCE) IN (SELECT DISTINCT G1.LAKE, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME JOIN MONDIAL_ISLANDIN I1 ON I1.LAKE = L1.NAME WHERE G1.COUNTRY = 'CN') ORDER BY G.LAKE ASC",
+                            "generated_sql": "SELECT l.name AS lake_name, gld.province AS province_name FROM MONDIAL_LAKE l JOIN MONDIAL_GEO_LAKE gld ON l.name = gld.lake JOIN MONDIAL_COUNTRY c ON gld.country = c.code JOIN MONDIAL_ISLANDIN loi ON l.name = loi.lake WHERE c.code = 'CN' ORDER BY l.name",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.871701002120972,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Count the previously listed Chinese lakes containing an island in each province, with provinces ordered alphabetically.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Now count those listed lakes in each province, sorting the provinces alphabetically.",
+                        "agent_reply": "There are no lakes in China recorded in the database that contain islands. Therefore, the count of such lakes in each province is zero for all provinces.",
+                        "evaluation": {
+                            "text_to_sql_input": "Count the number of lakes in each province of China that contain at least one island, sorted alphabetically by province name.",
+                            "user_intention": "Count the previously listed Chinese lakes containing an island in each province, with provinces ordered alphabetically.",
+                            "recall": 0.3333333333333333,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT G.PROVINCE, COUNT(G.LAKE) FROM MONDIAL_GEO_LAKE G WHERE G.COUNTRY = 'CN' AND (G.LAKE, G.COUNTRY, G.PROVINCE) IN (SELECT G2.LAKE, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_LAKE G2 WHERE G2.COUNTRY = 'CN' AND (G2.LAKE, G2.COUNTRY, G2.PROVINCE) IN (SELECT DISTINCT G1.LAKE, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME JOIN MONDIAL_ISLANDIN I1 ON I1.LAKE = L1.NAME WHERE G1.COUNTRY = 'CN')) GROUP BY G.PROVINCE ORDER BY G.PROVINCE ASC",
+                            "generated_sql": "",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 15.995675086975098,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "26",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:39:32.720733",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "27",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:39:59.241935",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 2,
+                "original_intent": "Among the countries identified as sharing a border with Albania, list those with at least one historical population record greater than ten million.",
+                "total_retries_needed": 4,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "Of those neighboring countries, which ones have at least one recorded population above 10 million?",
+                        "agent_reply": "Among Albania's neighboring countries, only **Greece** has a recorded population above 10 million, with approximately **10.8 million** people.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which of the neighboring countries of Albania (Greece, Kosovo, North Macedonia, Montenegro) have at least one recorded population above 10 million?",
+                            "user_intention": "Among the countries identified as sharing a border with Albania, list those with at least one historical population record greater than ten million.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT C.CODE, C.NAME FROM MONDIAL_COUNTRY C JOIN MONDIAL_COUNTRYPOPS P ON P.COUNTRY = C.CODE WHERE P.POPULATION > 10000000 AND (C.CODE) IN (SELECT C1.CODE FROM MONDIAL_BORDERS B1 JOIN MONDIAL_COUNTRY C1 ON B1.COUNTRY2 = C1.CODE WHERE B1.COUNTRY1 = 'AL') ORDER BY C.NAME ASC",
+                            "generated_sql": "SELECT c.name AS country_name, c.population AS country_population FROM MONDIAL_COUNTRY c JOIN MONDIAL_BORDERS b ON c.code = b.COUNTRY2 WHERE b.COUNTRY1 = 'AL' AND c.code IN ('GR', 'XK', 'MK', 'MNE') AND c.population > 10000000",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 8.07369327545166,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "Thanks, that answers my question: Greece is the only neighboring country of Albania with at least one historical population record above 10 million.",
+                        "agent_reply": "You're welcome! If you have any more questions or need further details, feel free to ask.",
+                        "evaluation": {
+                            "text_to_sql_input": "response",
+                            "user_intention": "Among the countries identified as sharing a border with Albania, list those with at least one historical population record greater than ten million.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT C.CODE, C.NAME FROM MONDIAL_COUNTRY C JOIN MONDIAL_COUNTRYPOPS P ON P.COUNTRY = C.CODE WHERE P.POPULATION > 10000000 AND (C.CODE) IN (SELECT C1.CODE FROM MONDIAL_BORDERS B1 JOIN MONDIAL_COUNTRY C1 ON B1.COUNTRY2 = C1.CODE WHERE B1.COUNTRY1 = 'AL') ORDER BY C.NAME ASC",
+                            "generated_sql": "",
+                            "is_retry": true,
+                            "retry_count": 2,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 23.756222248077393,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "28",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:40:33.750204",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "29",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:40:58.735981",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 2,
+                "original_intent": "List the cities located on the Indonesian islands larger than 100,000 square units identified previously, along with each city\u2019s province, country, and island.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which cities are located on those islands?",
+                        "agent_reply": "There are currently no records of cities directly linked to the islands of Sumatra, Java, Borneo, Sulawesi, or New Guinea in the database. This might be due to the way the data is structured or missing connections in the 'locatedon' table. Would you like me to check for cities in provinces associated with these islands instead?",
+                        "evaluation": {
+                            "text_to_sql_input": "Which cities are located on the islands of Sumatra, Java, Borneo, Sulawesi, and New Guinea in Indonesia?",
+                            "user_intention": "List the cities located on the Indonesian islands larger than 100,000 square units identified previously, along with each city\u2019s province, country, and island.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT L.CITY, L.PROVINCE, L.COUNTRY, L.ISLAND FROM MONDIAL_GEO_ISLAND G JOIN MONDIAL_ISLAND I ON G.ISLAND = I.NAME JOIN MONDIAL_LOCATEDON L ON L.ISLAND = I.NAME WHERE (G.ISLAND, G.COUNTRY, G.PROVINCE) IN (SELECT G1.ISLAND, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_ISLAND G1 JOIN MONDIAL_ISLAND I1 ON G1.ISLAND = I1.NAME WHERE G1.COUNTRY = 'RI' AND I1.AREA > 100000) ORDER BY L.ISLAND ASC, L.CITY ASC, L.COUNTRY ASC, L.PROVINCE ASC",
+                            "generated_sql": "SELECT  c.name AS city_name, c.province, c.country  FROM mondial_gpt.city c  JOIN mondial_gpt.locatedon l ON c.name = l.city AND c.province = l.province AND c.country = l.country  JOIN mondial_gpt.island i ON l.island = i.name  WHERE LOWER(i.name) IN ('sumatra', 'java', 'borneo', 'sulawesi', 'new guinea')  AND c.country = 'ID'",
+                            "needs_feedback": true,
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 10.748605966567993,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ],
+                "execution_time": 10.748630046844482
+            }
+        ]
+    },
+    {
+        "experiment_id": "30",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:41:26.523751",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List each desert recorded in Adrar, Mauritania, together with the capital of its province.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For the deserts recorded in Adrar, Mauritania (RIM), what is the provincial capital for each one?",
+                        "agent_reply": "There are no deserts recorded in the province of Adrar, Mauritania (RIM) in the database, or the data is not available for this specific query.",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the provincial capitals for the deserts recorded in Adrar, Mauritania (RIM)?",
+                            "user_intention": "List each desert recorded in Adrar, Mauritania, together with the capital of its province.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT G.DESERT, P.CAPITAL FROM MONDIAL_GEO_DESERT G JOIN MONDIAL_PROVINCE P ON G.PROVINCE = P.NAME AND G.COUNTRY = P.COUNTRY WHERE G.COUNTRY = 'RIM' AND G.PROVINCE = 'Adrar' ORDER BY G.DESERT ASC",
+                            "generated_sql": "SELECT  p.capital AS provincial_capital  FROM mondial_gpt.province p  JOIN mondial_gpt.geo_desert gd ON p.name = gd.province AND p.country = gd.country  JOIN mondial_gpt.desert d ON gd.desert = d.name  WHERE LOWER(p.country) = 'RIM' AND LOWER(gd.province) = 'adrar'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.792909145355225,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "31",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:41:47.989061",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "32",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:42:10.719596",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find the mountain named Anamudi and report its province together with the province's capital, area, and population.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For Anamudi, what province is the mountain in, and what are that province's capital, area, and population?",
+                        "agent_reply": "Anamudi mountain is located in the province of Kerala. The capital of Kerala is Trivandrum, its area is 38,852 square kilometers, and its population is approximately 33,406,061.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find the province where Anamudi mountain is located, and provide the capital, area, and population of that province.",
+                            "user_intention": "Find the mountain named Anamudi and report its province together with the province's capital, area, and population.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE, P.CAPITAL, P.AREA, P.POPULATION FROM MONDIAL_GEO_MOUNTAIN GM JOIN MONDIAL_PROVINCE P ON GM.PROVINCE = P.NAME AND GM.COUNTRY = P.COUNTRY WHERE GM.MOUNTAIN = 'Anamudi' ORDER BY GM.COUNTRY ASC, GM.PROVINCE ASC, GM.MOUNTAIN ASC",
+                            "generated_sql": "SELECT p.name AS province_name, p.capital, p.area, p.population FROM mondial_gpt.province p JOIN mondial_gpt.geo_mountain gm ON p.name = gm.province AND p.country = gm.country JOIN mondial_gpt.mountain m ON gm.mountain = m.name WHERE LOWER(m.name) = 'anamudi';",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.295447111129761,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "For the Anamudi mountain results whose matching province details were found, return each mountain name, country code, and province, ordered by country and province.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For the mountain entries found above, show just the mountain name, country code, and province, ordered by country and province.",
+                        "agent_reply": "The query returned an unexpectedly large number of results (703 rows), likely due to data inconsistencies or duplicates. However, the correct and relevant entry for **Anamudi** is:\n\n- **Mountain Name:** Anamudi\n- **Country Code:** IND (India)\n- **Province:** Kerala\n\nThis is the only logically accurate result based on geographical context. The other entries appear to be incorrect or irrelevant duplicates.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the mountain name, country code, and province for Anamudi, ordered by country and province.",
+                            "user_intention": "For the Anamudi mountain results whose matching province details were found, return each mountain name, country code, and province, ordered by country and province.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM WHERE (GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE) IN (SELECT GM1.MOUNTAIN, GM1.COUNTRY, GM1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM1 JOIN MONDIAL_PROVINCE P1 ON GM1.PROVINCE = P1.NAME AND GM1.COUNTRY = P1.COUNTRY WHERE GM1.MOUNTAIN = 'Anamudi') ORDER BY GM.COUNTRY ASC, GM.PROVINCE ASC, GM.MOUNTAIN ASC",
+                            "generated_sql": "SELECT m.name AS mountain_name, c.code AS country_code, p.name AS province FROM mondial_gpt.mountain m JOIN mondial_gpt.geo_mountain gm ON LOWER(m.name) = LOWER('Anamudi') JOIN mondial_gpt.province p ON gm.province = p.name AND gm.country = p.country JOIN mondial_gpt.country c ON gm.country = c.code ORDER BY c.code, p.name",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 12.815787076950073,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "Count the previously returned Anamudi mountain entries in each country and order the country groups from the largest count to the smallest.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "How many of those mountain entries are there per country, with the largest count first?",
+                        "agent_reply": "There is **1 entry for Anamudi in India**, which is the only valid and accurate record in the dataset. The other duplicate entries across unrelated countries (e.g., Austria, Afghanistan, Zimbabwe) appear to be incorrect or data anomalies.",
+                        "evaluation": {
+                            "text_to_sql_input": "Count the number of mountain entries for Anamudi per country, ordered by the count in descending order.",
+                            "user_intention": "Count the previously returned Anamudi mountain entries in each country and order the country groups from the largest count to the smallest.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT GM.COUNTRY, COUNT(*) AS MOUNTAIN_COUNT FROM MONDIAL_GEO_MOUNTAIN GM WHERE (GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE) IN (SELECT GM2.MOUNTAIN, GM2.COUNTRY, GM2.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM2 WHERE (GM2.MOUNTAIN, GM2.COUNTRY, GM2.PROVINCE) IN (SELECT GM1.MOUNTAIN, GM1.COUNTRY, GM1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM1 JOIN MONDIAL_PROVINCE P1 ON GM1.PROVINCE = P1.NAME AND GM1.COUNTRY = P1.COUNTRY WHERE GM1.MOUNTAIN = 'Anamudi')) GROUP BY GM.COUNTRY ORDER BY MOUNTAIN_COUNT DESC, GM.COUNTRY ASC",
+                            "generated_sql": "SELECT      c.name AS country_name,      COUNT(gm.province) AS mountain_count FROM      mondial_gpt.mountain m  JOIN      mondial_gpt.geo_mountain gm ON LOWER(m.name) = LOWER('Anamudi') AND gm.mountain = m.name JOIN      mondial_gpt.country c ON gm.country = c.code GROUP BY      c.name ORDER BY      mountain_count DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.562153100967407,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "33",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:42:41.125923",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List airports in the Czech Republic whose elevation is greater than 300 meters.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which airports in the Czech Republic are above 300 meters in elevation?",
+                        "agent_reply": "The airports in the Czech Republic that are above 300 meters in elevation are:\n\n1. **Karlovy Vary Airport** (IATA Code: **KLV**) - Elevation: **606 meters**\n2. **Vaclav Havel Airport** (IATA Code: **PRG**) - Elevation: **380 meters**",
+                        "evaluation": {
+                            "text_to_sql_input": "Which airports in the Czech Republic have an elevation above 300 meters?",
+                            "user_intention": "List airports in the Czech Republic whose elevation is greater than 300 meters.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NAME, IATACODE, COUNTRY, CITY, PROVINCE, ELEVATION FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 300 ORDER BY ELEVATION DESC, NAME ASC, IATACODE ASC",
+                            "generated_sql": "SELECT a.name, a.iataCode, a.elevation FROM MONDIAL_AIRPORT a JOIN MONDIAL_COUNTRY c ON a.country = c.code WHERE LOWER(c.name) = LOWER('Czech Republic') AND a.elevation > 300",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.07926869392395,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Among the Czech airports above 300 meters in elevation, list those west of longitude 14.5 together with their latitude and longitude.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Of those, which are west of longitude 14.5, and what are their coordinates?",
+                        "agent_reply": "The airport in the Czech Republic that meets the criteria is:\n\n1. **Karlovy Vary Airport** (IATA Code: **KLV**)\n   - **Coordinates**: Latitude **50.2030**, Longitude **12.9150**\n   - **Elevation**: 606 meters\n\n*Note: Vaclav Havel Airport (PRG) is east of longitude 14.5 and thus excluded.*",
+                        "evaluation": {
+                            "text_to_sql_input": "Which airports in the Czech Republic with an elevation above 300 meters are located west of longitude 14.5, and what are their coordinates?",
+                            "user_intention": "Among the Czech airports above 300 meters in elevation, list those west of longitude 14.5 together with their latitude and longitude.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NAME, IATACODE, COUNTRY, CITY, PROVINCE, LATITUDE, LONGITUDE FROM MONDIAL_AIRPORT WHERE (NAME, IATACODE, COUNTRY, CITY, PROVINCE) IN (SELECT NAME, IATACODE, COUNTRY, CITY, PROVINCE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 300) AND LONGITUDE < 14.5 ORDER BY LONGITUDE ASC, NAME ASC, IATACODE ASC",
+                            "generated_sql": "SELECT a.iataCode, a.name, a.latitude, a.longitude, a.elevation FROM MONDIAL_AIRPORT a JOIN MONDIAL_COUNTRY c ON a.country = c.code WHERE LOWER(c.name) = LOWER('Czech Republic') AND a.elevation > 300 AND a.longitude < 14.5",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.5673348903656,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For the Czech airports above 300 meters in elevation that are west of longitude 14.5, provide each airport and the population of its associated city.",
+                "total_retries_needed": 2,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "What is the population of each city served by those remaining airports?",
+                        "agent_reply": "The city served by **Karlovy Vary Airport (KLV)** in the Czech Republic is **Karlovy Vary**, with a population of **53,310**.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the population of each city served by the airport Karlovy Vary (IATA Code: KLV) in the Czech Republic?",
+                            "user_intention": "For the Czech airports above 300 meters in elevation that are west of longitude 14.5, provide each airport and the population of its associated city.",
+                            "recall": 1.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT A.NAME AS AIRPORT_NAME, A.IATACODE, C.NAME AS CITY_NAME, C.POPULATION FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME AND A.COUNTRY = C.COUNTRY AND A.PROVINCE = C.PROVINCE WHERE (A.NAME, A.IATACODE, A.COUNTRY, A.CITY, A.PROVINCE) IN (SELECT A2.NAME, A2.IATACODE, A2.COUNTRY, A2.CITY, A2.PROVINCE FROM MONDIAL_AIRPORT A2 WHERE (A2.NAME, A2.IATACODE, A2.COUNTRY, A2.CITY, A2.PROVINCE) IN (SELECT NAME, IATACODE, COUNTRY, CITY, PROVINCE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 300) AND A2.LONGITUDE < 14.5) ORDER BY A.NAME ASC, A.IATACODE ASC, C.NAME ASC",
+                            "generated_sql": "SELECT c.name AS city_name, c.population AS city_population FROM MONDIAL_CITY c JOIN MONDIAL_AIRPORT a ON LOWER(c.name) = LOWER(a.city) AND c.country = a.country AND c.province = a.province JOIN MONDIAL_COUNTRY co ON c.country = co.code WHERE a.iataCode = 'KLV' AND co.name = 'Czech Republic'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.377630949020386,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "Vaclav Havel Airport (PRG) was incorrectly excluded: its longitude is 14.26, which is west of 14.5. Please provide the associated city and population for both qualifying airports\u2014Karlovy Vary (KLV) and Vaclav Havel Airport (PRG).",
+                        "agent_reply": "Here are the cities served by the qualifying airports in the Czech Republic along with their populations:\n\n1. **Karlovy Vary Airport (KLV)** serves **Karlovy Vary**, with a population of **53,310**.\n2. **Vaclav Havel Airport (PRG)** serves **Prague (Praha)**, with a population of **1,289,556**.",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the cities served by the airports Karlovy Vary (IATA Code: KLV) and Vaclav Havel Airport (PRG) in the Czech Republic, and what are their populations?",
+                            "user_intention": "For the Czech airports above 300 meters in elevation that are west of longitude 14.5, provide each airport and the population of its associated city.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT A.NAME AS AIRPORT_NAME, A.IATACODE, C.NAME AS CITY_NAME, C.POPULATION FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME AND A.COUNTRY = C.COUNTRY AND A.PROVINCE = C.PROVINCE WHERE (A.NAME, A.IATACODE, A.COUNTRY, A.CITY, A.PROVINCE) IN (SELECT A2.NAME, A2.IATACODE, A2.COUNTRY, A2.CITY, A2.PROVINCE FROM MONDIAL_AIRPORT A2 WHERE (A2.NAME, A2.IATACODE, A2.COUNTRY, A2.CITY, A2.PROVINCE) IN (SELECT NAME, IATACODE, COUNTRY, CITY, PROVINCE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 300) AND A2.LONGITUDE < 14.5) ORDER BY A.NAME ASC, A.IATACODE ASC, C.NAME ASC",
+                            "generated_sql": "SELECT c.name AS city_name, c.population FROM MONDIAL_CITY c JOIN MONDIAL_COUNTRY co ON LOWER(c.country) = LOWER(co.code) WHERE LOWER(co.name) = LOWER('Czech Republic') AND c.name IN (     SELECT a.city     FROM MONDIAL_AIRPORT a     WHERE a.iataCode IN ('KLV', 'PRG') )",
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "alignment_and_correctness_failure",
+                            "execution_time": 21.85698103904724,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "34",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:43:19.784744",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Which islands are located in the Mediterranean Sea and are associated with neither a lake nor a river?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which islands are in the Mediterranean Sea and have neither a lake nor a river?",
+                        "agent_reply": "The islands located in the Mediterranean Sea that do not have any associated lakes or rivers are:\n\nLefkas, Zakynthos, Chios, Rhodos, Malta, Menorca, Mallorca, Salina, Euboea, Ikaria, Alicudi, Stromboli, Korcula, Mykonos, Crete, Lipari, Vulcano, Panarea, Lesbos, Elba, Filicudi, Formentera, Kos, Cyprus, Kefallinia, Syros, Gozo, Linosa, Ibiza, Cres, Brac, Samothraki, Corse, Krk, Korfu, Samos, and Lampedusa.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which islands are located in the Mediterranean Sea and do not have any associated lakes or rivers?",
+                            "user_intention": "Which islands are located in the Mediterranean Sea and are associated with neither a lake nor a river?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT ISLAND, SEA, LAKE, RIVER FROM MONDIAL_ISLANDIN WHERE SEA = 'Mediterranean Sea' AND LAKE IS NULL AND RIVER IS NULL ORDER BY ISLAND ASC",
+                            "generated_sql": "SELECT  MI.NAME AS island_name  FROM mondial_gpt.island MI  JOIN mondial_gpt.islandin INL ON MI.NAME = INL.ISLAND  JOIN mondial_gpt.sea S ON INL.SEA = S.NAME  WHERE LOWER(S.NAME) = LOWER('Mediterranean Sea')  AND NOT EXISTS (     SELECT 1      FROM mondial_gpt.lakeonisland LO      WHERE LO.ISLAND = MI.NAME )  AND NOT EXISTS (     SELECT 1      FROM mondial_gpt.riveronisland RO      WHERE RO.ISLAND = MI.NAME )",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.337036848068237,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Among the islands in the Mediterranean Sea that are associated with neither a lake nor a river, which islands have names beginning with S?",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Of those islands, which ones have names beginning with S?",
+                        "agent_reply": "The islands located in the Mediterranean Sea, without any associated lakes or rivers, and with names beginning with 'S' are:\n\n- Syros\n- Samothraki\n- Samos\n- Salina\n- Stromboli",
+                        "evaluation": {
+                            "text_to_sql_input": "Which islands located in the Mediterranean Sea, without any associated lakes or rivers, have names beginning with 'S'?",
+                            "user_intention": "Among the islands in the Mediterranean Sea that are associated with neither a lake nor a river, which islands have names beginning with S?",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT ISLAND, SEA, LAKE, RIVER FROM MONDIAL_ISLANDIN WHERE (ISLAND, SEA) IN (SELECT ISLAND, SEA FROM MONDIAL_ISLANDIN WHERE SEA = 'Mediterranean Sea' AND LAKE IS NULL AND RIVER IS NULL) AND ISLAND LIKE 'S%' ORDER BY ISLAND ASC",
+                            "generated_sql": "SELECT  i.name AS island_name  FROM mondial_gpt.island i  JOIN mondial_gpt.geo_island gi   ON i.name = gi.island  JOIN mondial_gpt.sea s   ON s.name = 'Mediterranean Sea'  WHERE NOT EXISTS (     SELECT 1      FROM mondial_gpt.lakeonisland li      WHERE li.island = i.name )  AND NOT EXISTS (     SELECT 1      FROM mondial_gpt.riveronisland ri      WHERE ri.island = i.name )  AND LOWER(i.name) LIKE 's%'  AND gi.country IN (     SELECT c.code      FROM mondial_gpt.sea s2      JOIN mondial_gpt.geo_sea gs          ON s2.name = gs.sea      JOIN mondial_gpt.country c          ON gs.country = c.code      WHERE s2.name = 'Mediterranean Sea' )",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.271512985229492,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For the previously selected Mediterranean islands whose names begin with S and that are associated with neither a lake nor a river, give the area and depth of each island's sea and list every other sea connected to it.",
+                "total_retries_needed": 2,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "For those islands, what are the area and depth of their sea, and which other seas does it merge with?",
+                        "agent_reply": "The **Mediterranean Sea**, associated with the islands Syros, Samothraki, Samos, Salina, and Stromboli, has the following characteristics:\n\n- **Area**: 2,500,000 square kilometers\n- **Depth**: 5,267 meters\n\nThe Mediterranean Sea merges with:\n- **Atlantic Ocean**\n- **Marmara Sea**",
+                        "evaluation": {
+                            "text_to_sql_input": "For the islands Syros, Samothraki, Samos, Salina, and Stromboli, provide the area and depth of the Mediterranean Sea and list other seas it merges with.",
+                            "user_intention": "For the previously selected Mediterranean islands whose names begin with S and that are associated with neither a lake nor a river, give the area and depth of each island's sea and list every other sea connected to it.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT I.ISLAND, S.NAME AS SEA, S.AREA, S.DEPTH, CASE WHEN M.SEA1 = S.NAME THEN M.SEA2 ELSE M.SEA1 END AS MERGES_WITH FROM MONDIAL_ISLANDIN I JOIN MONDIAL_SEA S ON I.SEA = S.NAME JOIN MONDIAL_MERGESWITH M ON M.SEA1 = S.NAME OR M.SEA2 = S.NAME WHERE (I.ISLAND, I.SEA) IN (SELECT ISLAND, SEA FROM MONDIAL_ISLANDIN WHERE (ISLAND, SEA) IN (SELECT ISLAND, SEA FROM MONDIAL_ISLANDIN WHERE SEA = 'Mediterranean Sea' AND LAKE IS NULL AND RIVER IS NULL) AND ISLAND LIKE 'S%') ORDER BY I.ISLAND ASC, MERGES_WITH ASC",
+                            "generated_sql": "SELECT      s.name AS sea_name,     s.area AS sea_area,     s.depth AS sea_depth,     m.sea1 AS merging_sea1,     m.sea2 AS merging_sea2 FROM      mondial_gpt.sea s JOIN      mondial_gpt.mergeswith m ON s.name = m.sea1 OR s.name = m.sea2 WHERE      LOWER(s.name) = 'mediterranean sea'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.373617887496948,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "For each of the previously selected islands\u2014Syros, Samothraki, Samos, Salina, and Stromboli\u2014identify the sea each island is located in, give that sea\u2019s area and depth, and list every other sea connected to it. Do not assume they are all directly in the Mediterranean Sea.",
+                        "agent_reply": "Here is the information for each of the specified islands:\n\n1. **Syros**\n   - **Sea**: Mediterranean Sea\n   - **Area**: 2,500,000 square kilometers\n   - **Depth**: 5,267 meters\n   - **Connected Seas**: Atlantic Ocean, Marmara Sea\n\n2. **Samothraki**\n   - **Sea**: Mediterranean Sea\n   - **Area**: 2,500,000 square kilometers\n   - **Depth**: 5,267 meters\n   - **Connected Seas**: Atlantic Ocean, Marmara Sea\n\n3. **Samos**\n   - **Sea**: Mediterranean Sea\n   - **Area**: 2,500,000 square kilometers\n   - **Depth**: 5,267 meters\n   - **Connected Seas**: Atlantic Ocean, Marmara Sea\n\n4. **Salina**\n   - **Sea**: Mediterranean Sea\n   - **Area**: 2,500,000 square kilometers\n   - **Depth**: 5,267 meters\n   - **Connected Seas**: Atlantic Ocean, Marmara Sea\n\n5. **Stromboli**\n   - **Sea**: Mediterranean Sea\n   - **Area**: 2,500,000 square kilometers\n   - **Depth**: 5,267 meters\n   - **Connected Seas**: Atlantic Ocean, Marmara Sea",
+                        "evaluation": {
+                            "text_to_sql_input": "For each of the islands Syros, Samothraki, Samos, Salina, and Stromboli, identify the sea they are located in, provide the area and depth of that sea, and list all other seas connected to it.",
+                            "user_intention": "For the previously selected Mediterranean islands whose names begin with S and that are associated with neither a lake nor a river, give the area and depth of each island's sea and list every other sea connected to it.",
+                            "recall": 0.6666666666666666,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT DISTINCT I.ISLAND, S.NAME AS SEA, S.AREA, S.DEPTH, CASE WHEN M.SEA1 = S.NAME THEN M.SEA2 ELSE M.SEA1 END AS MERGES_WITH FROM MONDIAL_ISLANDIN I JOIN MONDIAL_SEA S ON I.SEA = S.NAME JOIN MONDIAL_MERGESWITH M ON M.SEA1 = S.NAME OR M.SEA2 = S.NAME WHERE (I.ISLAND, I.SEA) IN (SELECT ISLAND, SEA FROM MONDIAL_ISLANDIN WHERE (ISLAND, SEA) IN (SELECT ISLAND, SEA FROM MONDIAL_ISLANDIN WHERE SEA = 'Mediterranean Sea' AND LAKE IS NULL AND RIVER IS NULL) AND ISLAND LIKE 'S%') ORDER BY I.ISLAND ASC, MERGES_WITH ASC",
+                            "generated_sql": "SELECT       MI.NAME AS ISLAND_NAME,      MS.NAME AS SEA_NAME,      MS.AREA AS SEA_AREA,      MS.DEPTH AS SEA_DEPTH FROM      MONDIAL_GPT.island MI  JOIN      MONDIAL_GPT.geo_island GI ON MI.NAME = GI.ISLAND  JOIN      MONDIAL_GPT.geo_sea GS ON GI.PROVINCE = GS.PROVINCE AND GI.COUNTRY = GS.COUNTRY  JOIN      MONDIAL_GPT.sea MS ON GS.SEA = MS.NAME WHERE      LOWER(MI.NAME) IN ('syros', 'samothraki', 'samos', 'salina', 'stromboli')",
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "alignment_and_correctness_failure",
+                            "execution_time": 39.35102200508118,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "35",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:44:28.906243",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Find airports identified with the Czech Republic country code that are at least 500 meters above sea level, and list their names, IATA codes, and elevations from highest to lowest.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which airports in the Czech Republic have an elevation of at least 500 meters? List their IATA codes and elevations, highest first.",
+                        "agent_reply": "The airport in the Czech Republic with an elevation of at least 500 meters is **Karlovy Vary Airport (KLV)**, which has an elevation of **606 meters**.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which airports in the Czech Republic have an elevation of at least 500 meters? List their IATA codes and elevations, sorted by elevation in descending order.",
+                            "user_intention": "Find airports identified with the Czech Republic country code that are at least 500 meters above sea level, and list their names, IATA codes, and elevations from highest to lowest.",
+                            "recall": 1.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT NAME, IATACODE, ELEVATION FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION >= 500 AND IATACODE IS NOT NULL ORDER BY ELEVATION DESC, NAME ASC, IATACODE ASC",
+                            "generated_sql": "SELECT a.iataCode, a.elevation FROM MONDIAL_AIRPORT a JOIN MONDIAL_COUNTRY c ON a.country = c.code WHERE LOWER(c.name) = LOWER('Czech Republic')   AND a.elevation >= 500 ORDER BY a.elevation DESC",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.333862066268921,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For the same previously identified Czech airports at least 500 meters above sea level, give each airport's name and IATA code together with the full name of its country.",
+                "total_retries_needed": 4,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "What is the full country name associated with each of those airports?",
+                        "agent_reply": "The full country name associated with the airport **KLV (Karlovy Vary Airport)** is **Czech Republic**.",
+                        "evaluation": {
+                            "text_to_sql_input": "What is the full country name associated with the airport having the IATA code 'KLV'?",
+                            "user_intention": "For the same previously identified Czech airports at least 500 meters above sea level, give each airport's name and IATA code together with the full name of its country.",
+                            "recall": 1.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT A.NAME, A.IATACODE, C.NAME AS COUNTRY_NAME FROM MONDIAL_AIRPORT A JOIN MONDIAL_COUNTRY C ON A.COUNTRY = C.CODE WHERE (A.IATACODE, A.COUNTRY) IN (SELECT A2.IATACODE, A2.COUNTRY FROM MONDIAL_AIRPORT A2 WHERE (A2.IATACODE, A2.COUNTRY) IN (SELECT IATACODE, COUNTRY FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION >= 500 AND IATACODE IS NOT NULL)) ORDER BY A.NAME ASC, A.IATACODE ASC",
+                            "generated_sql": "SELECT C.name AS country_name FROM MONDIAL_AIRPORT A JOIN MONDIAL_COUNTRY C ON A.country = C.code WHERE A.iataCode = 'KLV'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 7.675318002700806,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "Yes, that\u2019s correct: **Karlovy Vary Airport (KLV) \u2014 Czech Republic**.",
+                        "agent_reply": "Great! Let me know if you need any additional details or have further questions about this airport or others.",
+                        "evaluation": {
+                            "text_to_sql_input": "response",
+                            "user_intention": "For the same previously identified Czech airports at least 500 meters above sea level, give each airport's name and IATA code together with the full name of its country.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT A.NAME, A.IATACODE, C.NAME AS COUNTRY_NAME FROM MONDIAL_AIRPORT A JOIN MONDIAL_COUNTRY C ON A.COUNTRY = C.CODE WHERE (A.IATACODE, A.COUNTRY) IN (SELECT A2.IATACODE, A2.COUNTRY FROM MONDIAL_AIRPORT A2 WHERE (A2.IATACODE, A2.COUNTRY) IN (SELECT IATACODE, COUNTRY FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION >= 500 AND IATACODE IS NOT NULL)) ORDER BY A.NAME ASC, A.IATACODE ASC",
+                            "generated_sql": "",
+                            "is_retry": true,
+                            "retry_count": 2,
+                            "retry_reason": "json_decode_error",
+                            "execution_time": 15.114273071289062,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "36",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:44:56.909827",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "37",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:45:19.234628",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the Japanese provinces bordering the Sea of Japan together with the sea's area and depth.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which Japanese provinces border the Sea of Japan, and what are that sea's area and depth?",
+                        "agent_reply": "The following Japanese provinces border the Sea of Japan: Akita, Aomori, Fukui, Fukuoka, Hokkaido, Hyogo, Ishikawa, Kyoto, Nagasaki, Niigata, Saga, Shimane, Tottori, Toyama, Yamagata, and Yamaguchi. The Sea of Japan has an area of **978,000 square kilometers** and a maximum depth of **4,036 meters**.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which provinces in Japan border the Sea of Japan, and what are the area and depth of the Sea of Japan?",
+                            "user_intention": "List the Japanese provinces bordering the Sea of Japan together with the sea's area and depth.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT G.PROVINCE, S.NAME, S.AREA, S.DEPTH FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME WHERE G.COUNTRY = 'J' AND G.SEA = 'Sea of Japan' ORDER BY G.PROVINCE ASC",
+                            "generated_sql": "SELECT  p.name AS province_name, s.area AS sea_area, s.depth AS sea_depth FROM mondial_gpt.province p JOIN mondial_gpt.geo_sea gs ON p.name = gs.province AND p.country = gs.country JOIN mondial_gpt.sea s ON gs.sea = s.name WHERE LOWER(p.country) = 'j' AND LOWER(gs.sea) = 'sea of japan' ORDER BY p.name",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.717756986618042,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "For the Japanese province and Sea of Japan combinations identified previously, list cities in the same province and country that are located on that same sea.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which cities in those province-and-sea combinations are also located on the same sea?",
+                        "agent_reply": "The following cities in Japanese provinces bordering the Sea of Japan are also located on or near it: Matsue, Hakodate, Himeji, Akita, Amagasaki, Kanazawa, Kitakyushu, Kobe, Kyoto, Saga, Fukui, Fukuoka, Nagasaki, Niigata, Nishinomiya, Yamagata, Yamaguchi, Sapporo, Tottori, Toyama, Aomori, and Asahikawa.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which cities in the Japanese provinces bordering the Sea of Japan are also located on or near the Sea of Japan?",
+                            "user_intention": "For the Japanese province and Sea of Japan combinations identified previously, list cities in the same province and country that are located on that same sea.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT L.CITY, L.PROVINCE, L.COUNTRY, L.SEA FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME JOIN MONDIAL_LOCATED L ON L.SEA = S.NAME AND L.COUNTRY = G.COUNTRY AND L.PROVINCE = G.PROVINCE WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT G1.SEA, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_SEA G1 JOIN MONDIAL_SEA S1 ON G1.SEA = S1.NAME WHERE G1.COUNTRY = 'J' AND G1.SEA = 'Sea of Japan') ORDER BY L.CITY ASC, L.PROVINCE ASC",
+                            "generated_sql": "SELECT  c.name AS city_name, c.province, c.country  FROM mondial_gpt.city c  JOIN mondial_gpt.province p ON c.province = p.name AND c.country = p.country  JOIN mondial_gpt.geo_sea gs ON c.province = gs.province AND c.country = gs.country  WHERE LOWER(gs.sea) = 'sea of japan'  AND LOWER(p.country) = 'j'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.063340902328491,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "List islands lying in exactly the seas associated with the cities from the previously selected Japanese province and Sea of Japan combinations.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which islands lie in the seas associated with those cities?",
+                        "agent_reply": "The islands associated with the Sea of Japan or located near cities along its coast in Japan are **Hokkaido, Honshu, Kyushu, and Sakhalin (Sachalin)**.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which islands lie in the Sea of Japan or are associated with cities located on or near the Sea of Japan in Japan?",
+                            "user_intention": "List islands lying in exactly the seas associated with the cities from the previously selected Japanese province and Sea of Japan combinations.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT I.ISLAND, I.SEA FROM MONDIAL_ISLANDIN I JOIN MONDIAL_SEA S ON I.SEA = S.NAME WHERE (I.SEA) IN (SELECT L.SEA FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S2 ON G.SEA = S2.NAME JOIN MONDIAL_LOCATED L ON L.SEA = S2.NAME AND L.COUNTRY = G.COUNTRY AND L.PROVINCE = G.PROVINCE WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT G1.SEA, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_SEA G1 JOIN MONDIAL_SEA S1 ON G1.SEA = S1.NAME WHERE G1.COUNTRY = 'J' AND G1.SEA = 'Sea of Japan')) ORDER BY I.ISLAND ASC, I.SEA ASC",
+                            "generated_sql": "SELECT  i.name AS island_name  FROM mondial_gpt.island i  JOIN mondial_gpt.islandin ii ON i.name = ii.island  JOIN mondial_gpt.sea s ON ii.sea = s.name  WHERE LOWER(s.name) = LOWER('Sea of Japan')   UNION   SELECT  i.name AS island_name  FROM mondial_gpt.island i  JOIN mondial_gpt.geo_island gi ON i.name = gi.island  JOIN mondial_gpt.country c ON gi.country = c.code  JOIN mondial_gpt.city cl ON gi.province = cl.province AND gi.country = cl.country  JOIN mondial_gpt.located l ON cl.name = l.city AND cl.province = l.province AND cl.country = l.country  JOIN mondial_gpt.sea s ON l.sea = s.name  WHERE LOWER(c.name) = LOWER('Japan') AND LOWER(s.name) = LOWER('Sea of Japan')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 13.09380292892456,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "38",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:45:53.114739",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "39",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:46:10.673358",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "40",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:46:25.118253",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "41",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:46:55.277894",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "42",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:47:19.420438",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "43",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:47:49.748523",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "44",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:48:07.983315",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Identify the countries whose membership in CD is classified as signatory.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which countries are listed as signatory members of CD?",
+                        "agent_reply": "There are no countries listed as signatory members of the organization with the abbreviation 'CD' in the database.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which countries are listed as signatory members of the organization with the abbreviation 'CD'?",
+                            "user_intention": "Identify the countries whose membership in CD is classified as signatory.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT MONDIAL_ISMEMBER.COUNTRY, MONDIAL_ISMEMBER.ORGANIZATION, MONDIAL_ISMEMBER.TYPE FROM MONDIAL_ISMEMBER WHERE MONDIAL_ISMEMBER.ORGANIZATION = 'CD' AND MONDIAL_ISMEMBER.TYPE = 'signatory' ORDER BY MONDIAL_ISMEMBER.COUNTRY ASC",
+                            "generated_sql": "SELECT c.NAME AS country_name FROM MONDIAL_COUNTRY c JOIN MONDIAL_ISMEMBER i ON c.CODE = i.COUNTRY JOIN MONDIAL_ORGANIZATION o ON i.ORGANIZATION = o.ABBREVIATION WHERE LOWER(o.ABBREVIATION) = LOWER('CD') AND LOWER(i.TYPE) = 'member'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 8.797908067703247,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "For exactly the CD signatory memberships identified previously, provide the full name and host city of the corresponding organization.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "For those memberships, what is the organization's full name and host city?",
+                        "agent_reply": "There is no organization with the abbreviation 'CD' that has member countries listed in the database. Thus, no full name or host city could be retrieved.",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve the full name and host city of the organization with the abbreviation 'CD' that has member countries.",
+                            "user_intention": "For exactly the CD signatory memberships identified previously, provide the full name and host city of the corresponding organization.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT M.COUNTRY, O.NAME AS ORGANIZATION_NAME, O.CITY AS HOST_CITY FROM MONDIAL_ISMEMBER M JOIN MONDIAL_ORGANIZATION O ON M.ORGANIZATION = O.ABBREVIATION WHERE (M.COUNTRY, M.ORGANIZATION, M.TYPE) IN (SELECT COUNTRY, ORGANIZATION, TYPE FROM MONDIAL_ISMEMBER WHERE ORGANIZATION = 'CD' AND TYPE = 'signatory') ORDER BY M.COUNTRY ASC, O.NAME ASC, O.CITY ASC",
+                            "generated_sql": "SELECT o.NAME AS organization_name, c.NAME AS host_city, c.PROVINCE AS host_province, co.NAME AS country_name FROM MONDIAL_ORGANIZATION o JOIN MONDIAL_CITY c ON o.CITY = c.NAME AND o.COUNTRY = c.COUNTRY AND o.PROVINCE = c.PROVINCE JOIN MONDIAL_COUNTRY co ON o.COUNTRY = co.CODE WHERE o.ABBREVIATION = 'CD' AND EXISTS (     SELECT 1     FROM MONDIAL_ISMEMBER im     WHERE im.ORGANIZATION = o.ABBREVIATION )",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 10.69732928276062,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For exactly the organizations associated with the previously identified CD signatory memberships, return any alternate names recorded for their host provinces.",
+                "total_retries_needed": 4,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "Do the host provinces of these organizations have any alternate names?",
+                        "agent_reply": "Since there are no organizations with the abbreviation 'CD' or their associated member countries in the database, there are no host provinces to check for alternate names. If you have another query or need information about a different organization, feel free to ask!",
+                        "evaluation": {
+                            "text_to_sql_input": "feedback",
+                            "user_intention": "For exactly the organizations associated with the previously identified CD signatory memberships, return any alternate names recorded for their host provinces.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT M.COUNTRY, O.NAME AS ORGANIZATION_NAME, P.NAME AS HOST_PROVINCE, PN.OTHERNAME FROM MONDIAL_ISMEMBER M JOIN MONDIAL_ORGANIZATION O ON M.ORGANIZATION = O.ABBREVIATION JOIN MONDIAL_PROVINCE P ON O.PROVINCE = P.NAME AND O.COUNTRY = P.COUNTRY JOIN MONDIAL_PROVINCEOTHERNAME PN ON PN.PROVINCE = P.NAME AND PN.COUNTRY = P.COUNTRY WHERE (M.COUNTRY, M.ORGANIZATION, M.TYPE) IN (SELECT M2.COUNTRY, M2.ORGANIZATION, M2.TYPE FROM MONDIAL_ISMEMBER M2 JOIN MONDIAL_ORGANIZATION O2 ON M2.ORGANIZATION = O2.ABBREVIATION WHERE (M2.COUNTRY, M2.ORGANIZATION, M2.TYPE) IN (SELECT COUNTRY, ORGANIZATION, TYPE FROM MONDIAL_ISMEMBER WHERE ORGANIZATION = 'CD' AND TYPE = 'signatory')) ORDER BY M.COUNTRY ASC, O.NAME ASC, P.NAME ASC, PN.OTHERNAME ASC",
+                            "generated_sql": "",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 1.941234827041626,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "I think you misunderstood me. For the organizations associated with the previously identified CD signatory memberships, return any alternate names recorded for their host provinces.",
+                        "agent_reply": "There was an issue retrieving the alternate names for provinces associated with organizations having the abbreviation 'CD'. Since no organization with the abbreviation 'CD' exists in the database, no alternate province names could be found. If you have another query or need further assistance, let me know!",
+                        "evaluation": {
+                            "text_to_sql_input": "Retrieve alternate names for provinces where organizations with the abbreviation 'CD' are located, if any exist.",
+                            "user_intention": "For exactly the organizations associated with the previously identified CD signatory memberships, return any alternate names recorded for their host provinces.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT M.COUNTRY, O.NAME AS ORGANIZATION_NAME, P.NAME AS HOST_PROVINCE, PN.OTHERNAME FROM MONDIAL_ISMEMBER M JOIN MONDIAL_ORGANIZATION O ON M.ORGANIZATION = O.ABBREVIATION JOIN MONDIAL_PROVINCE P ON O.PROVINCE = P.NAME AND O.COUNTRY = P.COUNTRY JOIN MONDIAL_PROVINCEOTHERNAME PN ON PN.PROVINCE = P.NAME AND PN.COUNTRY = P.COUNTRY WHERE (M.COUNTRY, M.ORGANIZATION, M.TYPE) IN (SELECT M2.COUNTRY, M2.ORGANIZATION, M2.TYPE FROM MONDIAL_ISMEMBER M2 JOIN MONDIAL_ORGANIZATION O2 ON M2.ORGANIZATION = O2.ABBREVIATION WHERE (M2.COUNTRY, M2.ORGANIZATION, M2.TYPE) IN (SELECT COUNTRY, ORGANIZATION, TYPE FROM MONDIAL_ISMEMBER WHERE ORGANIZATION = 'CD' AND TYPE = 'signatory')) ORDER BY M.COUNTRY ASC, O.NAME ASC, P.NAME ASC, PN.OTHERNAME ASC",
+                            "generated_sql": "SELECT p.OTHERNAME, p.NAME AS province_name, co.NAME AS country_name FROM MONDIAL_PROVINCE p JOIN MONDIAL_PROVINCEOTHERNAME pn ON p.NAME = pn.PROVINCE AND p.COUNTRY = pn.COUNTRY JOIN MONDIAL_ORGANIZATION o ON p.NAME = o.PROVINCE AND p.COUNTRY = o.COUNTRY WHERE LOWER(o.ABBREVIATION) = 'cd'",
+                            "needs_feedback": true,
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 17.512871742248535,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 2
+                    },
+                    {
+                        "user_query": "You misunderstood \u201cCD\u201d as an organization abbreviation. Treat CD as the country code: find CD\u2019s memberships whose type is \u201csignatory,\u201d identify those organizations, and return any alternate names recorded for each organization\u2019s host province.",
+                        "agent_reply": "There are no organizations where the country with code 'CD' is listed as a signatory member, or no alternate names for their host provinces exist in the database.",
+                        "evaluation": {
+                            "text_to_sql_input": "Find organizations where the country with code 'CD' is a signatory member, and return the alternate names for their host provinces, if any exist.",
+                            "user_intention": "For exactly the organizations associated with the previously identified CD signatory memberships, return any alternate names recorded for their host provinces.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT M.COUNTRY, O.NAME AS ORGANIZATION_NAME, P.NAME AS HOST_PROVINCE, PN.OTHERNAME FROM MONDIAL_ISMEMBER M JOIN MONDIAL_ORGANIZATION O ON M.ORGANIZATION = O.ABBREVIATION JOIN MONDIAL_PROVINCE P ON O.PROVINCE = P.NAME AND O.COUNTRY = P.COUNTRY JOIN MONDIAL_PROVINCEOTHERNAME PN ON PN.PROVINCE = P.NAME AND PN.COUNTRY = P.COUNTRY WHERE (M.COUNTRY, M.ORGANIZATION, M.TYPE) IN (SELECT M2.COUNTRY, M2.ORGANIZATION, M2.TYPE FROM MONDIAL_ISMEMBER M2 JOIN MONDIAL_ORGANIZATION O2 ON M2.ORGANIZATION = O2.ABBREVIATION WHERE (M2.COUNTRY, M2.ORGANIZATION, M2.TYPE) IN (SELECT COUNTRY, ORGANIZATION, TYPE FROM MONDIAL_ISMEMBER WHERE ORGANIZATION = 'CD' AND TYPE = 'signatory')) ORDER BY M.COUNTRY ASC, O.NAME ASC, P.NAME ASC, PN.OTHERNAME ASC",
+                            "generated_sql": "SELECT po.OTHERNAME AS alternate_province_name, o.ABBREVIATION AS organization_abbreviation, o.NAME AS organization_name FROM MONDIAL_ISMEMBER im JOIN MONDIAL_ORGANIZATION o ON im.ORGANIZATION = o.ABBREVIATION JOIN MONDIAL_PROVINCEOTHERNAME po ON o.PROVINCE = po.PROVINCE AND o.COUNTRY = po.COUNTRY WHERE im.COUNTRY = 'CD'",
+                            "is_retry": true,
+                            "retry_count": 2,
+                            "retry_reason": "feedback_needed",
+                            "execution_time": 34.54168772697449,
+                            "query_complexity": "complexa"
+                        },
+                        "turn_id": 3
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "45",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:49:13.502306",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "Identify the rivers whose estuaries are located in the German state of Sachsen-Anhalt.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which rivers have estuaries in Sachsen-Anhalt, Germany?",
+                        "agent_reply": "The rivers with estuaries in Sachsen-Anhalt, Germany are the **Havel**, **Mulde**, and **Saale**.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which rivers have estuaries located in Sachsen-Anhalt, Germany?",
+                            "user_intention": "Identify the rivers whose estuaries are located in the German state of Sachsen-Anhalt.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'D' AND PROVINCE = 'Sachsen-Anhalt' ORDER BY RIVER ASC",
+                            "generated_sql": "SELECT r.name AS river_name FROM mondial_gpt.river r JOIN mondial_gpt.geo_estuary ge ON r.name = ge.river JOIN mondial_gpt.province p ON ge.province = p.name AND ge.country = p.country JOIN mondial_gpt.country c ON p.country = c.code WHERE LOWER(p.name) = LOWER('Sachsen-Anhalt') AND LOWER(c.name) = LOWER('Germany')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 9.427473783493042,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "experiment_id": "46",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:49:35.516114",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "47",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:49:52.749016",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "48",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:50:33.116843",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "49",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:51:03.219582",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": []
+    },
+    {
+        "experiment_id": "50",
+        "experiment_config": {
+            "max_retries": 2,
+            "model_version": "default",
+            "timestamp": "2026-08-11T12:51:16.394292",
+            "experiment_type": "standard"
+        },
+        "experiment_eval": [
+            {
+                "interaction_id": 1,
+                "original_intent": "List the rivers whose sources are in Sudan, together with their source provinces.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Which river sources are in Sudan, and what provinces are they in?",
+                        "agent_reply": "The river source located in Sudan is the **Nile**. It is associated with the country itself, as no specific province is listed in the data for this source.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which river sources are located in Sudan, and what provinces are they associated with?",
+                            "user_intention": "List the rivers whose sources are in Sudan, together with their source provinces.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD' ORDER BY RIVER ASC, PROVINCE ASC",
+                            "generated_sql": "SELECT gsr.river, gsr.province, c.name AS country_name FROM MONDIAL_GEO_SOURCE gsr JOIN MONDIAL_COUNTRY c ON gsr.country = c.code WHERE LOWER(c.name) = LOWER('Sudan')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.3648388385772705,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 2,
+                "original_intent": "Among the river sources in Sudan identified previously, list those whose source province begins with the letter S.",
+                "total_retries_needed": 0,
+                "success_without_retry": true,
+                "turns": [
+                    {
+                        "user_query": "Of those, which source records have a province name beginning with S?",
+                        "agent_reply": "There are no river sources in Sudan with a province name beginning with 'S'.",
+                        "evaluation": {
+                            "text_to_sql_input": "Which river sources in Sudan have a province name beginning with 'S'?",
+                            "user_intention": "Among the river sources in Sudan identified previously, list those whose source province begins with the letter S.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": false,
+                            "expected_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE (RIVER, COUNTRY, PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD') AND PROVINCE LIKE 'S%' ORDER BY RIVER ASC, PROVINCE ASC",
+                            "generated_sql": "SELECT r.name AS river_name, gs.province AS province_name, gs.country AS country_code, c.name AS country_name FROM MONDIAL_RIVER r JOIN MONDIAL_GEO_SOURCE gs ON r.name = gs.river JOIN MONDIAL_COUNTRY c ON gs.country = c.code WHERE gs.country = 'SD' AND LOWER(gs.province) LIKE 's%'",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.033367872238159,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    }
+                ]
+            },
+            {
+                "interaction_id": 3,
+                "original_intent": "For the previously selected rivers with sources in Sudan and province names beginning with S, give each river's length and source elevation.",
+                "total_retries_needed": 2,
+                "success_without_retry": false,
+                "turns": [
+                    {
+                        "user_query": "What are the lengths and source elevations of those rivers?",
+                        "agent_reply": "The **Nile** river, which is sourced in Sudan, has a length of **3,090 kilometers** and a source elevation of **370 meters**.",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the lengths and source elevations of the rivers sourced in Sudan?",
+                            "user_intention": "For the previously selected rivers with sources in Sudan and province names beginning with S, give each river's length and source elevation.",
+                            "recall": 0.0,
+                            "alignment": false,
+                            "correctness": false,
+                            "expected_sql": "SELECT R.NAME, R.LENGTH, R.SOURCEELEVATION FROM MONDIAL_GEO_SOURCE G JOIN MONDIAL_RIVER R ON G.RIVER = R.NAME WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE (RIVER, COUNTRY, PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD') AND PROVINCE LIKE 'S%') ORDER BY R.NAME ASC",
+                            "generated_sql": "SELECT r.name AS river_name, r.length AS river_length, r.sourceelevation AS source_elevation FROM MONDIAL_RIVER r JOIN MONDIAL_GEO_SOURCE gs ON r.name = gs.river JOIN MONDIAL_COUNTRY c ON gs.country = c.code WHERE LOWER(c.name) = LOWER('Sudan')",
+                            "is_retry": false,
+                            "retry_count": 0,
+                            "retry_reason": null,
+                            "execution_time": 7.656327962875366,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 1
+                    },
+                    {
+                        "user_query": "I think you misunderstood me. I was asking for the length and source elevation of only the previously selected rivers whose source records are in Sudan and have province names beginning with \u201cS,\u201d not all rivers sourced in Sudan.",
+                        "agent_reply": "There are no rivers sourced in Sudan with a province name beginning with 'S' in the database. Thus, no length or source elevation data is available for such rivers.",
+                        "evaluation": {
+                            "text_to_sql_input": "What are the lengths and source elevations of rivers sourced in Sudan where the province name begins with 'S'?",
+                            "user_intention": "For the previously selected rivers with sources in Sudan and province names beginning with S, give each river's length and source elevation.",
+                            "recall": 0.0,
+                            "alignment": true,
+                            "correctness": true,
+                            "expected_sql": "SELECT R.NAME, R.LENGTH, R.SOURCEELEVATION FROM MONDIAL_GEO_SOURCE G JOIN MONDIAL_RIVER R ON G.RIVER = R.NAME WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE (RIVER, COUNTRY, PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD') AND PROVINCE LIKE 'S%') ORDER BY R.NAME ASC",
+                            "generated_sql": "SELECT MR.name AS river_name, MR.length AS river_length, MR.sourceelevation AS source_elevation FROM MONDIAL_RIVER MR JOIN MONDIAL_GEO_SOURCE GS ON MR.name = GS.river JOIN MONDIAL_PROVINCE P ON GS.province = P.name AND GS.country = P.country WHERE GS.country = 'SUD' AND P.name LIKE 'S%'",
+                            "is_retry": true,
+                            "retry_count": 1,
+                            "retry_reason": "alignment_and_correctness_failure",
+                            "execution_time": 18.479353189468384,
+                            "query_complexity": "m\u00e9dia"
+                        },
+                        "turn_id": 2
+                    }
+                ]
+            }
+        ]
+    }
+]
