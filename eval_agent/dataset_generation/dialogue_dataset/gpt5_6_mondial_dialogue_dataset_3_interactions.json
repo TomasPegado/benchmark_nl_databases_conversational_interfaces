@@ -1,0 +1,2301 @@
+{
+  "dataset": [
+    {
+      "experiment_id": "1",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which mountains recorded in India have matching mountain details, and what are their elevations?",
+          "intention": "List the mountains recorded in India that have corresponding mountain details, together with their elevations.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_mountain"
+            ],
+            "golden_sql": "SELECT GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE, M.ELEVATION FROM MONDIAL_GEO_MOUNTAIN GM JOIN MONDIAL_MOUNTAIN M ON GM.MOUNTAIN = M.NAME WHERE GM.COUNTRY = 'IND' ORDER BY GM.MOUNTAIN ASC, GM.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which islands, if any, are those mountains located on?",
+          "intention": "For exactly the previously identified mountains recorded in India with corresponding mountain details, list the islands on which they are located.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_mountain",
+              "mondial_mountainonisland"
+            ],
+            "golden_sql": "SELECT GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE, MI.ISLAND FROM MONDIAL_GEO_MOUNTAIN GM JOIN MONDIAL_MOUNTAIN M ON GM.MOUNTAIN = M.NAME JOIN MONDIAL_MOUNTAINONISLAND MI ON M.NAME = MI.MOUNTAIN WHERE (GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE) IN (SELECT GM1.MOUNTAIN, GM1.COUNTRY, GM1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM1 JOIN MONDIAL_MOUNTAIN M1 ON GM1.MOUNTAIN = M1.NAME WHERE GM1.COUNTRY = 'IND') ORDER BY GM.MOUNTAIN ASC, GM.PROVINCE ASC, MI.ISLAND ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those mountain-island matches, what mountain range and type are recorded?",
+          "intention": "For exactly the previously identified Indian mountain-and-island matches, provide each mountain's recorded mountain range and type.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_mountain",
+              "mondial_mountainonisland"
+            ],
+            "golden_sql": "SELECT GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE, MI.ISLAND, M.MOUNTAINS, M.TYPE FROM MONDIAL_GEO_MOUNTAIN GM JOIN MONDIAL_MOUNTAIN M ON GM.MOUNTAIN = M.NAME JOIN MONDIAL_MOUNTAINONISLAND MI ON M.NAME = MI.MOUNTAIN WHERE (GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE, MI.ISLAND) IN (SELECT GM2.MOUNTAIN, GM2.COUNTRY, GM2.PROVINCE, MI2.ISLAND FROM MONDIAL_GEO_MOUNTAIN GM2 JOIN MONDIAL_MOUNTAIN M2 ON GM2.MOUNTAIN = M2.NAME JOIN MONDIAL_MOUNTAINONISLAND MI2 ON M2.NAME = MI2.MOUNTAIN WHERE (GM2.MOUNTAIN, GM2.COUNTRY, GM2.PROVINCE) IN (SELECT GM1.MOUNTAIN, GM1.COUNTRY, GM1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM1 JOIN MONDIAL_MOUNTAIN M1 ON GM1.MOUNTAIN = M1.NAME WHERE GM1.COUNTRY = 'IND')) ORDER BY GM.MOUNTAIN ASC, GM.PROVINCE ASC, MI.ISLAND ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "2",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which river estuaries are recorded in Sachsen-Anhalt?",
+          "intention": "List the river estuary records located in Sachsen-Anhalt, including each river, country code, and province.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary"
+            ],
+            "golden_sql": "SELECT MONDIAL_GEO_ESTUARY.RIVER, MONDIAL_GEO_ESTUARY.COUNTRY, MONDIAL_GEO_ESTUARY.PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE MONDIAL_GEO_ESTUARY.PROVINCE = 'Sachsen-Anhalt' ORDER BY MONDIAL_GEO_ESTUARY.RIVER ASC, MONDIAL_GEO_ESTUARY.COUNTRY ASC, MONDIAL_GEO_ESTUARY.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those estuaries, show the same details ordered first by country code and then by river.",
+          "intention": "Show the river, country code, and province for exactly the previously identified Sachsen-Anhalt estuary records, ordered by country code and then river name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary"
+            ],
+            "golden_sql": "SELECT MONDIAL_GEO_ESTUARY.RIVER, MONDIAL_GEO_ESTUARY.COUNTRY, MONDIAL_GEO_ESTUARY.PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE (MONDIAL_GEO_ESTUARY.RIVER, MONDIAL_GEO_ESTUARY.COUNTRY, MONDIAL_GEO_ESTUARY.PROVINCE) IN (SELECT G1.RIVER, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_ESTUARY G1 WHERE G1.PROVINCE = 'Sachsen-Anhalt') ORDER BY MONDIAL_GEO_ESTUARY.COUNTRY ASC, MONDIAL_GEO_ESTUARY.RIVER ASC, MONDIAL_GEO_ESTUARY.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which lakes do those rivers flow through?",
+          "intention": "List the lakes traversed by exactly the rivers in the previously ordered set of Sachsen-Anhalt estuary records.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary",
+              "mondial_river",
+              "mondial_riverthrough"
+            ],
+            "golden_sql": "SELECT G.RIVER, RT.LAKE FROM MONDIAL_GEO_ESTUARY G JOIN MONDIAL_RIVER R ON G.RIVER = R.NAME JOIN MONDIAL_RIVERTHROUGH RT ON RT.RIVER = R.NAME WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT G2.RIVER, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_ESTUARY G2 WHERE (G2.RIVER, G2.COUNTRY, G2.PROVINCE) IN (SELECT G1.RIVER, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_ESTUARY G1 WHERE G1.PROVINCE = 'Sachsen-Anhalt')) ORDER BY G.RIVER ASC, RT.LAKE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "3",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which airports serve cities with populations above one million, and what are those city populations?",
+          "intention": "List the airports serving cities whose populations exceed one million, together with each city's population.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT A.NAME AS AIRPORT_NAME, A.IATACODE, C.NAME AS CITY_NAME, C.POPULATION FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME AND A.COUNTRY = C.COUNTRY AND A.PROVINCE = C.PROVINCE WHERE C.POPULATION > 1000000 ORDER BY A.NAME ASC, A.IATACODE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those airports, which ones are located on an island, and what are the island's area and type?",
+          "intention": "Among the airports serving cities with populations above one million, list those located on an island and give that island's area and type.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_ISLAND",
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT A.NAME AS AIRPORT_NAME, A.IATACODE, I.NAME AS ISLAND_NAME, I.AREA, I.TYPE FROM MONDIAL_AIRPORT A JOIN MONDIAL_ISLAND I ON A.ISLAND = I.NAME WHERE (A.NAME, A.IATACODE, A.COUNTRY, A.CITY, A.PROVINCE) IN (SELECT A1.NAME, A1.IATACODE, A1.COUNTRY, A1.CITY, A1.PROVINCE FROM MONDIAL_AIRPORT A1 JOIN MONDIAL_CITY C1 ON A1.CITY = C1.NAME AND A1.COUNTRY = C1.COUNTRY AND A1.PROVINCE = C1.PROVINCE WHERE C1.POPULATION > 1000000) ORDER BY I.NAME ASC, A.NAME ASC, A.IATACODE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those island airports, how does each airport's elevation compare with the elevation of the city it serves?",
+          "intention": "For exactly the island airports serving cities with populations above one million, show each airport's elevation alongside the elevation of its city.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_CITY",
+              "MONDIAL_ISLAND"
+            ],
+            "golden_sql": "SELECT A.NAME AS AIRPORT_NAME, A.IATACODE, A.ELEVATION AS AIRPORT_ELEVATION, C.NAME AS CITY_NAME, C.ELEVATION AS CITY_ELEVATION FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME AND A.COUNTRY = C.COUNTRY AND A.PROVINCE = C.PROVINCE WHERE (A.NAME, A.IATACODE, A.COUNTRY, A.CITY, A.PROVINCE) IN (SELECT A2.NAME, A2.IATACODE, A2.COUNTRY, A2.CITY, A2.PROVINCE FROM MONDIAL_AIRPORT A2 JOIN MONDIAL_ISLAND I2 ON A2.ISLAND = I2.NAME WHERE (A2.NAME, A2.IATACODE, A2.COUNTRY, A2.CITY, A2.PROVINCE) IN (SELECT A1.NAME, A1.IATACODE, A1.COUNTRY, A1.CITY, A1.PROVINCE FROM MONDIAL_AIRPORT A1 JOIN MONDIAL_CITY C1 ON A1.CITY = C1.NAME AND A1.COUNTRY = C1.COUNTRY AND A1.PROVINCE = C1.PROVINCE WHERE C1.POPULATION > 1000000)) ORDER BY A.NAME ASC, A.IATACODE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "4",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers have estuaries in Sachsen-Anhalt, Germany, and what are their lengths?",
+          "intention": "List the rivers whose estuaries are in Sachsen-Anhalt, Germany, together with each river's length.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary",
+              "mondial_river"
+            ],
+            "golden_sql": "SELECT E.RIVER, E.COUNTRY, E.PROVINCE, R.LENGTH FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME WHERE E.COUNTRY = 'D' AND E.PROVINCE = 'Sachsen-Anhalt' ORDER BY E.RIVER ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those, keep only the rivers at least 100 kilometers long and sort them from longest to shortest.",
+          "intention": "Among the rivers whose estuaries are in Sachsen-Anhalt, Germany, list only those at least 100 kilometers long, ordered from longest to shortest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary",
+              "mondial_river"
+            ],
+            "golden_sql": "SELECT E.RIVER, E.COUNTRY, E.PROVINCE, R.LENGTH FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT E1.RIVER, E1.COUNTRY, E1.PROVINCE FROM MONDIAL_GEO_ESTUARY E1 JOIN MONDIAL_RIVER R1 ON E1.RIVER = R1.NAME WHERE E1.COUNTRY = 'D' AND E1.PROVINCE = 'Sachsen-Anhalt') AND R.LENGTH >= 100 ORDER BY R.LENGTH DESC, E.RIVER ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Through which countries and provinces do those longer rivers flow?",
+          "intention": "For the previously selected rivers with estuaries in Sachsen-Anhalt, Germany, and lengths of at least 100 kilometers, list the countries and provinces through which they flow.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary",
+              "mondial_river",
+              "mondial_geo_river"
+            ],
+            "golden_sql": "SELECT E.RIVER, GR.COUNTRY, GR.PROVINCE FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME JOIN MONDIAL_GEO_RIVER GR ON GR.RIVER = R.NAME WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT E1.RIVER, E1.COUNTRY, E1.PROVINCE FROM MONDIAL_GEO_ESTUARY E1 JOIN MONDIAL_RIVER R1 ON E1.RIVER = R1.NAME WHERE (E1.RIVER, E1.COUNTRY, E1.PROVINCE) IN (SELECT E2.RIVER, E2.COUNTRY, E2.PROVINCE FROM MONDIAL_GEO_ESTUARY E2 JOIN MONDIAL_RIVER R2 ON E2.RIVER = R2.NAME WHERE E2.COUNTRY = 'D' AND E2.PROVINCE = 'Sachsen-Anhalt') AND R1.LENGTH >= 100) ORDER BY E.RIVER ASC, GR.COUNTRY ASC, GR.PROVINCE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "5",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which Chinese lakes with a recorded area are linked to a city? Show each lake's country, province, area, and associated city.",
+          "intention": "List Chinese lakes that have a recorded area and are associated with a city, including each lake's country, province, area, and city.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE",
+              "MONDIAL_LOCATED"
+            ],
+            "golden_sql": "SELECT G.LAKE, G.COUNTRY, G.PROVINCE, L.AREA, O.CITY FROM MONDIAL_GEO_LAKE G JOIN MONDIAL_LAKE L ON G.LAKE = L.NAME JOIN MONDIAL_LOCATED O ON L.NAME = O.LAKE WHERE G.COUNTRY = 'CN' AND L.AREA IS NOT NULL AND O.CITY IS NOT NULL ORDER BY G.LAKE ASC, G.COUNTRY ASC, G.PROVINCE ASC, O.CITY ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those lakes, just list the lake and province, ordered by lake name.",
+          "intention": "For exactly the previously identified Chinese lakes with a recorded area and an associated city, list each lake and its province in ascending lake-name order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE",
+              "MONDIAL_LOCATED"
+            ],
+            "golden_sql": "SELECT G.LAKE, G.PROVINCE FROM MONDIAL_GEO_LAKE G WHERE G.COUNTRY = 'CN' AND (G.LAKE, G.COUNTRY, G.PROVINCE) IN (SELECT G1.LAKE, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME JOIN MONDIAL_LOCATED O1 ON L1.NAME = O1.LAKE WHERE G1.COUNTRY = 'CN' AND L1.AREA IS NOT NULL AND O1.CITY IS NOT NULL) ORDER BY G.LAKE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Now count the non-null country assignments for each of those lakes, ordered by lake name.",
+          "intention": "For exactly the lake-and-province records retained in the preceding result, count the non-null country assignments for each lake and order the results by lake name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE",
+              "MONDIAL_LOCATED"
+            ],
+            "golden_sql": "SELECT G.LAKE, COUNT(G.COUNTRY) FROM MONDIAL_GEO_LAKE G WHERE G.COUNTRY IS NOT NULL AND (G.LAKE, G.COUNTRY, G.PROVINCE) IN (SELECT G2.LAKE, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_LAKE G2 WHERE G2.COUNTRY = 'CN' AND (G2.LAKE, G2.COUNTRY, G2.PROVINCE) IN (SELECT G1.LAKE, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME JOIN MONDIAL_LOCATED O1 ON L1.NAME = O1.LAKE WHERE G1.COUNTRY = 'CN' AND L1.AREA IS NOT NULL AND O1.CITY IS NOT NULL)) GROUP BY G.LAKE ORDER BY G.LAKE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "6",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which cities in Moskovskaya have a population of at least 120,000, ordered from most to least populous?",
+          "intention": "List the cities in Moskovskaya with at least 120,000 residents, ordered by population from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE, MONDIAL_CITY.POPULATION FROM MONDIAL_CITY WHERE MONDIAL_CITY.PROVINCE = 'Moskovskaya' AND MONDIAL_CITY.POPULATION >= 120000 ORDER BY MONDIAL_CITY.POPULATION DESC, MONDIAL_CITY.NAME ASC, MONDIAL_CITY.COUNTRY ASC, MONDIAL_CITY.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which of those cities have alternate names, and what are they?",
+          "intention": "For exactly the previously listed cities in Moskovskaya with at least 120,000 residents, identify those that have alternate names and provide those names.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE, MONDIAL_CITYOTHERNAME.OTHERNAME FROM MONDIAL_CITY JOIN MONDIAL_CITYOTHERNAME ON MONDIAL_CITYOTHERNAME.CITY = MONDIAL_CITY.NAME AND MONDIAL_CITYOTHERNAME.COUNTRY = MONDIAL_CITY.COUNTRY AND MONDIAL_CITYOTHERNAME.PROVINCE = MONDIAL_CITY.PROVINCE WHERE (MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE) IN (SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE FROM MONDIAL_CITY WHERE MONDIAL_CITY.PROVINCE = 'Moskovskaya' AND MONDIAL_CITY.POPULATION >= 120000) ORDER BY MONDIAL_CITY.NAME ASC, MONDIAL_CITY.COUNTRY ASC, MONDIAL_CITY.PROVINCE ASC, MONDIAL_CITYOTHERNAME.OTHERNAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those cities with alternate names, show every recorded population year and value in chronological order.",
+          "intention": "For exactly the previously identified cities that have alternate names, list every available historical population year and population value in chronological order.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME",
+              "MONDIAL_CITYPOPS"
+            ],
+            "golden_sql": "SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE, MONDIAL_CITYPOPS.YEAR, MONDIAL_CITYPOPS.POPULATION FROM MONDIAL_CITY JOIN MONDIAL_CITYPOPS ON MONDIAL_CITYPOPS.CITY = MONDIAL_CITY.NAME AND MONDIAL_CITYPOPS.COUNTRY = MONDIAL_CITY.COUNTRY AND MONDIAL_CITYPOPS.PROVINCE = MONDIAL_CITY.PROVINCE WHERE (MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE) IN (SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE FROM MONDIAL_CITY JOIN MONDIAL_CITYOTHERNAME ON MONDIAL_CITYOTHERNAME.CITY = MONDIAL_CITY.NAME AND MONDIAL_CITYOTHERNAME.COUNTRY = MONDIAL_CITY.COUNTRY AND MONDIAL_CITYOTHERNAME.PROVINCE = MONDIAL_CITY.PROVINCE WHERE (MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE) IN (SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE FROM MONDIAL_CITY WHERE MONDIAL_CITY.PROVINCE = 'Moskovskaya' AND MONDIAL_CITY.POPULATION >= 120000)) ORDER BY MONDIAL_CITY.NAME ASC, MONDIAL_CITY.COUNTRY ASC, MONDIAL_CITY.PROVINCE ASC, MONDIAL_CITYPOPS.YEAR ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "7",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which Swiss river-location records correspond to rivers longer than 100 kilometers, and what are their lengths?",
+          "intention": "Find river-location records in Switzerland for rivers longer than 100 kilometers and report each river's length.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_river",
+              "mondial_river"
+            ],
+            "golden_sql": "SELECT GR.RIVER, GR.COUNTRY, GR.PROVINCE, R.LENGTH FROM MONDIAL_GEO_RIVER GR JOIN MONDIAL_RIVER R ON GR.RIVER = R.NAME WHERE GR.COUNTRY = 'CH' AND R.LENGTH > 100 ORDER BY GR.RIVER ASC, GR.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "From those, keep only the rivers recorded in Aargau and list their river, country, and province alphabetically.",
+          "intention": "Among the previously identified Swiss river-location records for rivers longer than 100 kilometers, return only those recorded in Aargau and list their river, country, and province alphabetically.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_river",
+              "mondial_river"
+            ],
+            "golden_sql": "SELECT GR.RIVER, GR.COUNTRY, GR.PROVINCE FROM MONDIAL_GEO_RIVER GR WHERE (GR.RIVER, GR.COUNTRY, GR.PROVINCE) IN (SELECT GR1.RIVER, GR1.COUNTRY, GR1.PROVINCE FROM MONDIAL_GEO_RIVER GR1 JOIN MONDIAL_RIVER R1 ON GR1.RIVER = R1.NAME WHERE GR1.COUNTRY = 'CH' AND R1.LENGTH > 100) AND GR.PROVINCE = 'Aargau' ORDER BY GR.RIVER ASC, GR.COUNTRY ASC, GR.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those Aargau rivers, where are their sources recorded, and what is each river's source elevation?",
+          "intention": "For the previously retained Aargau river-location records from the set of Swiss rivers longer than 100 kilometers, report each river's recorded source country and province together with its source elevation.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_river",
+              "mondial_river",
+              "mondial_geo_source"
+            ],
+            "golden_sql": "SELECT GR.RIVER, GS.COUNTRY AS SOURCE_COUNTRY, GS.PROVINCE AS SOURCE_PROVINCE, R.SOURCEELEVATION FROM MONDIAL_GEO_RIVER GR JOIN MONDIAL_RIVER R ON GR.RIVER = R.NAME JOIN MONDIAL_GEO_SOURCE GS ON GS.RIVER = R.NAME WHERE (GR.RIVER, GR.COUNTRY, GR.PROVINCE) IN (SELECT GR2.RIVER, GR2.COUNTRY, GR2.PROVINCE FROM MONDIAL_GEO_RIVER GR2 WHERE (GR2.RIVER, GR2.COUNTRY, GR2.PROVINCE) IN (SELECT GR1.RIVER, GR1.COUNTRY, GR1.PROVINCE FROM MONDIAL_GEO_RIVER GR1 JOIN MONDIAL_RIVER R1 ON GR1.RIVER = R1.NAME WHERE GR1.COUNTRY = 'CH' AND R1.LENGTH > 100) AND GR2.PROVINCE = 'Aargau') ORDER BY GR.RIVER ASC, GS.COUNTRY ASC, GS.PROVINCE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "8",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which Japanese provinces border a sea that is more than 2,000 meters deep, and what are that sea's area and depth?",
+          "intention": "Find Japanese provinces bordering seas deeper than 2,000 meters and report each sea's area and depth.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_sea",
+              "mondial_sea"
+            ],
+            "golden_sql": "SELECT G.SEA, G.COUNTRY, G.PROVINCE, S.AREA, S.DEPTH FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME WHERE G.COUNTRY = 'J' AND S.DEPTH > 2000 ORDER BY G.SEA ASC, G.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those province–sea matches, keep only provinces whose names begin with F.",
+          "intention": "From the previously identified Japanese province–sea matches involving seas deeper than 2,000 meters, return only those whose province name begins with F.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_sea",
+              "mondial_sea"
+            ],
+            "golden_sql": "SELECT G.SEA, G.COUNTRY, G.PROVINCE, S.AREA, S.DEPTH FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT G1.SEA, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_SEA G1 JOIN MONDIAL_SEA S1 ON G1.SEA = S1.NAME WHERE G1.COUNTRY = 'J' AND S1.DEPTH > 2000) AND G.PROVINCE LIKE 'F%' ORDER BY G.SEA ASC, G.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which other bodies of water does each sea in that filtered set merge with?",
+          "intention": "For the seas associated with the previously filtered Japanese provinces whose names begin with F and that border seas deeper than 2,000 meters, list the other bodies of water with which each sea merges.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_sea",
+              "mondial_sea",
+              "mondial_mergeswith"
+            ],
+            "golden_sql": "SELECT G.SEA, G.COUNTRY, G.PROVINCE, M.SEA2 FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME JOIN MONDIAL_MERGESWITH M ON M.SEA1 = S.NAME WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT G1.SEA, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_SEA G1 JOIN MONDIAL_SEA S1 ON G1.SEA = S1.NAME WHERE (G1.SEA, G1.COUNTRY, G1.PROVINCE) IN (SELECT G2.SEA, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_SEA G2 JOIN MONDIAL_SEA S2 ON G2.SEA = S2.NAME WHERE G2.COUNTRY = 'J' AND S2.DEPTH > 2000) AND G1.PROVINCE LIKE 'F%') ORDER BY G.SEA ASC, G.PROVINCE ASC, M.SEA2 ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "9",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which cities in Russia's Sankt-Peterburg province have more than one million residents?",
+          "intention": "Find the cities in Russia's Sankt-Peterburg province whose populations exceed one million.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE, MONDIAL_CITY.POPULATION FROM MONDIAL_CITY WHERE MONDIAL_CITY.COUNTRY = 'R' AND MONDIAL_CITY.PROVINCE = 'Sankt-Peterburg' AND MONDIAL_CITY.POPULATION > 1000000 ORDER BY MONDIAL_CITY.NAME ASC, MONDIAL_CITY.COUNTRY ASC, MONDIAL_CITY.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What alternate names are recorded for those cities?",
+          "intention": "List every recorded alternate name for exactly the previously identified cities in Russia's Sankt-Peterburg province with populations above one million.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE, MONDIAL_CITYOTHERNAME.OTHERNAME FROM MONDIAL_CITY JOIN MONDIAL_CITYOTHERNAME ON MONDIAL_CITYOTHERNAME.CITY = MONDIAL_CITY.NAME AND MONDIAL_CITYOTHERNAME.COUNTRY = MONDIAL_CITY.COUNTRY AND MONDIAL_CITYOTHERNAME.PROVINCE = MONDIAL_CITY.PROVINCE WHERE (MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE) IN (SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE FROM MONDIAL_CITY WHERE MONDIAL_CITY.COUNTRY = 'R' AND MONDIAL_CITY.PROVINCE = 'Sankt-Peterburg' AND MONDIAL_CITY.POPULATION > 1000000) ORDER BY MONDIAL_CITY.NAME ASC, MONDIAL_CITYOTHERNAME.OTHERNAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For the cities that had alternate names, show their populations and elevations, ordered from most to least populous.",
+          "intention": "Show the population and elevation of exactly the previously identified cities that have recorded alternate names, ranking them by population from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE, MONDIAL_CITY.POPULATION, MONDIAL_CITY.ELEVATION FROM MONDIAL_CITY WHERE (MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE) IN (SELECT DISTINCT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE FROM MONDIAL_CITY JOIN MONDIAL_CITYOTHERNAME ON MONDIAL_CITYOTHERNAME.CITY = MONDIAL_CITY.NAME AND MONDIAL_CITYOTHERNAME.COUNTRY = MONDIAL_CITY.COUNTRY AND MONDIAL_CITYOTHERNAME.PROVINCE = MONDIAL_CITY.PROVINCE WHERE (MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE) IN (SELECT MONDIAL_CITY.NAME, MONDIAL_CITY.COUNTRY, MONDIAL_CITY.PROVINCE FROM MONDIAL_CITY WHERE MONDIAL_CITY.COUNTRY = 'R' AND MONDIAL_CITY.PROVINCE = 'Sankt-Peterburg' AND MONDIAL_CITY.POPULATION > 1000000)) ORDER BY MONDIAL_CITY.POPULATION DESC, MONDIAL_CITY.NAME ASC, MONDIAL_CITY.COUNTRY ASC, MONDIAL_CITY.PROVINCE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "10",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers flowing into the North Sea are longer than 200 kilometers?",
+          "intention": "Find the rivers that flow into the North Sea and have a length greater than 200 kilometers.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER"
+            ],
+            "golden_sql": "SELECT MONDIAL_RIVER.NAME, MONDIAL_RIVER.LENGTH FROM MONDIAL_RIVER WHERE MONDIAL_RIVER.SEA = 'North Sea' AND MONDIAL_RIVER.LENGTH > 200 ORDER BY MONDIAL_RIVER.LENGTH DESC, MONDIAL_RIVER.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the source and estuary elevations of those rivers, ordered from the highest source?",
+          "intention": "For the rivers flowing into the North Sea that are longer than 200 kilometers, show their source and estuary elevations, ordered by source elevation from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER"
+            ],
+            "golden_sql": "SELECT MONDIAL_RIVER.NAME, MONDIAL_RIVER.SOURCEELEVATION, MONDIAL_RIVER.ESTUARYELEVATION FROM MONDIAL_RIVER WHERE (MONDIAL_RIVER.NAME) IN (SELECT MONDIAL_RIVER.NAME FROM MONDIAL_RIVER WHERE MONDIAL_RIVER.SEA = 'North Sea' AND MONDIAL_RIVER.LENGTH > 200) ORDER BY MONDIAL_RIVER.SOURCEELEVATION DESC, MONDIAL_RIVER.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which lakes do those same rivers flow through?",
+          "intention": "Identify the lakes traversed by the rivers flowing into the North Sea that are longer than 200 kilometers.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_RIVER",
+              "MONDIAL_RIVERTHROUGH"
+            ],
+            "golden_sql": "SELECT R.NAME, RT.LAKE FROM MONDIAL_RIVER R JOIN MONDIAL_RIVERTHROUGH RT ON RT.RIVER = R.NAME WHERE (R.NAME) IN (SELECT MONDIAL_RIVER.NAME FROM MONDIAL_RIVER WHERE MONDIAL_RIVER.SEA = 'North Sea' AND MONDIAL_RIVER.LENGTH > 200) ORDER BY R.NAME ASC, RT.LAKE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "11",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "For connections starting from the Andaman Sea, what are the depth of the starting sea and the area of each connected sea?",
+          "intention": "For every sea connection that starts at the Andaman Sea, provide the starting sea's depth and each connected sea's area.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MERGESWITH",
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT MW.SEA1, MW.SEA2, S1.DEPTH AS SEA1_DEPTH, S2.AREA AS SEA2_AREA FROM MONDIAL_MERGESWITH MW JOIN MONDIAL_SEA S1 ON MW.SEA1 = S1.NAME JOIN MONDIAL_SEA S2 ON MW.SEA2 = S2.NAME WHERE MW.SEA1 = 'Andaman Sea' ORDER BY MW.SEA2 ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Now list those same connection pairs, ordered alphabetically by the connected sea.",
+          "intention": "List exactly the previously identified sea connections starting at the Andaman Sea, ordered alphabetically by the connected sea's name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MERGESWITH",
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT MW.SEA1, MW.SEA2 FROM MONDIAL_MERGESWITH MW JOIN MONDIAL_SEA S1 ON MW.SEA1 = S1.NAME JOIN MONDIAL_SEA S2 ON MW.SEA2 = S2.NAME WHERE (MW.SEA1, MW.SEA2) IN (SELECT PMW.SEA1, PMW.SEA2 FROM MONDIAL_MERGESWITH PMW JOIN MONDIAL_SEA PS1 ON PMW.SEA1 = PS1.NAME JOIN MONDIAL_SEA PS2 ON PMW.SEA2 = PS2.NAME WHERE PMW.SEA1 = 'Andaman Sea') ORDER BY MW.SEA2 ASC, MW.SEA1 ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those connection pairs, what is the depth of each connected sea?",
+          "intention": "For exactly the previously listed sea connections starting at the Andaman Sea, provide the depth of each connected sea.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_MERGESWITH",
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT MW.SEA1, MW.SEA2, S2.DEPTH AS SEA2_DEPTH FROM MONDIAL_MERGESWITH MW JOIN MONDIAL_SEA S2 ON MW.SEA2 = S2.NAME WHERE (MW.SEA1, MW.SEA2) IN (SELECT PMW.SEA1, PMW.SEA2 FROM MONDIAL_MERGESWITH PMW JOIN MONDIAL_SEA PS1 ON PMW.SEA1 = PS1.NAME JOIN MONDIAL_SEA PS2 ON PMW.SEA2 = PS2.NAME WHERE (PMW.SEA1, PMW.SEA2) IN (SELECT PPMW.SEA1, PPMW.SEA2 FROM MONDIAL_MERGESWITH PPMW JOIN MONDIAL_SEA PPS1 ON PPMW.SEA1 = PPS1.NAME JOIN MONDIAL_SEA PPS2 ON PPMW.SEA2 = PPS2.NAME WHERE PPMW.SEA1 = 'Andaman Sea')) ORDER BY MW.SEA2 ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "12",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which lakes have an area greater than 900 and an elevation below 130?",
+          "intention": "Find lakes whose area is greater than 900 and whose elevation is below 130.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LAKE"
+            ],
+            "golden_sql": "SELECT NAME, AREA, ELEVATION FROM MONDIAL_LAKE WHERE AREA > 900 AND ELEVATION < 130 ORDER BY NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which rivers flow through those lakes?",
+          "intention": "Identify the rivers that flow through the lakes whose area is greater than 900 and whose elevation is below 130.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LAKE",
+              "MONDIAL_RIVERTHROUGH"
+            ],
+            "golden_sql": "SELECT RT.RIVER, L.NAME AS LAKE FROM MONDIAL_LAKE L JOIN MONDIAL_RIVERTHROUGH RT ON L.NAME = RT.LAKE WHERE (L.NAME) IN (SELECT NAME FROM MONDIAL_LAKE WHERE AREA > 900 AND ELEVATION < 130) ORDER BY L.NAME ASC, RT.RIVER ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those lake-river pairs, what are the lakes' depths and elevations?",
+          "intention": "For the previously identified river and lake pairs, report each lake's depth and elevation.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_LAKE",
+              "MONDIAL_RIVERTHROUGH"
+            ],
+            "golden_sql": "SELECT RT.RIVER, L.NAME AS LAKE, L.DEPTH, L.ELEVATION FROM MONDIAL_LAKE L JOIN MONDIAL_RIVERTHROUGH RT ON L.NAME = RT.LAKE WHERE (RT.RIVER, L.NAME) IN (SELECT RT2.RIVER, L2.NAME FROM MONDIAL_LAKE L2 JOIN MONDIAL_RIVERTHROUGH RT2 ON L2.NAME = RT2.LAKE WHERE (L2.NAME) IN (SELECT NAME FROM MONDIAL_LAKE WHERE AREA > 900 AND ELEVATION < 130)) ORDER BY L.NAME ASC, RT.RIVER ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "13",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which provinces of Japan border the Sea of Japan?",
+          "intention": "List the Japanese provinces that border the Sea of Japan.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_sea"
+            ],
+            "golden_sql": "SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan' AND COUNTRY = 'J' ORDER BY PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many of those provinces are there?",
+          "intention": "Count the Japanese provinces previously identified as bordering the Sea of Japan.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_sea"
+            ],
+            "golden_sql": "SELECT COUNT(*) AS PROVINCE_COUNT FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY, PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan' AND COUNTRY = 'J')"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For that sea, what are its area and depth, and which islands lie in it?",
+          "intention": "Give the area and depth of the sea associated with those previously counted Japanese provinces, along with the islands located in that sea.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_sea",
+              "mondial_sea",
+              "mondial_islandin"
+            ],
+            "golden_sql": "SELECT S.NAME, S.AREA, S.DEPTH, I.ISLAND FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME JOIN MONDIAL_ISLANDIN I ON I.SEA = S.NAME WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY, PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan' AND COUNTRY = 'J')) ORDER BY I.ISLAND ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "14",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which geographically recorded lakes are also listed as having a river flow through them? Include each lake's country and province.",
+          "intention": "List the lakes with recorded geographic locations that are traversed by a river, including each lake's country and province.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE",
+              "MONDIAL_RIVERTHROUGH"
+            ],
+            "golden_sql": "SELECT DISTINCT GL.LAKE, GL.COUNTRY, GL.PROVINCE FROM MONDIAL_GEO_LAKE GL JOIN MONDIAL_LAKE L ON GL.LAKE = L.NAME JOIN MONDIAL_RIVERTHROUGH RT ON L.NAME = RT.LAKE ORDER BY GL.LAKE ASC, GL.COUNTRY ASC, GL.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those lakes, show me the lake and province for the ones in China, ordered by lake name.",
+          "intention": "From the previously identified lakes that are traversed by a river, list the lake name and province for those located in China, ordered alphabetically by lake name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE",
+              "MONDIAL_RIVERTHROUGH"
+            ],
+            "golden_sql": "SELECT GL.LAKE, GL.PROVINCE FROM MONDIAL_GEO_LAKE GL WHERE (GL.LAKE, GL.COUNTRY, GL.PROVINCE) IN (SELECT DISTINCT GL1.LAKE, GL1.COUNTRY, GL1.PROVINCE FROM MONDIAL_GEO_LAKE GL1 JOIN MONDIAL_LAKE L1 ON GL1.LAKE = L1.NAME JOIN MONDIAL_RIVERTHROUGH RT1 ON L1.NAME = RT1.LAKE) AND GL.COUNTRY = 'CN' ORDER BY GL.LAKE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For each of these lakes, how many non-null country assignments are recorded? Order the results by lake name.",
+          "intention": "For each Chinese lake returned in the preceding question, count its recorded country assignments that are not null, ordering the results alphabetically by lake name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE",
+              "MONDIAL_RIVERTHROUGH"
+            ],
+            "golden_sql": "SELECT GL.LAKE, COUNT(GL.COUNTRY) FROM MONDIAL_GEO_LAKE GL WHERE GL.COUNTRY IS NOT NULL AND (GL.LAKE, GL.COUNTRY, GL.PROVINCE) IN (SELECT GL2.LAKE, GL2.COUNTRY, GL2.PROVINCE FROM MONDIAL_GEO_LAKE GL2 WHERE (GL2.LAKE, GL2.COUNTRY, GL2.PROVINCE) IN (SELECT DISTINCT GL1.LAKE, GL1.COUNTRY, GL1.PROVINCE FROM MONDIAL_GEO_LAKE GL1 JOIN MONDIAL_LAKE L1 ON GL1.LAKE = L1.NAME JOIN MONDIAL_RIVERTHROUGH RT1 ON L1.NAME = RT1.LAKE) AND GL2.COUNTRY = 'CN') GROUP BY GL.LAKE ORDER BY GL.LAKE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "15",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which mountains are located on Bali, and how high is each one?",
+          "intention": "List the mountains located on the island of Bali and give each mountain's elevation.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_island",
+              "mondial_mountainonisland",
+              "mondial_mountain"
+            ],
+            "golden_sql": "SELECT I.NAME AS ISLAND_NAME, M.NAME AS MOUNTAIN_NAME, M.ELEVATION AS MOUNTAIN_ELEVATION FROM MONDIAL_ISLAND I JOIN MONDIAL_MOUNTAINONISLAND MI ON MI.ISLAND = I.NAME JOIN MONDIAL_MOUNTAIN M ON M.NAME = MI.MOUNTAIN WHERE I.NAME = 'Bali' ORDER BY M.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For each of those mountain-island matches, which island group does the island belong to?",
+          "intention": "For every mountain located on Bali identified previously, give the island group to which Bali belongs.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_island",
+              "mondial_mountainonisland",
+              "mondial_mountain"
+            ],
+            "golden_sql": "SELECT I.NAME AS ISLAND_NAME, M.NAME AS MOUNTAIN_NAME, I.ISLANDS AS ISLAND_GROUP FROM MONDIAL_ISLAND I JOIN MONDIAL_MOUNTAINONISLAND MI ON MI.ISLAND = I.NAME JOIN MONDIAL_MOUNTAIN M ON M.NAME = MI.MOUNTAIN WHERE (I.NAME, M.NAME) IN (SELECT I1.NAME, M1.NAME FROM MONDIAL_ISLAND I1 JOIN MONDIAL_MOUNTAINONISLAND MI1 ON MI1.ISLAND = I1.NAME JOIN MONDIAL_MOUNTAIN M1 ON M1.NAME = MI1.MOUNTAIN WHERE I1.NAME = 'Bali') ORDER BY M.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Among those same matches, keep only islands with an area above 1,000 and order them from largest to smallest.",
+          "intention": "From the previously identified mountain-and-island matches, retain only those whose island has an area greater than 1,000 square kilometers, then sort them by island area from largest to smallest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_island",
+              "mondial_mountainonisland",
+              "mondial_mountain"
+            ],
+            "golden_sql": "SELECT I.NAME AS ISLAND_NAME, M.NAME AS MOUNTAIN_NAME, I.AREA AS ISLAND_AREA FROM MONDIAL_ISLAND I JOIN MONDIAL_MOUNTAINONISLAND MI ON MI.ISLAND = I.NAME JOIN MONDIAL_MOUNTAIN M ON M.NAME = MI.MOUNTAIN WHERE (I.NAME, M.NAME) IN (SELECT I2.NAME, M2.NAME FROM MONDIAL_ISLAND I2 JOIN MONDIAL_MOUNTAINONISLAND MI2 ON MI2.ISLAND = I2.NAME JOIN MONDIAL_MOUNTAIN M2 ON M2.NAME = MI2.MOUNTAIN WHERE (I2.NAME, M2.NAME) IN (SELECT I1.NAME, M1.NAME FROM MONDIAL_ISLAND I1 JOIN MONDIAL_MOUNTAINONISLAND MI1 ON MI1.ISLAND = I1.NAME JOIN MONDIAL_MOUNTAIN M1 ON M1.NAME = MI1.MOUNTAIN WHERE I1.NAME = 'Bali')) AND I.AREA > 1000 ORDER BY I.AREA DESC, I.NAME ASC, M.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "16",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which country and province coastline records are associated with seas deeper than 3,000 meters?",
+          "intention": "List each sea, country, and province coastline record associated with a sea whose depth exceeds 3,000 meters.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA",
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT G.SEA, G.COUNTRY, G.PROVINCE, S.DEPTH FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME WHERE S.DEPTH > 3000 ORDER BY G.SEA ASC, G.COUNTRY ASC, G.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those, keep only the Japanese records and order them by province.",
+          "intention": "From the coastline records associated with seas deeper than 3,000 meters, return only those whose country code is J and sort them by province.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA",
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT G.SEA, G.COUNTRY, G.PROVINCE FROM MONDIAL_GEO_SEA G WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT G1.SEA, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_SEA G1 JOIN MONDIAL_SEA S1 ON G1.SEA = S1.NAME WHERE S1.DEPTH > 3000) AND G.COUNTRY = 'J' ORDER BY G.PROVINCE ASC, G.SEA ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which cities are located on the same seas as those Japanese coastline records, and what are each sea's area and depth?",
+          "intention": "For the Japanese coastline records associated with seas deeper than 3,000 meters, list cities located on the same seas together with each sea's area and depth.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA",
+              "MONDIAL_SEA",
+              "MONDIAL_LOCATED"
+            ],
+            "golden_sql": "SELECT DISTINCT L.CITY, L.PROVINCE, L.COUNTRY, S.NAME AS SEA, S.AREA, S.DEPTH FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME JOIN MONDIAL_LOCATED L ON L.SEA = S.NAME WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT G2.SEA, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_SEA G2 WHERE (G2.SEA, G2.COUNTRY, G2.PROVINCE) IN (SELECT G1.SEA, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_SEA G1 JOIN MONDIAL_SEA S1 ON G1.SEA = S1.NAME WHERE S1.DEPTH > 3000) AND G2.COUNTRY = 'J') ORDER BY S.NAME ASC, L.COUNTRY ASC, L.PROVINCE ASC, L.CITY ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "17",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which islands are listed in Scotland, GB?",
+          "intention": "List the islands recorded in Scotland in the United Kingdom.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ISLAND"
+            ],
+            "golden_sql": "SELECT ISLAND, COUNTRY, PROVINCE FROM MONDIAL_GEO_ISLAND WHERE COUNTRY = 'GB' AND PROVINCE = 'Scotland' ORDER BY ISLAND ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those islands, what are their areas and elevations?",
+          "intention": "Give the area and elevation of each island previously identified as being in Scotland in the United Kingdom.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ISLAND",
+              "MONDIAL_ISLAND"
+            ],
+            "golden_sql": "SELECT G.ISLAND, G.COUNTRY, G.PROVINCE, I.AREA, I.ELEVATION FROM MONDIAL_GEO_ISLAND G JOIN MONDIAL_ISLAND I ON G.ISLAND = I.NAME WHERE (G.ISLAND, G.COUNTRY, G.PROVINCE) IN (SELECT ISLAND, COUNTRY, PROVINCE FROM MONDIAL_GEO_ISLAND WHERE COUNTRY = 'GB' AND PROVINCE = 'Scotland') ORDER BY G.ISLAND ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which cities are located on those islands?",
+          "intention": "List the cities located on the previously identified Scottish islands for which area and elevation information was found.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ISLAND",
+              "MONDIAL_ISLAND",
+              "MONDIAL_LOCATEDON"
+            ],
+            "golden_sql": "SELECT G.ISLAND, L.CITY, L.PROVINCE, L.COUNTRY FROM MONDIAL_GEO_ISLAND G JOIN MONDIAL_ISLAND I ON G.ISLAND = I.NAME JOIN MONDIAL_LOCATEDON L ON L.ISLAND = I.NAME WHERE (G.ISLAND, G.COUNTRY, G.PROVINCE) IN (SELECT G2.ISLAND, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_ISLAND G2 JOIN MONDIAL_ISLAND I2 ON G2.ISLAND = I2.NAME WHERE (G2.ISLAND, G2.COUNTRY, G2.PROVINCE) IN (SELECT ISLAND, COUNTRY, PROVINCE FROM MONDIAL_GEO_ISLAND WHERE COUNTRY = 'GB' AND PROVINCE = 'Scotland')) ORDER BY G.ISLAND ASC, L.CITY ASC, L.COUNTRY ASC, L.PROVINCE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "18",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers have their source in a province of Sudan?",
+          "intention": "List the rivers whose source country code is Sudan, together with their source country code and province.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_source"
+            ],
+            "golden_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD' ORDER BY RIVER ASC, PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the capitals of those source provinces?",
+          "intention": "For exactly the Sudanese river sources identified previously, give each river and source province along with that province's capital.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_source",
+              "mondial_province"
+            ],
+            "golden_sql": "SELECT G.RIVER, G.COUNTRY, G.PROVINCE, P.CAPITAL FROM MONDIAL_GEO_SOURCE G JOIN MONDIAL_PROVINCE P ON G.PROVINCE = P.NAME AND G.COUNTRY = P.COUNTRY WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD') ORDER BY G.RIVER ASC, G.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Now list those river-source records by province, then by river.",
+          "intention": "List exactly the river sources whose provinces and capitals were identified in the previous step, ordered first by source province and then by river name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_source",
+              "mondial_province"
+            ],
+            "golden_sql": "SELECT G.RIVER, G.COUNTRY, G.PROVINCE FROM MONDIAL_GEO_SOURCE G WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT G2.RIVER, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_SOURCE G2 JOIN MONDIAL_PROVINCE P2 ON G2.PROVINCE = P2.NAME AND G2.COUNTRY = P2.COUNTRY WHERE (G2.RIVER, G2.COUNTRY, G2.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD')) ORDER BY G.PROVINCE ASC, G.RIVER ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "19",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries that were formerly dependent on the Ottoman Empire have parliamentary governments?",
+          "intention": "List the countries formerly dependent on the Ottoman Empire whose form of government is parliamentary.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRY",
+              "MONDIAL_POLITICS"
+            ],
+            "golden_sql": "SELECT C.NAME, P.GOVERNMENT FROM MONDIAL_COUNTRY C JOIN MONDIAL_POLITICS P ON P.COUNTRY = C.CODE WHERE P.WASDEPENDENT = 'Ottoman Empire' AND P.GOVERNMENT LIKE 'parliamentary%' ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those countries, what are their population growth and infant mortality rates?",
+          "intention": "Show the population growth and infant mortality rates for the countries formerly dependent on the Ottoman Empire whose form of government is parliamentary.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRY",
+              "MONDIAL_POLITICS",
+              "MONDIAL_POPULATION"
+            ],
+            "golden_sql": "SELECT C.NAME, POP.POPULATION_GROWTH, POP.INFANT_MORTALITY FROM MONDIAL_COUNTRY C JOIN MONDIAL_POPULATION POP ON POP.COUNTRY = C.CODE WHERE (C.CODE) IN (SELECT C1.CODE FROM MONDIAL_COUNTRY C1 JOIN MONDIAL_POLITICS P1 ON P1.COUNTRY = C1.CODE WHERE P1.WASDEPENDENT = 'Ottoman Empire' AND P1.GOVERNMENT LIKE 'parliamentary%') ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Among those countries, which have an area greater than 100,000, ordered from largest to smallest?",
+          "intention": "From the countries formerly dependent on the Ottoman Empire with parliamentary governments whose population growth and infant mortality rates were requested, list those with an area above 100,000 square units from largest to smallest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRY",
+              "MONDIAL_POLITICS",
+              "MONDIAL_POPULATION"
+            ],
+            "golden_sql": "SELECT C.NAME, C.AREA FROM MONDIAL_COUNTRY C JOIN MONDIAL_POPULATION POP ON POP.COUNTRY = C.CODE WHERE (C.CODE) IN (SELECT C2.CODE FROM MONDIAL_COUNTRY C2 JOIN MONDIAL_POPULATION POP2 ON POP2.COUNTRY = C2.CODE WHERE (C2.CODE) IN (SELECT C1.CODE FROM MONDIAL_COUNTRY C1 JOIN MONDIAL_POLITICS P1 ON P1.COUNTRY = C1.CODE WHERE P1.WASDEPENDENT = 'Ottoman Empire' AND P1.GOVERNMENT LIKE 'parliamentary%')) AND C.AREA > 100000 ORDER BY C.AREA DESC, C.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "20",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which airports in the Czech Republic have an elevation above 200 meters? Show their names, IATA codes, and elevations, highest first.",
+          "intention": "List airports in the Czech Republic that are more than 200 meters above sea level, including each airport's name, IATA code, and elevation, ordered from highest to lowest elevation.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_airport"
+            ],
+            "golden_sql": "SELECT NAME, IATACODE, ELEVATION FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 200 ORDER BY ELEVATION DESC, NAME ASC, IATACODE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those airports, what are their coordinates and GMT offsets?",
+          "intention": "For exactly the Czech airports above 200 meters identified previously, provide each airport's latitude, longitude, and GMT offset.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_airport"
+            ],
+            "golden_sql": "SELECT NAME, IATACODE, LATITUDE, LONGITUDE, GMTOFFSET FROM MONDIAL_AIRPORT WHERE (NAME, IATACODE) IN (SELECT NAME, IATACODE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 200) ORDER BY NAME ASC, IATACODE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which of those airports are on recognized islands, and for each one, what are the island group, island area, mapped country and province, and associated sea, lake, or river?",
+          "intention": "Among exactly the previously identified Czech airports above 200 meters, identify those located on recognized islands and report each island's group, area, mapped country and province, and associated sea, lake, or river.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_airport",
+              "mondial_island",
+              "mondial_geo_island",
+              "mondial_islandin"
+            ],
+            "golden_sql": "SELECT A.NAME, A.IATACODE, I.NAME AS ISLAND_NAME, I.ISLANDS AS ISLAND_GROUP, I.AREA AS ISLAND_AREA, G.COUNTRY AS ISLAND_COUNTRY, G.PROVINCE AS ISLAND_PROVINCE, II.SEA, II.LAKE, II.RIVER FROM MONDIAL_AIRPORT A JOIN MONDIAL_ISLAND I ON A.ISLAND = I.NAME JOIN MONDIAL_GEO_ISLAND G ON G.ISLAND = I.NAME JOIN MONDIAL_ISLANDIN II ON II.ISLAND = I.NAME WHERE (A.NAME, A.IATACODE) IN (SELECT NAME, IATACODE FROM MONDIAL_AIRPORT WHERE (NAME, IATACODE) IN (SELECT NAME, IATACODE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 200)) ORDER BY A.NAME ASC, A.IATACODE ASC, I.NAME ASC, G.COUNTRY ASC, G.PROVINCE ASC, II.SEA ASC, II.LAKE ASC, II.RIVER ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "21",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which lakes recorded in China have matching lake details, and what are their areas and depths?",
+          "intention": "List the lakes geographically recorded in China that also have physical lake details, including each lake's area and depth.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_lake",
+              "mondial_lake"
+            ],
+            "golden_sql": "SELECT DISTINCT L.NAME, L.AREA, L.DEPTH FROM MONDIAL_GEO_LAKE G JOIN MONDIAL_LAKE L ON G.LAKE = L.NAME WHERE G.COUNTRY = 'CN' ORDER BY L.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Among those lakes, which ones have islands recorded in them?",
+          "intention": "List the islands recorded within exactly the Chinese lakes that had matching physical lake details in the previous request.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_lake",
+              "mondial_lake",
+              "mondial_islandin"
+            ],
+            "golden_sql": "SELECT DISTINCT I.ISLAND, I.LAKE FROM MONDIAL_GEO_LAKE G JOIN MONDIAL_LAKE L ON G.LAKE = L.NAME JOIN MONDIAL_ISLANDIN I ON I.LAKE = L.NAME WHERE (L.NAME) IN (SELECT L1.NAME FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME WHERE G1.COUNTRY = 'CN') ORDER BY I.LAKE ASC, I.ISLAND ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those island-lake pairs, which islands also have a recorded sea, and what are that sea's area and depth?",
+          "intention": "For exactly the island-and-lake pairs identified previously, list any corresponding recorded seas and give each sea's area and depth.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_lake",
+              "mondial_lake",
+              "mondial_islandin",
+              "mondial_sea"
+            ],
+            "golden_sql": "SELECT DISTINCT I.ISLAND, I.LAKE, S.NAME AS SEA_NAME, S.AREA, S.DEPTH FROM MONDIAL_GEO_LAKE G JOIN MONDIAL_LAKE L ON G.LAKE = L.NAME JOIN MONDIAL_ISLANDIN I ON I.LAKE = L.NAME JOIN MONDIAL_SEA S ON I.SEA = S.NAME WHERE (I.ISLAND, I.LAKE) IN (SELECT I2.ISLAND, I2.LAKE FROM MONDIAL_GEO_LAKE G2 JOIN MONDIAL_LAKE L2 ON G2.LAKE = L2.NAME JOIN MONDIAL_ISLANDIN I2 ON I2.LAKE = L2.NAME WHERE (L2.NAME) IN (SELECT L1.NAME FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME WHERE G1.COUNTRY = 'CN')) ORDER BY I.LAKE ASC, I.ISLAND ASC, S.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "22",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which country and provinces border the Sea of Japan?",
+          "intention": "List the country and provinces that border the Sea of Japan.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA"
+            ],
+            "golden_sql": "SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan' ORDER BY COUNTRY ASC, PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How many of those provinces are there in each country?",
+          "intention": "For the country and provinces that border the Sea of Japan, count the selected provinces in each country.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA"
+            ],
+            "golden_sql": "SELECT COUNTRY, COUNT(*) AS PROVINCE_COUNT FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY, PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan') GROUP BY COUNTRY ORDER BY COUNTRY ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the area and depth of the sea bordered by those provinces?",
+          "intention": "Give the area and depth of the sea bordered by the previously selected provinces around the Sea of Japan.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_SEA",
+              "MONDIAL_SEA"
+            ],
+            "golden_sql": "SELECT DISTINCT S.NAME, S.AREA, S.DEPTH FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE (SEA, COUNTRY, PROVINCE) IN (SELECT SEA, COUNTRY, PROVINCE FROM MONDIAL_GEO_SEA WHERE SEA = 'Sea of Japan')) ORDER BY S.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "23",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which deserts are located in provinces that also contain at least one island?",
+          "intention": "Find the deserts located in provinces that also contain at least one island.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_desert",
+              "mondial_geo_desert",
+              "mondial_province",
+              "mondial_geo_island"
+            ],
+            "golden_sql": "SELECT DISTINCT D.NAME FROM MONDIAL_DESERT D JOIN MONDIAL_GEO_DESERT GD ON GD.DESERT = D.NAME JOIN MONDIAL_PROVINCE P ON GD.PROVINCE = P.NAME AND GD.COUNTRY = P.COUNTRY JOIN MONDIAL_GEO_ISLAND GI ON GI.COUNTRY = P.COUNTRY AND GI.PROVINCE = P.NAME ORDER BY D.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those deserts, which province and island do they share?",
+          "intention": "For the deserts located in provinces that also contain islands, list each desert together with its province and each island in that province.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_desert",
+              "mondial_geo_desert",
+              "mondial_province",
+              "mondial_geo_island"
+            ],
+            "golden_sql": "SELECT DISTINCT D.NAME AS DESERT_NAME, P.NAME AS PROVINCE_NAME, GI.ISLAND FROM MONDIAL_DESERT D JOIN MONDIAL_GEO_DESERT GD ON GD.DESERT = D.NAME JOIN MONDIAL_PROVINCE P ON GD.PROVINCE = P.NAME AND GD.COUNTRY = P.COUNTRY JOIN MONDIAL_GEO_ISLAND GI ON GI.COUNTRY = P.COUNTRY AND GI.PROVINCE = P.NAME WHERE (D.NAME) IN (SELECT DISTINCT D1.NAME FROM MONDIAL_DESERT D1 JOIN MONDIAL_GEO_DESERT GD1 ON GD1.DESERT = D1.NAME JOIN MONDIAL_PROVINCE P1 ON GD1.PROVINCE = P1.NAME AND GD1.COUNTRY = P1.COUNTRY JOIN MONDIAL_GEO_ISLAND GI1 ON GI1.COUNTRY = P1.COUNTRY AND GI1.PROVINCE = P1.NAME) ORDER BY D.NAME ASC, P.NAME ASC, GI.ISLAND ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Of those deserts, which have an area greater than 100,000, ordered from largest to smallest?",
+          "intention": "Among the deserts identified with their shared provinces and islands, return those whose area exceeds 100,000 and rank them from largest to smallest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_desert",
+              "mondial_geo_desert",
+              "mondial_province",
+              "mondial_geo_island"
+            ],
+            "golden_sql": "SELECT D.NAME, D.AREA FROM MONDIAL_DESERT D WHERE (D.NAME) IN (SELECT DISTINCT D2.NAME FROM MONDIAL_DESERT D2 JOIN MONDIAL_GEO_DESERT GD2 ON GD2.DESERT = D2.NAME JOIN MONDIAL_PROVINCE P2 ON GD2.PROVINCE = P2.NAME AND GD2.COUNTRY = P2.COUNTRY JOIN MONDIAL_GEO_ISLAND GI2 ON GI2.COUNTRY = P2.COUNTRY AND GI2.PROVINCE = P2.NAME WHERE (D2.NAME) IN (SELECT DISTINCT D1.NAME FROM MONDIAL_DESERT D1 JOIN MONDIAL_GEO_DESERT GD1 ON GD1.DESERT = D1.NAME JOIN MONDIAL_PROVINCE P1 ON GD1.PROVINCE = P1.NAME AND GD1.COUNTRY = P1.COUNTRY JOIN MONDIAL_GEO_ISLAND GI1 ON GI1.COUNTRY = P1.COUNTRY AND GI1.PROVINCE = P1.NAME)) AND D.AREA > 100000 ORDER BY D.AREA DESC, D.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "24",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which mountains recorded in Indian provinces have mountain details, and what are their elevations?",
+          "intention": "List mountains recorded in Indian provinces that have mountain details, together with their elevations.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_mountain"
+            ],
+            "golden_sql": "SELECT G.MOUNTAIN, G.PROVINCE, M.ELEVATION FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME WHERE G.COUNTRY = 'IND' ORDER BY G.MOUNTAIN ASC, G.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which of those mountains are located on islands, and what are the islands' names?",
+          "intention": "Among the Indian provincial mountains with mountain details identified previously, list those located on islands and give each island's name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_mountain",
+              "mondial_mountainonisland",
+              "mondial_island"
+            ],
+            "golden_sql": "SELECT G.MOUNTAIN, I.NAME AS ISLAND_NAME FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME JOIN MONDIAL_MOUNTAINONISLAND MI ON M.NAME = MI.MOUNTAIN JOIN MONDIAL_ISLAND I ON MI.ISLAND = I.NAME WHERE (G.MOUNTAIN, G.COUNTRY, G.PROVINCE) IN (SELECT G1.MOUNTAIN, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN G1 JOIN MONDIAL_MOUNTAIN M1 ON G1.MOUNTAIN = M1.NAME WHERE G1.COUNTRY = 'IND') ORDER BY G.MOUNTAIN ASC, I.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those island mountains, how many provincial records are there per country?",
+          "intention": "For the previously identified island mountains among Indian provincial mountains with mountain details, count their provincial records by country.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_mountain",
+              "mondial_mountainonisland",
+              "mondial_island"
+            ],
+            "golden_sql": "SELECT G.COUNTRY, COUNT(*) AS PROVINCIAL_RECORD_COUNT FROM MONDIAL_GEO_MOUNTAIN G JOIN MONDIAL_MOUNTAIN M ON G.MOUNTAIN = M.NAME JOIN MONDIAL_MOUNTAINONISLAND MI ON M.NAME = MI.MOUNTAIN JOIN MONDIAL_ISLAND I ON MI.ISLAND = I.NAME WHERE (G.MOUNTAIN, MI.ISLAND) IN (SELECT G2.MOUNTAIN, I2.NAME FROM MONDIAL_GEO_MOUNTAIN G2 JOIN MONDIAL_MOUNTAIN M2 ON G2.MOUNTAIN = M2.NAME JOIN MONDIAL_MOUNTAINONISLAND MI2 ON M2.NAME = MI2.MOUNTAIN JOIN MONDIAL_ISLAND I2 ON MI2.ISLAND = I2.NAME WHERE (G2.MOUNTAIN, G2.COUNTRY, G2.PROVINCE) IN (SELECT G1.MOUNTAIN, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN G1 JOIN MONDIAL_MOUNTAIN M1 ON G1.MOUNTAIN = M1.NAME WHERE G1.COUNTRY = 'IND')) GROUP BY G.COUNTRY ORDER BY G.COUNTRY ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "25",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which lakes in China contain at least one island?",
+          "intention": "Identify the lakes located in China that contain at least one island.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE",
+              "MONDIAL_ISLANDIN"
+            ],
+            "golden_sql": "SELECT DISTINCT G.LAKE, G.COUNTRY, G.PROVINCE FROM MONDIAL_GEO_LAKE G JOIN MONDIAL_LAKE L ON G.LAKE = L.NAME JOIN MONDIAL_ISLANDIN I ON I.LAKE = L.NAME WHERE G.COUNTRY = 'CN' ORDER BY G.LAKE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those lakes, list each lake and its province, ordered by lake name.",
+          "intention": "List the name and province of each previously identified Chinese lake containing an island, ordered alphabetically by lake name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE",
+              "MONDIAL_ISLANDIN"
+            ],
+            "golden_sql": "SELECT G.LAKE, G.PROVINCE FROM MONDIAL_GEO_LAKE G WHERE G.COUNTRY = 'CN' AND (G.LAKE, G.COUNTRY, G.PROVINCE) IN (SELECT DISTINCT G1.LAKE, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME JOIN MONDIAL_ISLANDIN I1 ON I1.LAKE = L1.NAME WHERE G1.COUNTRY = 'CN') ORDER BY G.LAKE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Now count those listed lakes in each province, sorting the provinces alphabetically.",
+          "intention": "Count the previously listed Chinese lakes containing an island in each province, with provinces ordered alphabetically.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_LAKE",
+              "MONDIAL_LAKE",
+              "MONDIAL_ISLANDIN"
+            ],
+            "golden_sql": "SELECT G.PROVINCE, COUNT(G.LAKE) FROM MONDIAL_GEO_LAKE G WHERE G.COUNTRY = 'CN' AND (G.LAKE, G.COUNTRY, G.PROVINCE) IN (SELECT G2.LAKE, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_LAKE G2 WHERE G2.COUNTRY = 'CN' AND (G2.LAKE, G2.COUNTRY, G2.PROVINCE) IN (SELECT DISTINCT G1.LAKE, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_LAKE G1 JOIN MONDIAL_LAKE L1 ON G1.LAKE = L1.NAME JOIN MONDIAL_ISLANDIN I1 ON I1.LAKE = L1.NAME WHERE G1.COUNTRY = 'CN')) GROUP BY G.PROVINCE ORDER BY G.PROVINCE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "26",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which deserts have an area of at least 70,000 square kilometers, ordered from largest to smallest?",
+          "intention": "List deserts with an area of at least 70,000 square kilometers, ordered by decreasing area.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT"
+            ],
+            "golden_sql": "SELECT MONDIAL_DESERT.NAME, MONDIAL_DESERT.AREA FROM MONDIAL_DESERT WHERE MONDIAL_DESERT.AREA >= 70000 ORDER BY MONDIAL_DESERT.AREA DESC, MONDIAL_DESERT.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "In which country and province is each of those deserts located?",
+          "intention": "For the deserts with an area of at least 70,000 square kilometers, list every country and province in which each desert is located.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT",
+              "MONDIAL_GEO_DESERT"
+            ],
+            "golden_sql": "SELECT MONDIAL_DESERT.NAME, MONDIAL_GEO_DESERT.COUNTRY, MONDIAL_GEO_DESERT.PROVINCE FROM MONDIAL_DESERT JOIN MONDIAL_GEO_DESERT ON MONDIAL_GEO_DESERT.DESERT = MONDIAL_DESERT.NAME WHERE (MONDIAL_DESERT.NAME) IN (SELECT MONDIAL_DESERT.NAME FROM MONDIAL_DESERT WHERE MONDIAL_DESERT.AREA >= 70000) ORDER BY MONDIAL_DESERT.NAME ASC, MONDIAL_GEO_DESERT.COUNTRY ASC, MONDIAL_GEO_DESERT.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which rivers have their sources in those exact desert-hosting provinces?",
+          "intention": "For the exact country-and-province locations of the previously selected deserts with an area of at least 70,000 square kilometers, list the rivers whose sources are in those same provinces, together with the corresponding desert and location.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_DESERT",
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_PROVINCE",
+              "MONDIAL_GEO_SOURCE"
+            ],
+            "golden_sql": "SELECT DISTINCT MONDIAL_GEO_DESERT.DESERT, MONDIAL_GEO_DESERT.COUNTRY, MONDIAL_GEO_DESERT.PROVINCE, MONDIAL_GEO_SOURCE.RIVER FROM MONDIAL_GEO_DESERT JOIN MONDIAL_DESERT ON MONDIAL_GEO_DESERT.DESERT = MONDIAL_DESERT.NAME JOIN MONDIAL_PROVINCE ON MONDIAL_GEO_DESERT.PROVINCE = MONDIAL_PROVINCE.NAME AND MONDIAL_GEO_DESERT.COUNTRY = MONDIAL_PROVINCE.COUNTRY JOIN MONDIAL_GEO_SOURCE ON MONDIAL_GEO_SOURCE.PROVINCE = MONDIAL_PROVINCE.NAME AND MONDIAL_GEO_SOURCE.COUNTRY = MONDIAL_PROVINCE.COUNTRY WHERE (MONDIAL_GEO_DESERT.DESERT, MONDIAL_GEO_DESERT.COUNTRY, MONDIAL_GEO_DESERT.PROVINCE) IN (SELECT MONDIAL_GEO_DESERT.DESERT, MONDIAL_GEO_DESERT.COUNTRY, MONDIAL_GEO_DESERT.PROVINCE FROM MONDIAL_DESERT JOIN MONDIAL_GEO_DESERT ON MONDIAL_GEO_DESERT.DESERT = MONDIAL_DESERT.NAME WHERE (MONDIAL_DESERT.NAME) IN (SELECT MONDIAL_DESERT.NAME FROM MONDIAL_DESERT WHERE MONDIAL_DESERT.AREA >= 70000)) ORDER BY MONDIAL_GEO_DESERT.DESERT ASC, MONDIAL_GEO_DESERT.COUNTRY ASC, MONDIAL_GEO_DESERT.PROVINCE ASC, MONDIAL_GEO_SOURCE.RIVER ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "27",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries share a border with Albania, and what are their country codes and names?",
+          "intention": "List the codes and names of all countries that share a border with Albania.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_borders",
+              "mondial_country"
+            ],
+            "golden_sql": "SELECT C.CODE, C.NAME FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C ON B.COUNTRY2 = C.CODE WHERE B.COUNTRY1 = 'AL' ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those neighboring countries, which ones have at least one recorded population above 10 million?",
+          "intention": "Among the countries identified as sharing a border with Albania, list those with at least one historical population record greater than ten million.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_borders",
+              "mondial_country",
+              "mondial_countrypops"
+            ],
+            "golden_sql": "SELECT DISTINCT C.CODE, C.NAME FROM MONDIAL_COUNTRY C JOIN MONDIAL_COUNTRYPOPS P ON P.COUNTRY = C.CODE WHERE P.POPULATION > 10000000 AND (C.CODE) IN (SELECT C1.CODE FROM MONDIAL_BORDERS B1 JOIN MONDIAL_COUNTRY C1 ON B1.COUNTRY2 = C1.CODE WHERE B1.COUNTRY1 = 'AL') ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those countries, list every border where the country appears first and the border is longer than 100 kilometers, from longest to shortest.",
+          "intention": "For the previously identified Albanian neighbors that have a recorded population above ten million, list border pairs in which such a country is the first country and the border length exceeds one hundred kilometers, ordered from longest to shortest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_borders",
+              "mondial_country",
+              "mondial_countrypops"
+            ],
+            "golden_sql": "SELECT B.COUNTRY1, B.COUNTRY2, B.LENGTH FROM MONDIAL_BORDERS B WHERE B.LENGTH > 100 AND (B.COUNTRY1) IN (SELECT DISTINCT C.CODE FROM MONDIAL_COUNTRY C JOIN MONDIAL_COUNTRYPOPS P ON P.COUNTRY = C.CODE WHERE P.POPULATION > 10000000 AND (C.CODE) IN (SELECT C1.CODE FROM MONDIAL_BORDERS B1 JOIN MONDIAL_COUNTRY C1 ON B1.COUNTRY2 = C1.CODE WHERE B1.COUNTRY1 = 'AL')) ORDER BY B.LENGTH DESC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "28",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which cities host organizations that have at least one member country?",
+          "intention": "Identify cities that host organizations with at least one member country.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_ORGANIZATION",
+              "MONDIAL_ISMEMBER"
+            ],
+            "golden_sql": "SELECT DISTINCT C.NAME, C.COUNTRY, C.PROVINCE FROM MONDIAL_CITY C JOIN MONDIAL_ORGANIZATION O ON O.CITY = C.NAME AND O.COUNTRY = C.COUNTRY AND O.PROVINCE = C.PROVINCE JOIN MONDIAL_ISMEMBER M ON M.ORGANIZATION = O.ABBREVIATION ORDER BY C.NAME ASC, C.COUNTRY ASC, C.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Among those cities, which are above 500 meters in elevation, ordered from highest to lowest?",
+          "intention": "From the cities that host organizations with at least one member country, identify those above 500 meters in elevation and order them from highest to lowest elevation.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_ORGANIZATION",
+              "MONDIAL_ISMEMBER"
+            ],
+            "golden_sql": "SELECT C.NAME, C.COUNTRY, C.PROVINCE, C.ELEVATION FROM MONDIAL_CITY C WHERE (C.NAME, C.COUNTRY, C.PROVINCE) IN (SELECT DISTINCT C1.NAME, C1.COUNTRY, C1.PROVINCE FROM MONDIAL_CITY C1 JOIN MONDIAL_ORGANIZATION O ON O.CITY = C1.NAME AND O.COUNTRY = C1.COUNTRY AND O.PROVINCE = C1.PROVINCE JOIN MONDIAL_ISMEMBER M ON M.ORGANIZATION = O.ABBREVIATION) AND C.ELEVATION > 500 ORDER BY C.ELEVATION DESC, C.NAME ASC, C.COUNTRY ASC, C.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those high-elevation cities, what population records are available by year?",
+          "intention": "List the yearly population records available for the previously identified organization-hosting cities whose elevation exceeds 500 meters.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_ORGANIZATION",
+              "MONDIAL_ISMEMBER",
+              "MONDIAL_CITYPOPS"
+            ],
+            "golden_sql": "SELECT C.NAME, C.COUNTRY, C.PROVINCE, P.YEAR, P.POPULATION FROM MONDIAL_CITY C JOIN MONDIAL_CITYPOPS P ON P.CITY = C.NAME AND P.COUNTRY = C.COUNTRY AND P.PROVINCE = C.PROVINCE WHERE (C.NAME, C.COUNTRY, C.PROVINCE) IN (SELECT C2.NAME, C2.COUNTRY, C2.PROVINCE FROM MONDIAL_CITY C2 WHERE (C2.NAME, C2.COUNTRY, C2.PROVINCE) IN (SELECT DISTINCT C1.NAME, C1.COUNTRY, C1.PROVINCE FROM MONDIAL_CITY C1 JOIN MONDIAL_ORGANIZATION O ON O.CITY = C1.NAME AND O.COUNTRY = C1.COUNTRY AND O.PROVINCE = C1.PROVINCE JOIN MONDIAL_ISMEMBER M ON M.ORGANIZATION = O.ABBREVIATION) AND C2.ELEVATION > 500) ORDER BY C.NAME ASC, C.COUNTRY ASC, C.PROVINCE ASC, P.YEAR ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "29",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which islands associated with Indonesia have an area greater than 100,000, and what are their provinces, areas, and elevations?",
+          "intention": "Find the Indonesian islands larger than 100,000 square units and report each island's province, area, and elevation.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_island",
+              "mondial_island"
+            ],
+            "golden_sql": "SELECT DISTINCT G.ISLAND, G.COUNTRY, G.PROVINCE, I.AREA, I.ELEVATION FROM MONDIAL_GEO_ISLAND G JOIN MONDIAL_ISLAND I ON G.ISLAND = I.NAME WHERE G.COUNTRY = 'RI' AND I.AREA > 100000 ORDER BY G.ISLAND ASC, G.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which cities are located on those islands?",
+          "intention": "List the cities located on the Indonesian islands larger than 100,000 square units identified previously, along with each city’s province, country, and island.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_island",
+              "mondial_island",
+              "mondial_locatedon"
+            ],
+            "golden_sql": "SELECT DISTINCT L.CITY, L.PROVINCE, L.COUNTRY, L.ISLAND FROM MONDIAL_GEO_ISLAND G JOIN MONDIAL_ISLAND I ON G.ISLAND = I.NAME JOIN MONDIAL_LOCATEDON L ON L.ISLAND = I.NAME WHERE (G.ISLAND, G.COUNTRY, G.PROVINCE) IN (SELECT G1.ISLAND, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_ISLAND G1 JOIN MONDIAL_ISLAND I1 ON G1.ISLAND = I1.NAME WHERE G1.COUNTRY = 'RI' AND I1.AREA > 100000) ORDER BY L.ISLAND ASC, L.CITY ASC, L.COUNTRY ASC, L.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "And which mountains are found on the islands represented in that city list?",
+          "intention": "List the mountains on exactly the islands represented by the previously identified cities located on Indonesian islands larger than 100,000 square units.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_island",
+              "mondial_island",
+              "mondial_locatedon",
+              "mondial_mountainonisland"
+            ],
+            "golden_sql": "SELECT DISTINCT M.ISLAND, M.MOUNTAIN FROM MONDIAL_GEO_ISLAND G JOIN MONDIAL_ISLAND I ON G.ISLAND = I.NAME JOIN MONDIAL_MOUNTAINONISLAND M ON M.ISLAND = I.NAME WHERE (G.ISLAND, G.COUNTRY, G.PROVINCE) IN (SELECT G2.ISLAND, G2.COUNTRY, G2.PROVINCE FROM MONDIAL_GEO_ISLAND G2 JOIN MONDIAL_ISLAND I2 ON G2.ISLAND = I2.NAME JOIN MONDIAL_LOCATEDON L2 ON L2.ISLAND = I2.NAME WHERE (G2.ISLAND, G2.COUNTRY, G2.PROVINCE) IN (SELECT G1.ISLAND, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_ISLAND G1 JOIN MONDIAL_ISLAND I1 ON G1.ISLAND = I1.NAME WHERE G1.COUNTRY = 'RI' AND I1.AREA > 100000)) ORDER BY M.ISLAND ASC, M.MOUNTAIN ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "30",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "For the deserts recorded in Adrar, Mauritania (RIM), what is the provincial capital for each one?",
+          "intention": "List each desert recorded in Adrar, Mauritania, together with the capital of its province.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT G.DESERT, P.CAPITAL FROM MONDIAL_GEO_DESERT G JOIN MONDIAL_PROVINCE P ON G.PROVINCE = P.NAME AND G.COUNTRY = P.COUNTRY WHERE G.COUNTRY = 'RIM' AND G.PROVINCE = 'Adrar' ORDER BY G.DESERT ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Now show just those deserts with their country and province codes, sorted alphabetically by desert name.",
+          "intention": "For exactly the deserts previously identified in Adrar, Mauritania, show each desert with its country and province, ordered alphabetically by desert name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT D.DESERT, D.COUNTRY, D.PROVINCE FROM MONDIAL_GEO_DESERT D WHERE (D.DESERT, D.COUNTRY, D.PROVINCE) IN (SELECT G.DESERT, G.COUNTRY, G.PROVINCE FROM MONDIAL_GEO_DESERT G JOIN MONDIAL_PROVINCE P ON G.PROVINCE = P.NAME AND G.COUNTRY = P.COUNTRY WHERE G.COUNTRY = 'RIM' AND G.PROVINCE = 'Adrar') ORDER BY D.DESERT ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "How many of those are there for each country-and-province combination?",
+          "intention": "Count exactly the previously listed deserts within each country-and-province combination.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_DESERT",
+              "MONDIAL_PROVINCE"
+            ],
+            "golden_sql": "SELECT D.COUNTRY, D.PROVINCE, COUNT(*) AS DESERT_COUNT FROM MONDIAL_GEO_DESERT D WHERE (D.DESERT, D.COUNTRY, D.PROVINCE) IN (SELECT D2.DESERT, D2.COUNTRY, D2.PROVINCE FROM MONDIAL_GEO_DESERT D2 WHERE (D2.DESERT, D2.COUNTRY, D2.PROVINCE) IN (SELECT G.DESERT, G.COUNTRY, G.PROVINCE FROM MONDIAL_GEO_DESERT G JOIN MONDIAL_PROVINCE P ON G.PROVINCE = P.NAME AND G.COUNTRY = P.COUNTRY WHERE G.COUNTRY = 'RIM' AND G.PROVINCE = 'Adrar')) GROUP BY D.COUNTRY, D.PROVINCE ORDER BY D.COUNTRY ASC, D.PROVINCE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "31",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which river estuaries are recorded in Sachsen-Anhalt, Germany?",
+          "intention": "List the river estuaries recorded in the German province of Sachsen-Anhalt.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary"
+            ],
+            "golden_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'D' AND PROVINCE = 'Sachsen-Anhalt' ORDER BY RIVER ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "How long are those rivers?",
+          "intention": "Give the lengths of the rivers whose estuaries are recorded in the German province of Sachsen-Anhalt.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary",
+              "mondial_river"
+            ],
+            "golden_sql": "SELECT E.RIVER, R.LENGTH FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'D' AND PROVINCE = 'Sachsen-Anhalt') ORDER BY E.RIVER ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those same rivers, which countries and provinces are recorded along their courses?",
+          "intention": "For the previously identified rivers with recorded lengths and estuaries in Sachsen-Anhalt, Germany, list the countries and provinces recorded along their courses.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary",
+              "mondial_river",
+              "mondial_geo_river"
+            ],
+            "golden_sql": "SELECT E.RIVER, G.COUNTRY, G.PROVINCE FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME JOIN MONDIAL_GEO_RIVER G ON G.RIVER = R.NAME WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT E2.RIVER, E2.COUNTRY, E2.PROVINCE FROM MONDIAL_GEO_ESTUARY E2 JOIN MONDIAL_RIVER R2 ON E2.RIVER = R2.NAME WHERE (E2.RIVER, E2.COUNTRY, E2.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'D' AND PROVINCE = 'Sachsen-Anhalt')) ORDER BY E.RIVER ASC, G.COUNTRY ASC, G.PROVINCE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "32",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "For Anamudi, what province is the mountain in, and what are that province's capital, area, and population?",
+          "intention": "Find the mountain named Anamudi and report its province together with the province's capital, area, and population.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_province"
+            ],
+            "golden_sql": "SELECT GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE, P.CAPITAL, P.AREA, P.POPULATION FROM MONDIAL_GEO_MOUNTAIN GM JOIN MONDIAL_PROVINCE P ON GM.PROVINCE = P.NAME AND GM.COUNTRY = P.COUNTRY WHERE GM.MOUNTAIN = 'Anamudi' ORDER BY GM.COUNTRY ASC, GM.PROVINCE ASC, GM.MOUNTAIN ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For the mountain entries found above, show just the mountain name, country code, and province, ordered by country and province.",
+          "intention": "For the Anamudi mountain results whose matching province details were found, return each mountain name, country code, and province, ordered by country and province.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_province"
+            ],
+            "golden_sql": "SELECT GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM WHERE (GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE) IN (SELECT GM1.MOUNTAIN, GM1.COUNTRY, GM1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM1 JOIN MONDIAL_PROVINCE P1 ON GM1.PROVINCE = P1.NAME AND GM1.COUNTRY = P1.COUNTRY WHERE GM1.MOUNTAIN = 'Anamudi') ORDER BY GM.COUNTRY ASC, GM.PROVINCE ASC, GM.MOUNTAIN ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "How many of those mountain entries are there per country, with the largest count first?",
+          "intention": "Count the previously returned Anamudi mountain entries in each country and order the country groups from the largest count to the smallest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_mountain",
+              "mondial_province"
+            ],
+            "golden_sql": "SELECT GM.COUNTRY, COUNT(*) AS MOUNTAIN_COUNT FROM MONDIAL_GEO_MOUNTAIN GM WHERE (GM.MOUNTAIN, GM.COUNTRY, GM.PROVINCE) IN (SELECT GM2.MOUNTAIN, GM2.COUNTRY, GM2.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM2 WHERE (GM2.MOUNTAIN, GM2.COUNTRY, GM2.PROVINCE) IN (SELECT GM1.MOUNTAIN, GM1.COUNTRY, GM1.PROVINCE FROM MONDIAL_GEO_MOUNTAIN GM1 JOIN MONDIAL_PROVINCE P1 ON GM1.PROVINCE = P1.NAME AND GM1.COUNTRY = P1.COUNTRY WHERE GM1.MOUNTAIN = 'Anamudi')) GROUP BY GM.COUNTRY ORDER BY MOUNTAIN_COUNT DESC, GM.COUNTRY ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "33",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which airports in the Czech Republic are above 300 meters in elevation?",
+          "intention": "List airports in the Czech Republic whose elevation is greater than 300 meters.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, IATACODE, COUNTRY, CITY, PROVINCE, ELEVATION FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 300 ORDER BY ELEVATION DESC, NAME ASC, IATACODE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those, which are west of longitude 14.5, and what are their coordinates?",
+          "intention": "Among the Czech airports above 300 meters in elevation, list those west of longitude 14.5 together with their latitude and longitude.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, IATACODE, COUNTRY, CITY, PROVINCE, LATITUDE, LONGITUDE FROM MONDIAL_AIRPORT WHERE (NAME, IATACODE, COUNTRY, CITY, PROVINCE) IN (SELECT NAME, IATACODE, COUNTRY, CITY, PROVINCE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 300) AND LONGITUDE < 14.5 ORDER BY LONGITUDE ASC, NAME ASC, IATACODE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the population of each city served by those remaining airports?",
+          "intention": "For the Czech airports above 300 meters in elevation that are west of longitude 14.5, provide each airport and the population of its associated city.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT A.NAME AS AIRPORT_NAME, A.IATACODE, C.NAME AS CITY_NAME, C.POPULATION FROM MONDIAL_AIRPORT A JOIN MONDIAL_CITY C ON A.CITY = C.NAME AND A.COUNTRY = C.COUNTRY AND A.PROVINCE = C.PROVINCE WHERE (A.NAME, A.IATACODE, A.COUNTRY, A.CITY, A.PROVINCE) IN (SELECT A2.NAME, A2.IATACODE, A2.COUNTRY, A2.CITY, A2.PROVINCE FROM MONDIAL_AIRPORT A2 WHERE (A2.NAME, A2.IATACODE, A2.COUNTRY, A2.CITY, A2.PROVINCE) IN (SELECT NAME, IATACODE, COUNTRY, CITY, PROVINCE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION > 300) AND A2.LONGITUDE < 14.5) ORDER BY A.NAME ASC, A.IATACODE ASC, C.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "34",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which islands are in the Mediterranean Sea and have neither a lake nor a river?",
+          "intention": "Which islands are located in the Mediterranean Sea and are associated with neither a lake nor a river?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLANDIN"
+            ],
+            "golden_sql": "SELECT ISLAND, SEA, LAKE, RIVER FROM MONDIAL_ISLANDIN WHERE SEA = 'Mediterranean Sea' AND LAKE IS NULL AND RIVER IS NULL ORDER BY ISLAND ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those islands, which ones have names beginning with S?",
+          "intention": "Among the islands in the Mediterranean Sea that are associated with neither a lake nor a river, which islands have names beginning with S?",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLANDIN"
+            ],
+            "golden_sql": "SELECT ISLAND, SEA, LAKE, RIVER FROM MONDIAL_ISLANDIN WHERE (ISLAND, SEA) IN (SELECT ISLAND, SEA FROM MONDIAL_ISLANDIN WHERE SEA = 'Mediterranean Sea' AND LAKE IS NULL AND RIVER IS NULL) AND ISLAND LIKE 'S%' ORDER BY ISLAND ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those islands, what are the area and depth of their sea, and which other seas does it merge with?",
+          "intention": "For the previously selected Mediterranean islands whose names begin with S and that are associated with neither a lake nor a river, give the area and depth of each island's sea and list every other sea connected to it.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_ISLANDIN",
+              "MONDIAL_SEA",
+              "MONDIAL_MERGESWITH"
+            ],
+            "golden_sql": "SELECT DISTINCT I.ISLAND, S.NAME AS SEA, S.AREA, S.DEPTH, CASE WHEN M.SEA1 = S.NAME THEN M.SEA2 ELSE M.SEA1 END AS MERGES_WITH FROM MONDIAL_ISLANDIN I JOIN MONDIAL_SEA S ON I.SEA = S.NAME JOIN MONDIAL_MERGESWITH M ON M.SEA1 = S.NAME OR M.SEA2 = S.NAME WHERE (I.ISLAND, I.SEA) IN (SELECT ISLAND, SEA FROM MONDIAL_ISLANDIN WHERE (ISLAND, SEA) IN (SELECT ISLAND, SEA FROM MONDIAL_ISLANDIN WHERE SEA = 'Mediterranean Sea' AND LAKE IS NULL AND RIVER IS NULL) AND ISLAND LIKE 'S%') ORDER BY I.ISLAND ASC, MERGES_WITH ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "35",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which airports in the Czech Republic have an elevation of at least 500 meters? List their IATA codes and elevations, highest first.",
+          "intention": "Find airports identified with the Czech Republic country code that are at least 500 meters above sea level, and list their names, IATA codes, and elevations from highest to lowest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, IATACODE, ELEVATION FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION >= 500 AND IATACODE IS NOT NULL ORDER BY ELEVATION DESC, NAME ASC, IATACODE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those airports, what are their latitude, longitude, and GMT offset?",
+          "intention": "For the previously identified Czech airports at least 500 meters above sea level, provide each airport's latitude, longitude, and GMT offset.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT"
+            ],
+            "golden_sql": "SELECT NAME, IATACODE, LATITUDE, LONGITUDE, GMTOFFSET FROM MONDIAL_AIRPORT WHERE (IATACODE, COUNTRY) IN (SELECT IATACODE, COUNTRY FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION >= 500 AND IATACODE IS NOT NULL) ORDER BY NAME ASC, IATACODE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What is the full country name associated with each of those airports?",
+          "intention": "For the same previously identified Czech airports at least 500 meters above sea level, give each airport's name and IATA code together with the full name of its country.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_AIRPORT",
+              "MONDIAL_COUNTRY"
+            ],
+            "golden_sql": "SELECT A.NAME, A.IATACODE, C.NAME AS COUNTRY_NAME FROM MONDIAL_AIRPORT A JOIN MONDIAL_COUNTRY C ON A.COUNTRY = C.CODE WHERE (A.IATACODE, A.COUNTRY) IN (SELECT A2.IATACODE, A2.COUNTRY FROM MONDIAL_AIRPORT A2 WHERE (A2.IATACODE, A2.COUNTRY) IN (SELECT IATACODE, COUNTRY FROM MONDIAL_AIRPORT WHERE COUNTRY = 'CZ' AND ELEVATION >= 500 AND IATACODE IS NOT NULL)) ORDER BY A.NAME ASC, A.IATACODE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "36",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which estuaries are recorded in Germany?",
+          "intention": "List the rivers with estuaries recorded in Germany, including their country and province identifiers.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY"
+            ],
+            "golden_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'D' ORDER BY RIVER ASC, PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the lengths and estuary elevations of those rivers?",
+          "intention": "For exactly the rivers whose estuaries were identified in Germany, provide each river's length and estuary elevation.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY",
+              "MONDIAL_RIVER"
+            ],
+            "golden_sql": "SELECT E.RIVER, R.LENGTH, R.ESTUARYELEVATION FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'D') ORDER BY E.RIVER ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Among those, keep only the estuaries in Sachsen-Anhalt and order them by river name.",
+          "intention": "From exactly the rivers with length and estuary-elevation information in the preceding result, return only those whose estuaries are in Sachsen-Anhalt, ordered alphabetically by river name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_GEO_ESTUARY",
+              "MONDIAL_RIVER"
+            ],
+            "golden_sql": "SELECT E.RIVER, E.COUNTRY, E.PROVINCE FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT E2.RIVER, E2.COUNTRY, E2.PROVINCE FROM MONDIAL_GEO_ESTUARY E2 JOIN MONDIAL_RIVER R2 ON E2.RIVER = R2.NAME WHERE (E2.RIVER, E2.COUNTRY, E2.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'D')) AND E.PROVINCE = 'Sachsen-Anhalt' ORDER BY E.RIVER ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "37",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which Japanese provinces border the Sea of Japan, and what are that sea's area and depth?",
+          "intention": "List the Japanese provinces bordering the Sea of Japan together with the sea's area and depth.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_sea",
+              "mondial_sea"
+            ],
+            "golden_sql": "SELECT G.PROVINCE, S.NAME, S.AREA, S.DEPTH FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME WHERE G.COUNTRY = 'J' AND G.SEA = 'Sea of Japan' ORDER BY G.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which cities in those province-and-sea combinations are also located on the same sea?",
+          "intention": "For the Japanese province and Sea of Japan combinations identified previously, list cities in the same province and country that are located on that same sea.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_sea",
+              "mondial_sea",
+              "mondial_located"
+            ],
+            "golden_sql": "SELECT L.CITY, L.PROVINCE, L.COUNTRY, L.SEA FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S ON G.SEA = S.NAME JOIN MONDIAL_LOCATED L ON L.SEA = S.NAME AND L.COUNTRY = G.COUNTRY AND L.PROVINCE = G.PROVINCE WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT G1.SEA, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_SEA G1 JOIN MONDIAL_SEA S1 ON G1.SEA = S1.NAME WHERE G1.COUNTRY = 'J' AND G1.SEA = 'Sea of Japan') ORDER BY L.CITY ASC, L.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which islands lie in the seas associated with those cities?",
+          "intention": "List islands lying in exactly the seas associated with the cities from the previously selected Japanese province and Sea of Japan combinations.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_sea",
+              "mondial_sea",
+              "mondial_located",
+              "mondial_islandin"
+            ],
+            "golden_sql": "SELECT I.ISLAND, I.SEA FROM MONDIAL_ISLANDIN I JOIN MONDIAL_SEA S ON I.SEA = S.NAME WHERE (I.SEA) IN (SELECT L.SEA FROM MONDIAL_GEO_SEA G JOIN MONDIAL_SEA S2 ON G.SEA = S2.NAME JOIN MONDIAL_LOCATED L ON L.SEA = S2.NAME AND L.COUNTRY = G.COUNTRY AND L.PROVINCE = G.PROVINCE WHERE (G.SEA, G.COUNTRY, G.PROVINCE) IN (SELECT G1.SEA, G1.COUNTRY, G1.PROVINCE FROM MONDIAL_GEO_SEA G1 JOIN MONDIAL_SEA S1 ON G1.SEA = S1.NAME WHERE G1.COUNTRY = 'J' AND G1.SEA = 'Sea of Japan')) ORDER BY I.ISLAND ASC, I.SEA ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "38",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Show me borders where the first country code is AL or GR and the length is between 150 and 300, ordered from shortest to longest.",
+          "intention": "List borders whose first country code is Albania or Greece and whose length is between 150 and 300, ordered from shortest to longest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT MONDIAL_BORDERS.COUNTRY1, MONDIAL_BORDERS.COUNTRY2, MONDIAL_BORDERS.LENGTH FROM MONDIAL_BORDERS WHERE MONDIAL_BORDERS.COUNTRY1 IN ('AL', 'GR') AND MONDIAL_BORDERS.LENGTH BETWEEN 150 AND 300 ORDER BY MONDIAL_BORDERS.LENGTH ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those borders, keep only the ones longer than 170 and order them from longest to shortest.",
+          "intention": "From the previously listed borders involving Albania or Greece and measuring between 150 and 300, retain only those longer than 170 and order them from longest to shortest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS"
+            ],
+            "golden_sql": "SELECT MONDIAL_BORDERS.COUNTRY1, MONDIAL_BORDERS.COUNTRY2, MONDIAL_BORDERS.LENGTH FROM MONDIAL_BORDERS WHERE (MONDIAL_BORDERS.COUNTRY1, MONDIAL_BORDERS.COUNTRY2, MONDIAL_BORDERS.LENGTH) IN (SELECT B1.COUNTRY1, B1.COUNTRY2, B1.LENGTH FROM MONDIAL_BORDERS B1 WHERE B1.COUNTRY1 IN ('AL', 'GR') AND B1.LENGTH BETWEEN 150 AND 300) AND MONDIAL_BORDERS.LENGTH > 170 ORDER BY MONDIAL_BORDERS.LENGTH DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those remaining borders, what is the name and continent of the first country?",
+          "intention": "For the previously retained borders longer than 170, give the name and continent of the country represented by the first country code.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_CONTINENT"
+            ],
+            "golden_sql": "SELECT B.COUNTRY1, B.COUNTRY2, B.LENGTH, C.NAME, CT.NAME AS CONTINENT FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C ON B.COUNTRY1 = C.CODE JOIN MONDIAL_ENCOMPASSES E ON C.CODE = E.COUNTRY JOIN MONDIAL_CONTINENT CT ON E.CONTINENT = CT.NAME WHERE (B.COUNTRY1, B.COUNTRY2, B.LENGTH) IN (SELECT B2.COUNTRY1, B2.COUNTRY2, B2.LENGTH FROM MONDIAL_BORDERS B2 WHERE (B2.COUNTRY1, B2.COUNTRY2, B2.LENGTH) IN (SELECT B1.COUNTRY1, B1.COUNTRY2, B1.LENGTH FROM MONDIAL_BORDERS B1 WHERE B1.COUNTRY1 IN ('AL', 'GR') AND B1.LENGTH BETWEEN 150 AND 300) AND B2.LENGTH > 170) ORDER BY B.LENGTH DESC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "39",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which city is also known as Saint Petersburg?",
+          "intention": "Identify the city whose alternative name is Saint Petersburg.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT C.NAME, C.COUNTRY, C.PROVINCE FROM MONDIAL_CITY C JOIN MONDIAL_CITYOTHERNAME O ON O.CITY = C.NAME AND O.COUNTRY = C.COUNTRY AND O.PROVINCE = C.PROVINCE WHERE O.OTHERNAME = 'Saint Petersburg' ORDER BY C.NAME ASC, C.COUNTRY ASC, C.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are its population, coordinates, and elevation?",
+          "intention": "Give the population, latitude, longitude, and elevation of the city whose alternative name is Saint Petersburg.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT C.NAME, C.COUNTRY, C.PROVINCE, C.POPULATION, C.LATITUDE, C.LONGITUDE, C.ELEVATION FROM MONDIAL_CITY C WHERE (C.NAME, C.COUNTRY, C.PROVINCE) IN (SELECT C1.NAME, C1.COUNTRY, C1.PROVINCE FROM MONDIAL_CITY C1 JOIN MONDIAL_CITYOTHERNAME O ON O.CITY = C1.NAME AND O.COUNTRY = C1.COUNTRY AND O.PROVINCE = C1.PROVINCE WHERE O.OTHERNAME = 'Saint Petersburg') ORDER BY C.NAME ASC, C.COUNTRY ASC, C.PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Is that city located on an island, and if so, which one?",
+          "intention": "Determine whether the city whose alternative name is Saint Petersburg is located on an island and provide the island's name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME",
+              "MONDIAL_LOCATEDON"
+            ],
+            "golden_sql": "SELECT C.NAME, C.COUNTRY, C.PROVINCE, L.ISLAND FROM MONDIAL_CITY C JOIN MONDIAL_LOCATEDON L ON L.CITY = C.NAME AND L.COUNTRY = C.COUNTRY AND L.PROVINCE = C.PROVINCE WHERE (C.NAME, C.COUNTRY, C.PROVINCE) IN (SELECT C2.NAME, C2.COUNTRY, C2.PROVINCE FROM MONDIAL_CITY C2 WHERE (C2.NAME, C2.COUNTRY, C2.PROVINCE) IN (SELECT C1.NAME, C1.COUNTRY, C1.PROVINCE FROM MONDIAL_CITY C1 JOIN MONDIAL_CITYOTHERNAME O ON O.CITY = C1.NAME AND O.COUNTRY = C1.COUNTRY AND O.PROVINCE = C1.PROVINCE WHERE O.OTHERNAME = 'Saint Petersburg')) ORDER BY L.ISLAND ASC, C.NAME ASC, C.COUNTRY ASC, C.PROVINCE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "40",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries have an area between 25,000 and 150,000 square kilometers and a population above 2 million?",
+          "intention": "Find countries whose area is between 25,000 and 150,000 square kilometers and whose population exceeds two million.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_country"
+            ],
+            "golden_sql": "SELECT MONDIAL_COUNTRY.CODE, MONDIAL_COUNTRY.NAME FROM MONDIAL_COUNTRY WHERE MONDIAL_COUNTRY.AREA BETWEEN 25000 AND 150000 AND MONDIAL_COUNTRY.POPULATION > 2000000 ORDER BY MONDIAL_COUNTRY.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those countries, show their capitals and population density, from highest density to lowest.",
+          "intention": "For the countries with an area between 25,000 and 150,000 square kilometers and a population above two million, show each country's capital and population per square kilometer, ordered from highest to lowest population density.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_country"
+            ],
+            "golden_sql": "SELECT MONDIAL_COUNTRY.CODE, MONDIAL_COUNTRY.NAME, MONDIAL_COUNTRY.CAPITAL, MONDIAL_COUNTRY.POPULATION / MONDIAL_COUNTRY.AREA AS POPULATION_DENSITY FROM MONDIAL_COUNTRY WHERE (MONDIAL_COUNTRY.CODE) IN (SELECT MONDIAL_COUNTRY.CODE FROM MONDIAL_COUNTRY WHERE MONDIAL_COUNTRY.AREA BETWEEN 25000 AND 150000 AND MONDIAL_COUNTRY.POPULATION > 2000000) ORDER BY POPULATION_DENSITY DESC, MONDIAL_COUNTRY.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What languages and percentages are recorded for each of those countries?",
+          "intention": "For the same countries whose capitals and population densities were shown, list every recorded language and its percentage for each country.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_country",
+              "mondial_language"
+            ],
+            "golden_sql": "SELECT C.NAME AS COUNTRY_NAME, L.NAME AS LANGUAGE_NAME, L.PERCENTAGE FROM MONDIAL_COUNTRY C JOIN MONDIAL_LANGUAGE L ON L.COUNTRY = C.CODE WHERE (C.CODE) IN (SELECT MONDIAL_COUNTRY.CODE FROM MONDIAL_COUNTRY WHERE (MONDIAL_COUNTRY.CODE) IN (SELECT MONDIAL_COUNTRY.CODE FROM MONDIAL_COUNTRY WHERE MONDIAL_COUNTRY.AREA BETWEEN 25000 AND 150000 AND MONDIAL_COUNTRY.POPULATION > 2000000)) ORDER BY C.NAME ASC, L.PERCENTAGE DESC, L.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "41",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which deserts have an area of at least 1,000,000, ordered from largest to smallest?",
+          "intention": "List the deserts whose area is at least one million, ordered from largest to smallest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_desert"
+            ],
+            "golden_sql": "SELECT MONDIAL_DESERT.NAME, MONDIAL_DESERT.AREA FROM MONDIAL_DESERT WHERE MONDIAL_DESERT.AREA >= 1000000 ORDER BY MONDIAL_DESERT.AREA DESC, MONDIAL_DESERT.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which provinces contain those deserts, and what are their capitals?",
+          "intention": "For the deserts with an area of at least one million, list each province containing them and the province's capital.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_desert",
+              "mondial_geo_desert",
+              "mondial_province"
+            ],
+            "golden_sql": "SELECT D.NAME AS DESERT_NAME, P.NAME AS PROVINCE_NAME, P.COUNTRY, P.CAPITAL FROM MONDIAL_DESERT D JOIN MONDIAL_GEO_DESERT GD ON GD.DESERT = D.NAME JOIN MONDIAL_PROVINCE P ON GD.PROVINCE = P.NAME AND GD.COUNTRY = P.COUNTRY WHERE (D.NAME) IN (SELECT D1.NAME FROM MONDIAL_DESERT D1 WHERE D1.AREA >= 1000000) ORDER BY D.NAME ASC, P.COUNTRY ASC, P.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which islands are located in those provinces?",
+          "intention": "List the islands located in the provinces identified as containing deserts with an area of at least one million.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_island",
+              "mondial_province",
+              "mondial_desert",
+              "mondial_geo_desert"
+            ],
+            "golden_sql": "SELECT GI.ISLAND, P.NAME AS PROVINCE_NAME, P.COUNTRY FROM MONDIAL_GEO_ISLAND GI JOIN MONDIAL_PROVINCE P ON GI.COUNTRY = P.COUNTRY AND GI.PROVINCE = P.NAME WHERE (P.COUNTRY, P.NAME) IN (SELECT P2.COUNTRY, P2.NAME FROM MONDIAL_DESERT D2 JOIN MONDIAL_GEO_DESERT GD2 ON GD2.DESERT = D2.NAME JOIN MONDIAL_PROVINCE P2 ON GD2.PROVINCE = P2.NAME AND GD2.COUNTRY = P2.COUNTRY WHERE (D2.NAME) IN (SELECT D1.NAME FROM MONDIAL_DESERT D1 WHERE D1.AREA >= 1000000)) ORDER BY P.COUNTRY ASC, P.NAME ASC, GI.ISLAND ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "42",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which borders start in Albania and connect to countries with unemployment of at least 27.9 percent? Show both country names and the border length.",
+          "intention": "List the borders from Albania to neighboring countries whose unemployment rate is at least 27.9 percent, including both country names and each border's length.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT C1.NAME AS COUNTRY1_NAME, C2.NAME AS COUNTRY2_NAME, B.LENGTH FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C1 ON B.COUNTRY1 = C1.CODE JOIN MONDIAL_COUNTRY C2 ON B.COUNTRY2 = C2.CODE JOIN MONDIAL_ECONOMY E2 ON E2.COUNTRY = C2.CODE WHERE C1.NAME = 'Albania' AND E2.UNEMPLOYMENT >= 27.9 ORDER BY B.LENGTH DESC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those borders, which are longer than 151 kilometers? List their country codes and lengths from longest to shortest.",
+          "intention": "Among the previously identified borders from Albania to neighbors with unemployment of at least 27.9 percent, list only those longer than 151 kilometers, with both country codes and border lengths ordered from longest to shortest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT B.COUNTRY1, B.COUNTRY2, B.LENGTH FROM MONDIAL_BORDERS B WHERE (B.COUNTRY1, B.COUNTRY2) IN (SELECT B0.COUNTRY1, B0.COUNTRY2 FROM MONDIAL_BORDERS B0 JOIN MONDIAL_COUNTRY C10 ON B0.COUNTRY1 = C10.CODE JOIN MONDIAL_COUNTRY C20 ON B0.COUNTRY2 = C20.CODE JOIN MONDIAL_ECONOMY E20 ON E20.COUNTRY = C20.CODE WHERE C10.NAME = 'Albania' AND E20.UNEMPLOYMENT >= 27.9) AND B.LENGTH > 151 ORDER BY B.LENGTH DESC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For the borders that remain, show the countries on both sides and the neighboring country's recorded population in 2012.",
+          "intention": "For the previously retained borders longer than 151 kilometers, show the names of the country on each side and the 2012 population recorded for the country neighboring Albania.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_BORDERS",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_COUNTRYPOPS",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT C1.NAME AS COUNTRY1_NAME, C2.NAME AS COUNTRY2_NAME, P2.POPULATION FROM MONDIAL_BORDERS B JOIN MONDIAL_COUNTRY C1 ON B.COUNTRY1 = C1.CODE JOIN MONDIAL_COUNTRY C2 ON B.COUNTRY2 = C2.CODE JOIN MONDIAL_COUNTRYPOPS P2 ON P2.COUNTRY = C2.CODE WHERE (B.COUNTRY1, B.COUNTRY2) IN (SELECT B1.COUNTRY1, B1.COUNTRY2 FROM MONDIAL_BORDERS B1 WHERE (B1.COUNTRY1, B1.COUNTRY2) IN (SELECT B0.COUNTRY1, B0.COUNTRY2 FROM MONDIAL_BORDERS B0 JOIN MONDIAL_COUNTRY C10 ON B0.COUNTRY1 = C10.CODE JOIN MONDIAL_COUNTRY C20 ON B0.COUNTRY2 = C20.CODE JOIN MONDIAL_ECONOMY E20 ON E20.COUNTRY = C20.CODE WHERE C10.NAME = 'Albania' AND E20.UNEMPLOYMENT >= 27.9) AND B1.LENGTH > 151) AND P2.YEAR = 2012 ORDER BY C1.NAME ASC, C2.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "43",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which Indonesian airports located on named islands are above sea level? Show their names, IATA codes, islands, and elevations.",
+          "intention": "List Indonesian airports with IATA codes that are located on named islands and have elevations above sea level, including each airport's name, code, island, and elevation.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_airport"
+            ],
+            "golden_sql": "SELECT NAME, IATACODE, ISLAND, ELEVATION FROM MONDIAL_AIRPORT WHERE COUNTRY = 'RI' AND ISLAND IS NOT NULL AND ELEVATION > 0 AND IATACODE IS NOT NULL ORDER BY ELEVATION DESC, NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those airports, what are the areas and types of their islands?",
+          "intention": "For exactly the previously listed Indonesian island airports above sea level, give the area and type of each airport's island.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_airport",
+              "mondial_island"
+            ],
+            "golden_sql": "SELECT A.IATACODE, A.NAME AS AIRPORT_NAME, I.NAME AS ISLAND_NAME, I.AREA, I.TYPE FROM MONDIAL_AIRPORT A JOIN MONDIAL_ISLAND I ON A.ISLAND = I.NAME WHERE (A.IATACODE) IN (SELECT IATACODE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'RI' AND ISLAND IS NOT NULL AND ELEVATION > 0 AND IATACODE IS NOT NULL) ORDER BY I.AREA DESC, A.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Which mountains are on the islands in those results, and how high are they?",
+          "intention": "List the mountains and their elevations on exactly the islands associated with the airport-and-island results from the previous question.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_airport",
+              "mondial_island",
+              "mondial_mountainonisland",
+              "mondial_mountain"
+            ],
+            "golden_sql": "SELECT DISTINCT A.IATACODE, A.NAME AS AIRPORT_NAME, I.NAME AS ISLAND_NAME, M.NAME AS MOUNTAIN_NAME, M.ELEVATION AS MOUNTAIN_ELEVATION FROM MONDIAL_AIRPORT A JOIN MONDIAL_ISLAND I ON A.ISLAND = I.NAME JOIN MONDIAL_MOUNTAINONISLAND MI ON MI.ISLAND = I.NAME JOIN MONDIAL_MOUNTAIN M ON M.NAME = MI.MOUNTAIN WHERE (A.IATACODE, I.NAME) IN (SELECT A2.IATACODE, I2.NAME FROM MONDIAL_AIRPORT A2 JOIN MONDIAL_ISLAND I2 ON A2.ISLAND = I2.NAME WHERE (A2.IATACODE) IN (SELECT IATACODE FROM MONDIAL_AIRPORT WHERE COUNTRY = 'RI' AND ISLAND IS NOT NULL AND ELEVATION > 0 AND IATACODE IS NOT NULL)) ORDER BY I.NAME ASC, M.ELEVATION DESC, M.NAME ASC, A.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "44",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries are listed as signatory members of CD?",
+          "intention": "Identify the countries whose membership in CD is classified as signatory.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_ismember"
+            ],
+            "golden_sql": "SELECT MONDIAL_ISMEMBER.COUNTRY, MONDIAL_ISMEMBER.ORGANIZATION, MONDIAL_ISMEMBER.TYPE FROM MONDIAL_ISMEMBER WHERE MONDIAL_ISMEMBER.ORGANIZATION = 'CD' AND MONDIAL_ISMEMBER.TYPE = 'signatory' ORDER BY MONDIAL_ISMEMBER.COUNTRY ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those memberships, what is the organization's full name and host city?",
+          "intention": "For exactly the CD signatory memberships identified previously, provide the full name and host city of the corresponding organization.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_ismember",
+              "mondial_organization"
+            ],
+            "golden_sql": "SELECT M.COUNTRY, O.NAME AS ORGANIZATION_NAME, O.CITY AS HOST_CITY FROM MONDIAL_ISMEMBER M JOIN MONDIAL_ORGANIZATION O ON M.ORGANIZATION = O.ABBREVIATION WHERE (M.COUNTRY, M.ORGANIZATION, M.TYPE) IN (SELECT COUNTRY, ORGANIZATION, TYPE FROM MONDIAL_ISMEMBER WHERE ORGANIZATION = 'CD' AND TYPE = 'signatory') ORDER BY M.COUNTRY ASC, O.NAME ASC, O.CITY ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Do the host provinces of these organizations have any alternate names?",
+          "intention": "For exactly the organizations associated with the previously identified CD signatory memberships, return any alternate names recorded for their host provinces.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_ismember",
+              "mondial_organization",
+              "mondial_province",
+              "mondial_provinceothername"
+            ],
+            "golden_sql": "SELECT M.COUNTRY, O.NAME AS ORGANIZATION_NAME, P.NAME AS HOST_PROVINCE, PN.OTHERNAME FROM MONDIAL_ISMEMBER M JOIN MONDIAL_ORGANIZATION O ON M.ORGANIZATION = O.ABBREVIATION JOIN MONDIAL_PROVINCE P ON O.PROVINCE = P.NAME AND O.COUNTRY = P.COUNTRY JOIN MONDIAL_PROVINCEOTHERNAME PN ON PN.PROVINCE = P.NAME AND PN.COUNTRY = P.COUNTRY WHERE (M.COUNTRY, M.ORGANIZATION, M.TYPE) IN (SELECT M2.COUNTRY, M2.ORGANIZATION, M2.TYPE FROM MONDIAL_ISMEMBER M2 JOIN MONDIAL_ORGANIZATION O2 ON M2.ORGANIZATION = O2.ABBREVIATION WHERE (M2.COUNTRY, M2.ORGANIZATION, M2.TYPE) IN (SELECT COUNTRY, ORGANIZATION, TYPE FROM MONDIAL_ISMEMBER WHERE ORGANIZATION = 'CD' AND TYPE = 'signatory')) ORDER BY M.COUNTRY ASC, O.NAME ASC, P.NAME ASC, PN.OTHERNAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "45",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which rivers have estuaries in Sachsen-Anhalt, Germany?",
+          "intention": "Identify the rivers whose estuaries are located in the German state of Sachsen-Anhalt.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary"
+            ],
+            "golden_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'D' AND PROVINCE = 'Sachsen-Anhalt' ORDER BY RIVER ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "For those rivers, show the country and province again, ordered alphabetically by river name.",
+          "intention": "List the country and province for the previously identified rivers with estuaries in Sachsen-Anhalt, ordering the results alphabetically by river name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary"
+            ],
+            "golden_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE (RIVER, COUNTRY, PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'D' AND PROVINCE = 'Sachsen-Anhalt') ORDER BY RIVER ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the lengths and estuary elevations of those rivers?",
+          "intention": "Give the length and estuary elevation of each river in the previously ordered set of rivers whose estuaries are in Sachsen-Anhalt, Germany.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_estuary",
+              "mondial_river"
+            ],
+            "golden_sql": "SELECT E.RIVER, R.LENGTH, R.ESTUARYELEVATION FROM MONDIAL_GEO_ESTUARY E JOIN MONDIAL_RIVER R ON E.RIVER = R.NAME WHERE (E.RIVER, E.COUNTRY, E.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE (RIVER, COUNTRY, PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_ESTUARY WHERE COUNTRY = 'D' AND PROVINCE = 'Sachsen-Anhalt')) ORDER BY E.RIVER ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "46",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which continents contain at least one country whose GDP exceeds 1,000,000?",
+          "intention": "Identify the continents that contain at least one country with a GDP greater than 1,000,000.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT DISTINCT C.NAME FROM MONDIAL_CONTINENT C JOIN MONDIAL_ENCOMPASSES EN ON EN.CONTINENT = C.NAME JOIN MONDIAL_COUNTRY CO ON EN.COUNTRY = CO.CODE JOIN MONDIAL_ECONOMY EC ON EC.COUNTRY = CO.CODE WHERE EC.GDP > 1000000 ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What are the names and areas of those continents?",
+          "intention": "Return the name and area of every continent identified as containing at least one country with a GDP greater than 1,000,000.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT C.NAME, C.AREA FROM MONDIAL_CONTINENT C WHERE (C.NAME) IN (SELECT DISTINCT C1.NAME FROM MONDIAL_CONTINENT C1 JOIN MONDIAL_ENCOMPASSES EN1 ON EN1.CONTINENT = C1.NAME JOIN MONDIAL_COUNTRY CO1 ON EN1.COUNTRY = CO1.CODE JOIN MONDIAL_ECONOMY EC1 ON EC1.COUNTRY = CO1.CODE WHERE EC1.GDP > 1000000) ORDER BY C.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "Of those, which have an area greater than 10,000,000, ordered from largest to smallest?",
+          "intention": "Among the continents previously returned with their names and areas, keep only those whose area exceeds 10,000,000 and order them by area from largest to smallest.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ECONOMY"
+            ],
+            "golden_sql": "SELECT C.NAME, C.AREA FROM MONDIAL_CONTINENT C WHERE (C.NAME) IN (SELECT C2.NAME FROM MONDIAL_CONTINENT C2 WHERE (C2.NAME) IN (SELECT DISTINCT C1.NAME FROM MONDIAL_CONTINENT C1 JOIN MONDIAL_ENCOMPASSES EN1 ON EN1.CONTINENT = C1.NAME JOIN MONDIAL_COUNTRY CO1 ON EN1.COUNTRY = CO1.CODE JOIN MONDIAL_ECONOMY EC1 ON EC1.COUNTRY = CO1.CODE WHERE EC1.GDP > 1000000)) AND C.AREA > 10000000 ORDER BY C.AREA DESC, C.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "47",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which cities in country code R have populations between 100,000 and 250,000 and elevations of at least 100?",
+          "intention": "List the cities in country code R whose populations are between 100,000 and 250,000 and whose elevations are at least 100.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY"
+            ],
+            "golden_sql": "SELECT NAME, COUNTRY, PROVINCE, POPULATION, ELEVATION FROM MONDIAL_CITY WHERE COUNTRY = 'R' AND POPULATION BETWEEN 100000 AND 250000 AND ELEVATION >= 100 ORDER BY NAME ASC, PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Which of those cities have alternate names, and what are those names?",
+          "intention": "For exactly the previously identified cities in country code R with populations between 100,000 and 250,000 and elevations of at least 100, list each city that has an alternate name together with that alternate name.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT C.NAME, C.COUNTRY, C.PROVINCE, O.OTHERNAME FROM MONDIAL_CITY C JOIN MONDIAL_CITYOTHERNAME O ON O.CITY = C.NAME AND O.COUNTRY = C.COUNTRY AND O.PROVINCE = C.PROVINCE WHERE (C.NAME, C.COUNTRY, C.PROVINCE) IN (SELECT NAME, COUNTRY, PROVINCE FROM MONDIAL_CITY WHERE COUNTRY = 'R' AND POPULATION BETWEEN 100000 AND 250000 AND ELEVATION >= 100) ORDER BY C.NAME ASC, O.OTHERNAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those cities with alternate names, show their coordinates and elevation, ordered from highest to lowest elevation.",
+          "intention": "For exactly the cities from the previous result that have alternate names, show each city's latitude, longitude, and elevation, sorted by descending elevation.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CITY",
+              "MONDIAL_CITYOTHERNAME"
+            ],
+            "golden_sql": "SELECT C.NAME, C.COUNTRY, C.PROVINCE, C.LATITUDE, C.LONGITUDE, C.ELEVATION FROM MONDIAL_CITY C WHERE (C.NAME, C.COUNTRY, C.PROVINCE) IN (SELECT C2.NAME, C2.COUNTRY, C2.PROVINCE FROM MONDIAL_CITY C2 JOIN MONDIAL_CITYOTHERNAME O2 ON O2.CITY = C2.NAME AND O2.COUNTRY = C2.COUNTRY AND O2.PROVINCE = C2.PROVINCE WHERE (C2.NAME, C2.COUNTRY, C2.PROVINCE) IN (SELECT NAME, COUNTRY, PROVINCE FROM MONDIAL_CITY WHERE COUNTRY = 'R' AND POPULATION BETWEEN 100000 AND 250000 AND ELEVATION >= 100)) ORDER BY C.ELEVATION DESC, C.NAME ASC, C.PROVINCE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "48",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which European countries are fully encompassed by Europe?",
+          "intention": "List the countries whose territory is entirely in Europe.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_COUNTRY"
+            ],
+            "golden_sql": "SELECT CO.CODE, CO.NAME FROM MONDIAL_CONTINENT C JOIN MONDIAL_ENCOMPASSES E ON E.CONTINENT = C.NAME JOIN MONDIAL_COUNTRY CO ON E.COUNTRY = CO.CODE WHERE C.NAME = 'Europe' AND E.PERCENTAGE = 100 ORDER BY CO.NAME ASC, CO.CODE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "What ethnic groups are recorded for those countries?",
+          "intention": "List the ethnic groups recorded for the countries whose territory is entirely in Europe.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ETHNICGROUP"
+            ],
+            "golden_sql": "SELECT CO.CODE, CO.NAME AS COUNTRY_NAME, EG.NAME AS ETHNIC_GROUP, EG.PERCENTAGE FROM MONDIAL_CONTINENT C JOIN MONDIAL_ENCOMPASSES E ON E.CONTINENT = C.NAME JOIN MONDIAL_COUNTRY CO ON E.COUNTRY = CO.CODE JOIN MONDIAL_ETHNICGROUP EG ON EG.COUNTRY = CO.CODE WHERE (CO.CODE) IN (SELECT CO1.CODE FROM MONDIAL_CONTINENT C1 JOIN MONDIAL_ENCOMPASSES E1 ON E1.CONTINENT = C1.NAME JOIN MONDIAL_COUNTRY CO1 ON E1.COUNTRY = CO1.CODE WHERE C1.NAME = 'Europe' AND E1.PERCENTAGE = 100) ORDER BY CO.NAME ASC, EG.NAME ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "And which languages are spoken in the countries from that ethnic-group result?",
+          "intention": "List the languages spoken in the fully European countries that have recorded ethnic groups.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_CONTINENT",
+              "MONDIAL_ENCOMPASSES",
+              "MONDIAL_COUNTRY",
+              "MONDIAL_ETHNICGROUP",
+              "MONDIAL_LANGUAGE"
+            ],
+            "golden_sql": "SELECT DISTINCT CO.CODE, CO.NAME AS COUNTRY_NAME, L.NAME AS LANGUAGE_NAME, L.PERCENTAGE FROM MONDIAL_CONTINENT C JOIN MONDIAL_ENCOMPASSES E ON E.CONTINENT = C.NAME JOIN MONDIAL_COUNTRY CO ON E.COUNTRY = CO.CODE JOIN MONDIAL_LANGUAGE L ON L.COUNTRY = CO.CODE WHERE (CO.CODE) IN (SELECT CO2.CODE FROM MONDIAL_CONTINENT C2 JOIN MONDIAL_ENCOMPASSES E2 ON E2.CONTINENT = C2.NAME JOIN MONDIAL_COUNTRY CO2 ON E2.COUNTRY = CO2.CODE JOIN MONDIAL_ETHNICGROUP EG2 ON EG2.COUNTRY = CO2.CODE WHERE (CO2.CODE) IN (SELECT CO1.CODE FROM MONDIAL_CONTINENT C1 JOIN MONDIAL_ENCOMPASSES E1 ON E1.CONTINENT = C1.NAME JOIN MONDIAL_COUNTRY CO1 ON E1.COUNTRY = CO1.CODE WHERE C1.NAME = 'Europe' AND E1.PERCENTAGE = 100)) ORDER BY CO.NAME ASC, L.NAME ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "49",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which countries have Greek spoken by at least 0.5 percent of their population?",
+          "intention": "Identify the countries in which Greek is spoken by at least 0.5 percent of the population.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRY",
+              "MONDIAL_LANGUAGE"
+            ],
+            "golden_sql": "SELECT C.CODE, C.NAME FROM MONDIAL_COUNTRY C JOIN MONDIAL_LANGUAGE L ON L.COUNTRY = C.CODE WHERE L.NAME = 'Greek' AND L.PERCENTAGE >= 0.5 ORDER BY C.NAME ASC, C.CODE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those countries, which ones have more than 5 million residents?",
+          "intention": "Among the countries in which Greek is spoken by at least 0.5 percent of the population, identify those whose population exceeds five million.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRY",
+              "MONDIAL_LANGUAGE"
+            ],
+            "golden_sql": "SELECT C.CODE, C.NAME, C.POPULATION FROM MONDIAL_COUNTRY C WHERE (C.CODE) IN (SELECT C1.CODE FROM MONDIAL_COUNTRY C1 JOIN MONDIAL_LANGUAGE L1 ON L1.COUNTRY = C1.CODE WHERE L1.NAME = 'Greek' AND L1.PERCENTAGE >= 0.5) AND C.POPULATION > 5000000 ORDER BY C.POPULATION DESC, C.NAME ASC, C.CODE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "For those, show me their capitals and areas, largest area first.",
+          "intention": "For the previously identified countries where Greek is spoken by at least 0.5 percent of the population and whose population exceeds five million, show each country's capital and area, ordered from largest to smallest area.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "MONDIAL_COUNTRY",
+              "MONDIAL_LANGUAGE"
+            ],
+            "golden_sql": "SELECT C.CODE, C.NAME, C.CAPITAL, C.AREA FROM MONDIAL_COUNTRY C WHERE (C.CODE) IN (SELECT C2.CODE FROM MONDIAL_COUNTRY C2 WHERE (C2.CODE) IN (SELECT C1.CODE FROM MONDIAL_COUNTRY C1 JOIN MONDIAL_LANGUAGE L1 ON L1.COUNTRY = C1.CODE WHERE L1.NAME = 'Greek' AND L1.PERCENTAGE >= 0.5) AND C2.POPULATION > 5000000) ORDER BY C.AREA DESC, C.NAME ASC, C.CODE ASC"
+          }
+        }
+      ]
+    },
+    {
+      "experiment_id": "50",
+      "total_expected_interactions": 3,
+      "interactions": [
+        {
+          "interaction_id": "1",
+          "speaker": "User",
+          "utterance": "Which river sources are in Sudan, and what provinces are they in?",
+          "intention": "List the rivers whose sources are in Sudan, together with their source provinces.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_source"
+            ],
+            "golden_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD' ORDER BY RIVER ASC, PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "2",
+          "speaker": "User",
+          "utterance": "Of those, which source records have a province name beginning with S?",
+          "intention": "Among the river sources in Sudan identified previously, list those whose source province begins with the letter S.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_source"
+            ],
+            "golden_sql": "SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE (RIVER, COUNTRY, PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD') AND PROVINCE LIKE 'S%' ORDER BY RIVER ASC, PROVINCE ASC"
+          }
+        },
+        {
+          "interaction_id": "3",
+          "speaker": "User",
+          "utterance": "What are the lengths and source elevations of those rivers?",
+          "intention": "For the previously selected rivers with sources in Sudan and province names beginning with S, give each river's length and source elevation.",
+          "ground_truths": {
+            "tables_from_schema_linking": [
+              "mondial_geo_source",
+              "mondial_river"
+            ],
+            "golden_sql": "SELECT R.NAME, R.LENGTH, R.SOURCEELEVATION FROM MONDIAL_GEO_SOURCE G JOIN MONDIAL_RIVER R ON G.RIVER = R.NAME WHERE (G.RIVER, G.COUNTRY, G.PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE (RIVER, COUNTRY, PROVINCE) IN (SELECT RIVER, COUNTRY, PROVINCE FROM MONDIAL_GEO_SOURCE WHERE COUNTRY = 'SUD') AND PROVINCE LIKE 'S%') ORDER BY R.NAME ASC"
+          }
+        }
+      ]
+    }
+  ]
+}

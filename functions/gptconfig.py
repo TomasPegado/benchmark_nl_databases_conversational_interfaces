@@ -9,9 +9,10 @@ pyfile = pathlib.Path(__file__).parent.resolve()
 
 
 ##### CONFIF #######
-AZURE_OPENAI_BASE_URL = os.environ["AZURE_OPENAI_BASE_URL"]
-OPENAI_API_KEY = os.environ["AZURE_OPENAI_API_KEY"]
-OPENAI_API_VERSION = os.environ["AZURE_OPENAI_API_VERSION"]
+OPENAI_BASE_URL = os.environ["OPENAI_BASE_URL"]
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+OPENAI_API_VERSION = os.environ["OPENAI_API_VERSION"]
+
 
 ###### MODELS #########
 MODEL_35_TURBO = 'gpt-35-turbo'
@@ -19,6 +20,7 @@ MODEL_4O = 'gpt-4o'
 MODEL_EMBEDDING = 'text-embedding-ada-002'
 MODEL_O1_MINI = 'o1-mini'
 MODEL_O3_MINI = 'o3-mini'
+MODEL_5_6_SOL = 'gpt-5.6-sol'
 
 
 

@@ -8,7 +8,7 @@ import time
 
 import functions.gptconfig as gptconfig
 
-def get_llm(temperature=0, n=1, max_tokens=400, model=gptconfig.MODEL_4O, logprobs=None, **model_kwargs):
+def get_llm(temperature=1, n=1, model=gptconfig.MODEL_5_6_SOL, logprobs=None, **model_kwargs):
     
     params = {
         "temperature": temperature,
@@ -17,18 +17,19 @@ def get_llm(temperature=0, n=1, max_tokens=400, model=gptconfig.MODEL_4O, logpro
         "openai_api_key":  gptconfig.OPENAI_API_KEY,  
         "openai_api_version":  gptconfig.OPENAI_API_VERSION,
         # "azure_endpoint": config['OPENAI']['OPENAI_API_BASE'],
-        "azure_endpoint": gptconfig.AZURE_OPENAI_BASE_URL,
+        "azure_endpoint": gptconfig.OPENAI_BASE_URL,
         
     }
 
     if logprobs is not None:
         params["logprobs"] = logprobs
 
-    if model.startswith("o1") or model.startswith("o3"):
+    if model.startswith("o1") or model.startswith("o3") or "5.6" in model:
         params["temperature"] = 1
         params["max_completion_tokens"] = 4000
     else:
-        params["max_tokens"] = max_tokens
+        pass
+        # params["max_tokens"] = max_tokens
             
     llm = AzureChatOpenAI(
        **params,
@@ -45,7 +46,7 @@ def get_embeddings_model(model=gptconfig.MODEL_EMBEDDING):
         openai_api_key= gptconfig.OPENAI_API_KEY, 
         openai_api_version= gptconfig.OPENAI_API_VERSION,
         # azure_endpoint=config['OPENAI']['OPENAI_API_BASE'],
-        azure_endpoint=gptconfig.AZURE_OPENAI_BASE_URL
+        azure_endpoint=gptconfig.OPENAI_BASE_URL
     )
     return embeddings
 

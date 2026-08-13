@@ -80,7 +80,7 @@ def get_client()->AzureOpenAI:
         api_key= gptconfig.OPENAI_API_KEY,  
         api_version= gptconfig.OPENAI_API_VERSION,
         # azure_endpoint=config['OPENAI']['OPENAI_API_BASE'],
-        base_url=gptconfig.AZURE_OPENAI_BASE_URL,
+        base_url=gptconfig.OPENAI_BASE_URL,
         # http_client=http_client
     )
 

@@ -35,9 +35,6 @@ if EMBEDDINGS == "":
 else:
     EMBEDDINGS_PATH = os.path.join(experiment_root_path, "eval_agent", "conversational_agent", "text_to_sql_tool", "synthetic_dataset", EMBEDDINGS)
 
-# User Agent
-CHATBOT_PROMPT_PATH= os.path.join(experiment_root_path, "eval_agent", "user_agent", "chat_prompts", "chatbot_prompt_v2_english.txt")
-
 
 ENVIRONMENT = run_environment
 
@@ -55,7 +52,6 @@ if __name__ == "__main__":
     print(experiment_root_path)
     print(DB_CONNECTION_FILE)
     print(PROMPT_DECOMPOSER_FILE)
-    print(CHATBOT_PROMPT_PATH)
     print(ENVIRONMENT)
 
 
